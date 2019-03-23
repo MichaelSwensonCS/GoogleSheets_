@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DA08E631-33F6-4DDB-A2AC-42013AE26B2B}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SS</RootNamespace>
+    <AssemblyName>SpreadsheetGUI</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DependencyGraph">
+      <HintPath>..\Resources\Libraries\DependencyGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="Formula">
+      <HintPath>..\Resources\Libraries\Formula.dll</HintPath>
+    </Reference>
+    <Reference Include="Spreadsheet">
+      <HintPath>..\Resources\Libraries\Spreadsheet.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetPanel">
+      <HintPath>..\Resources\Libraries\SpreadsheetPanel.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\AppController.cs" />
+    <Compile Include="Controllers\ISpreadsheetController.cs" />
+    <Compile Include="Controllers\SpreadsheetController.cs" />
+    <Compile Include="Controllers\SubViewsController.cs" />
+    <Compile Include="Models\Cell.cs" />
+    <Compile Include="Models\DialogColors.cs" />
+    <Compile Include="Models\ISpreadsheetModel.cs" />
+    <Compile Include="Models\MenuColorTable.cs" />
+    <Compile Include="Models\SpreadsheetModel.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="Views\AboutView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\AboutView.Designer.cs">
+      <DependentUpon>AboutView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HelpAdditionalFeatures.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\HelpAdditionalFeatures.Designer.cs">
+      <DependentUpon>HelpAdditionalFeatures.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HelpChangingCellsContentsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\HelpChangingCellsContentsView.Designer.cs">
+      <DependentUpon>HelpChangingCellsContentsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HelpNavView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\HelpNavView.Designer.cs">
+      <DependentUpon>HelpNavView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ISpreadsheetView.cs" />
+    <Compile Include="Views\MessageBoxSave.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\MessageBoxSave.Designer.cs">
+      <DependentUpon>MessageBoxSave.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SpreadsheetView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SpreadsheetView.Designer.cs">
+      <DependentUpon>SpreadsheetView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Views\AboutView.resx">
+      <DependentUpon>AboutView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\HelpAdditionalFeatures.resx">
+      <DependentUpon>HelpAdditionalFeatures.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\HelpChangingCellsContentsView.resx">
+      <DependentUpon>HelpChangingCellsContentsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\HelpNavView.resx">
+      <DependentUpon>HelpNavView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\MessageBoxSave.resx">
+      <DependentUpon>MessageBoxSave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SpreadsheetView.resx">
+      <DependentUpon>SpreadsheetView.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enterTabNavigation.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowsNavigation.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mouseNavigation.gif" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
