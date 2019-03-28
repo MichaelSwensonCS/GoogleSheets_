@@ -93,7 +93,7 @@
             this.Controls.Add(this.passwordBox);
             this.Controls.Add(this.usernameBox);
             this.Name = "OpenSaveView";
-            this.Text = "OpenSaveView";
+            this.Text = "Open/Save Spreadsheet";
             this.ResumeLayout(false);
             this.PerformLayout();
 

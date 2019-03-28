@@ -70,6 +70,11 @@ namespace SS.Controllers {
             f.Show();
         }
 
+        public void NewInstance() {
+            SubViewsController subViews = new SubViewsController(false);
+            subViews.ShowOpenSaveView();
+        }
+
         /// <summary>
         /// Creates a new spreadsheet window in the app context.
         /// </summary>

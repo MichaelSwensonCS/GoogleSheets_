@@ -30,7 +30,9 @@ namespace SS {
             Application.SetCompatibleTextRenderingDefault(false);
 
             AppController controller = AppController.GetController();
-            controller.CreateNewWindow("");
+
+            //controller.CreateNewWindow("");
+            controller.NewInstance();
             Application.Run(controller);
         }
     }

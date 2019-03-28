@@ -27,7 +27,7 @@ namespace SS.Controllers {
         private HelpNavView _helpNav;
         private HelpChangingCellsContentsView _helpCells;
         private HelpAdditionalFeatures _helpFeatures;
-        private MessageBoxSave _msgBoxSave;
+        private OpenSaveView _openSave;
 
         /// <summary>
         /// Basic constructor that will create all the subviews.
@@ -37,7 +37,7 @@ namespace SS.Controllers {
             _helpNav = new HelpNavView(mode);
             _helpCells = new HelpChangingCellsContentsView(mode);
             _helpFeatures = new HelpAdditionalFeatures(mode);
-            _msgBoxSave = new MessageBoxSave();
+            _openSave = new OpenSaveView(mode);
 
             DarkMode(mode);
         }
@@ -69,9 +69,12 @@ namespace SS.Controllers {
         public void ShowHelpAdditoinalFeaturesView() {
             _helpFeatures.ShowDialog();
         }
-
-        public DialogResult ShowMessageBoxSave() {
-            return _msgBoxSave.ShowDialog();
+        
+        /// <summary>
+        /// Show the "Open/Save" dialog.
+        /// </summary>
+        public void ShowOpenSaveView() {
+            _openSave.ShowDialog();
         }
 
         /// <summary>
@@ -83,6 +86,7 @@ namespace SS.Controllers {
             _helpNav.DarkMode(mode);
             _helpCells.DarkMode(mode);
             _helpFeatures.DarkMode(mode);
+            _openSave.DarkMode(mode);
         }
     }
 }

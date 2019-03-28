@@ -166,28 +166,28 @@ namespace SS.Controllers {
         private bool SpreadsheetCanClose() {
             bool canClose = true;
 
-            if (_model.PendingSave) {
-                DialogResult result = _subViews.ShowMessageBoxSave();
+            //if (_model.PendingSave) {
+            //    DialogResult result = _subViews.ShowMessageBoxSave();
 
-                switch(result) {
-                    // Save
-                    case DialogResult.Yes:
-                        Save(out DialogResult saveResult);
+            //    switch(result) {
+            //        // Save
+            //        case DialogResult.Yes:
+            //            Save(out DialogResult saveResult);
 
-                        if (saveResult == DialogResult.Cancel) {
-                            canClose = false;
-                        }
+            //            if (saveResult == DialogResult.Cancel) {
+            //                canClose = false;
+            //            }
 
-                        break;
-                    // Don't Save
-                    case DialogResult.No:
-                        break;
-                    // Cancel
-                    case DialogResult.Cancel:
-                        canClose = false;
-                        break;
-                }
-            }
+            //            break;
+            //        // Don't Save
+            //        case DialogResult.No:
+            //            break;
+            //        // Cancel
+            //        case DialogResult.Cancel:
+            //            canClose = false;
+            //            break;
+            //    }
+            //}
 
             return canClose;
         }
