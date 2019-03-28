@@ -81,7 +81,7 @@
             // 
             this.openMenuItem.Name = "openMenuItem";
             this.openMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.openMenuItem.Text = "Open";
+            this.openMenuItem.Text = "New/Open";
             // 
             // closeMenuItem
             // 
@@ -179,7 +179,7 @@
             this.formulaBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.formulaBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.formulaBox.Location = new System.Drawing.Point(144, 55);
-            this.formulaBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.formulaBox.Margin = new System.Windows.Forms.Padding(2);
             this.formulaBox.Name = "formulaBox";
             this.formulaBox.Size = new System.Drawing.Size(525, 23);
             this.formulaBox.TabIndex = 2;
@@ -213,7 +213,7 @@
             this.valueBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.valueBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.valueBox.Location = new System.Drawing.Point(46, 55);
-            this.valueBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.valueBox.Margin = new System.Windows.Forms.Padding(2);
             this.valueBox.Name = "valueBox";
             this.valueBox.ReadOnly = true;
             this.valueBox.Size = new System.Drawing.Size(61, 23);
@@ -255,7 +255,7 @@
             this.spreadsheetPanel.ContextMenuStrip = this.contextMenu;
             this.spreadsheetPanel.Cursor = System.Windows.Forms.Cursors.Cross;
             this.spreadsheetPanel.Location = new System.Drawing.Point(0, 78);
-            this.spreadsheetPanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.spreadsheetPanel.Margin = new System.Windows.Forms.Padding(2);
             this.spreadsheetPanel.Name = "spreadsheetPanel";
             this.spreadsheetPanel.Size = new System.Drawing.Size(668, 259);
             this.spreadsheetPanel.TabIndex = 3;
@@ -274,7 +274,7 @@
             this.Controls.Add(this.menuStrip);
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "SpreadsheetView";
             this.Text = "Form1";
             this.menuStrip.ResumeLayout(false);

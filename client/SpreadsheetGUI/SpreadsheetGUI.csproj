@@ -102,6 +102,12 @@
     <Compile Include="Views\MessageBoxSave.Designer.cs">
       <DependentUpon>MessageBoxSave.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\OpenSaveView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\OpenSaveView.Designer.cs">
+      <DependentUpon>OpenSaveView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\SpreadsheetView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\MessageBoxSave.resx">
       <DependentUpon>MessageBoxSave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\OpenSaveView.resx">
+      <DependentUpon>OpenSaveView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\SpreadsheetView.resx">
       <DependentUpon>SpreadsheetView.cs</DependentUpon>
