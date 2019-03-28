@@ -124,12 +124,8 @@ namespace SS.Controllers {
 
             _view.SelectionChanged += OnCellSelectionChanged;
             _view.DisplayedContentsKeyPress += OnFormulaBoxKeyPressed;
-
-            _view.NewMenuClick += (o, e) => AppController.GetController().CreateNewWindow("");
+            
             _view.OpenMenuClick += OnOpenClick;
-            _view.AutoSaveMenuClick += OnAutoSaveClick;
-            _view.SaveMenuClick += OnSaveClick;
-            _view.SaveAsMenuClick += OnSaveAsClick;
             _view.CloseMenuClick += (o, e) => _view.Close();
 
             _view.CutMenuClick += OnCutClick;

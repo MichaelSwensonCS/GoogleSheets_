@@ -30,12 +30,8 @@ namespace SS.Views {
 
         event SelectionChangedHandler SelectionChanged;
         event KeyPressEventHandler DisplayedContentsKeyPress;
-
-        event EventHandler NewMenuClick;
+        
         event EventHandler OpenMenuClick;
-        event EventHandler AutoSaveMenuClick;
-        event EventHandler SaveMenuClick;
-        event EventHandler SaveAsMenuClick;
         event EventHandler CloseMenuClick;
 
         event EventHandler CutMenuClick;

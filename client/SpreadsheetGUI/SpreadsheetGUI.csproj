@@ -59,12 +59,15 @@
   <ItemGroup>
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\ISpreadsheetController.cs" />
+    <Compile Include="Controllers\Net.cs" />
     <Compile Include="Controllers\SpreadsheetController.cs" />
     <Compile Include="Controllers\SubViewsController.cs" />
     <Compile Include="Models\Cell.cs" />
+    <Compile Include="Models\ConnectState.cs" />
     <Compile Include="Models\DialogColors.cs" />
     <Compile Include="Models\ISpreadsheetModel.cs" />
     <Compile Include="Models\MenuColorTable.cs" />
+    <Compile Include="Models\SocketState.cs" />
     <Compile Include="Models\SpreadsheetModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Utilities.cs" />

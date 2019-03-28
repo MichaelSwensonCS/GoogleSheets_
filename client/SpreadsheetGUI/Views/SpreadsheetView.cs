@@ -33,12 +33,8 @@ namespace SS {
 
         public event SelectionChangedHandler SelectionChanged;
         public event KeyPressEventHandler DisplayedContentsKeyPress;
-
-        public event EventHandler NewMenuClick;
+        
         public event EventHandler OpenMenuClick;
-        public event EventHandler AutoSaveMenuClick;
-        public event EventHandler SaveMenuClick;
-        public event EventHandler SaveAsMenuClick;
         public event EventHandler CloseMenuClick;
 
         public event EventHandler CutMenuClick;
@@ -109,12 +105,8 @@ namespace SS {
 
             spreadsheetPanel.SelectionChanged += OnCellSelectionChanged;
             formulaBox.KeyPress += (o, e) => DisplayedContentsKeyPress?.Invoke(o, e);
-
-            newMenuItem.Click += (o, e) => NewMenuClick?.Invoke(o, e);
+            
             openMenuItem.Click += (o, e) => OpenMenuClick?.Invoke(o, e);
-            autoSaveMenuItem.Click += (o, e) => AutoSaveMenuClick?.Invoke(o, e);
-            saveMenuItem.Click += (o, e) => SaveMenuClick?.Invoke(o, e);
-            saveAsMenuItem.Click += (o, e) => SaveAsMenuClick?.Invoke(o, e);
             closeMenuItem.Click += (o, e) => CloseMenuClick?.Invoke(o, e);
 
             cutMenuItem.Click += (o, e) => CutMenuClick?.Invoke(o, e);
@@ -185,7 +177,7 @@ namespace SS {
         /// </summary>
         /// <param name="autosave">True if autosave is enabled, false if not.</param>
         public void ToggleAutoSave(bool autosave) {
-            autoSaveMenuItem.Checked = autosave;
+            //autoSaveMenuItem.Checked = autosave;
         }
 
         /// <summary>
