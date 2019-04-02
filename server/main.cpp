@@ -1,10 +1,10 @@
-#include "boost/lambda/lambda.hpp"
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include "boost/lambda/lambda.hpp"
+#include "simdjson/simdjson.h"
 
-int main()
-{
+int main() {
     using namespace boost::lambda;
     typedef std::istream_iterator<int> in;
 
