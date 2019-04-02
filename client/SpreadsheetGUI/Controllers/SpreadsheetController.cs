@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/01/18                                                     *
+ *                      Modtime : 04/02/18                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -73,7 +73,7 @@ namespace SS.Controllers {
             _subViews = subviews;
 
             Load(appController);
-            _subViews.ShowOpenSaveView();
+            _subViews.ShowOpenSaveView(true);
         }
 
         /// <summary>
@@ -139,6 +139,8 @@ namespace SS.Controllers {
             _model.PropertyChanged += OnModelPropertyChange;
 
             _subViews.OpenSaveFormClosed += OnOpenSaveClosed;
+            _subViews.OpenSaveOpenClicked += OnOpenSaveOpen;
+            _subViews.OpenSaveNewClicked += OnOpenSaveNew;
         }
 
         /// <summary>
@@ -273,22 +275,24 @@ namespace SS.Controllers {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnOpenClick(object sender, EventArgs e) {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Spreadsheet Files|*.sprd|All files (*.*)|*.*";
-            openFileDialog.Title = "Select a Spreadsheet File";
+            //OpenFileDialog openFileDialog = new OpenFileDialog();
+            //openFileDialog.Filter = "Spreadsheet Files|*.sprd|All files (*.*)|*.*";
+            //openFileDialog.Title = "Select a Spreadsheet File";
 
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                if (openFileDialog.FilterIndex == 1)
-                {
-                    string ext = Path.GetExtension(openFileDialog.SafeFileName);
+            //if (openFileDialog.ShowDialog() == DialogResult.OK)
+            //{
+            //    if (openFileDialog.FilterIndex == 1)
+            //    {
+            //        string ext = Path.GetExtension(openFileDialog.SafeFileName);
 
-                    if (ext != ".sprd") { }
-                }
+            //        if (ext != ".sprd") { }
+            //    }
 
-                //AppController.CreateNewWindow(openFileDialog.FileName);
-                AppController.GetController().LoadModelIntoInstance(openFileDialog.FileName, this);
-            }
+            //    //AppController.CreateNewWindow(openFileDialog.FileName);
+            //    AppController.GetController().LoadModelIntoInstance(openFileDialog.FileName, this);
+            //}
+
+            _subViews.ShowOpenSaveView(false);
         }
 
         /// <summary>
@@ -438,6 +442,14 @@ namespace SS.Controllers {
 
         private void OnOpenSaveClosed(Object sender, EventArgs e) {
             _view.Close();
+        }
+
+        private void OnOpenSaveOpen(Object sender, EventArgs e) {
+            Console.WriteLine("Open");
+        }
+
+        private void OnOpenSaveNew(Object sender, EventArgs e) {
+            Console.WriteLine("New");
         }
     }
 }

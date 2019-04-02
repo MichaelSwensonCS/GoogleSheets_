@@ -58,7 +58,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(ProjectDir)bin\Debug\SpreadsheetPanel.dll $(SolutionDir)Resources\Libraries\SpreadsheetPanel.dll
-copy $(ProjectDir)bin\Debug\SpreadsheetPanel.xml $(SolutionDir)Resources\Libraries\SpreadsheetPanel.xml</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

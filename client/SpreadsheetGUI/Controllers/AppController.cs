@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/01/19                                                     *
+ *                      Modtime : 04/02/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -64,6 +64,7 @@ namespace SS.Controllers {
             f.FormClosed += (o, e) => {
                 if (--Instances <= 0) {
                     ExitThread();
+                    Application.Exit();
                 }
             };
 
