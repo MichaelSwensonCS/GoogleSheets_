@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/13/18                                                     *
  *                                                                                             *
- *                      Modtime : 10/15/18                                                     *
+ *                      Modtime : 03/28/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -30,9 +30,7 @@ namespace SS {
             Application.SetCompatibleTextRenderingDefault(false);
 
             AppController controller = AppController.GetController();
-
-            //controller.CreateNewWindow("");
-            controller.NewInstance();
+            controller.CreateNewWindow();
             Application.Run(controller);
         }
     }

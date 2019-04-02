@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 10/15/18                                                     *
+ *                      Modtime : 04/01/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -70,21 +70,12 @@ namespace SS.Controllers {
             f.Show();
         }
 
-        public void NewInstance() {
-            SubViewsController subViews = new SubViewsController(false);
-            subViews.ShowOpenSaveView();
-        }
-
         /// <summary>
         /// Creates a new spreadsheet window in the app context.
         /// </summary>
         /// <returns>The application context.</returns>
-        public void CreateNewWindow(string path) {
-            if (InstanceTitles.Contains(path)) {
-                return;
-            }
-
-            path = ConfigurePath(path);
+        public void CreateNewWindow() {
+            string path = "";
             if (TryCreateModel(path, out ISpreadsheetModel model)) {
                 ISpreadsheetView view = new SpreadsheetView(path, false);
                 SubViewsController subViews = new SubViewsController(false);
@@ -154,34 +145,6 @@ namespace SS.Controllers {
         /// <param name="controller"></param>
         public void OnInstanceClosing(ISpreadsheetController controller) {
             InstanceTitles.Remove(controller.ModelPath);
-        }
-
-        /// <summary>
-        /// Manages the setup of a particular instance's path. The path will be the location of the spreadsheet
-        /// if it was loaded from file. Otherwise a default filename is given.
-        /// </summary>
-        /// <param name="value">The path to assign.</param>
-        /// <returns></returns>
-        private string ConfigurePath(string value) {
-            if (string.IsNullOrEmpty(value)) {
-                string title = "";
-                string titlePrefix = "Spreadsheet";
-
-                for (int i = 0; i <= Instances; i++) {
-                    title = $"{titlePrefix}{i}";
-
-                    if (!InstanceTitles.Contains(title)) {
-                        value = title;
-                        break;
-                    }
-                }
-
-                if (string.IsNullOrEmpty(value)) {
-                    value = $"{titlePrefix}{Instances + 1}";
-                }
-            }
-
-            return value;
         }
     }
 }

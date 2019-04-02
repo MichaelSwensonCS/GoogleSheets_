@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 10/15/18                                                     *
+ *                      Modtime : 04/01/18                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -49,8 +49,6 @@ namespace SS.Controllers {
         private ISpreadsheetModel _model;
         private SubViewsController _subViews;
 
-        private bool _autoSave;
-
         /// <summary>
         /// Triggers when the controller commits to closing.
         /// </summary>
@@ -75,6 +73,7 @@ namespace SS.Controllers {
             _subViews = subviews;
 
             Load(appController);
+            _subViews.ShowOpenSaveView();
         }
 
         /// <summary>
@@ -97,8 +96,6 @@ namespace SS.Controllers {
             _model = model;
             _view.Clear();
             _view.Title = _model.FilePath;
-
-            _autoSave = false;
 
             _view.DisplayedCellName = _model.Current.Name;
             _view.DisplayedCellContents = _model.Current.Contents;
@@ -140,56 +137,17 @@ namespace SS.Controllers {
             _view.AboutMenuClick += (o, e) => _subViews.ShowAboutView();
 
             _model.PropertyChanged += OnModelPropertyChange;
+
+            _subViews.OpenSaveFormClosed += OnOpenSaveClosed;
         }
 
         /// <summary>
-        /// Handler for when the main view begins to close. The user will be prompted if there are unsaved changes.
+        /// Handler for when the main view begins to close.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnMainWindowClosing(object sender, FormClosingEventArgs e) {
-            if (!SpreadsheetCanClose()) {
-                e.Cancel = true;
-            }
-            else {
-                ClosingInitiated?.Invoke(this);
-            }
-        }
-
-        /// <summary>
-        /// Used to verify that a spreadsheet may be closed. It open a message box to prompt
-        /// the user to save. If they choose to save, and do save, then the spreadsheet may close.
-        /// If they choose not to save then the spreadsheet may close. If they choose to cancel then
-        /// the spreadsheet may not close.
-        /// </summary>
-        /// <returns></returns>
-        private bool SpreadsheetCanClose() {
-            bool canClose = true;
-
-            //if (_model.PendingSave) {
-            //    DialogResult result = _subViews.ShowMessageBoxSave();
-
-            //    switch(result) {
-            //        // Save
-            //        case DialogResult.Yes:
-            //            Save(out DialogResult saveResult);
-
-            //            if (saveResult == DialogResult.Cancel) {
-            //                canClose = false;
-            //            }
-
-            //            break;
-            //        // Don't Save
-            //        case DialogResult.No:
-            //            break;
-            //        // Cancel
-            //        case DialogResult.Cancel:
-            //            canClose = false;
-            //            break;
-            //    }
-            //}
-
-            return canClose;
+            ClosingInitiated?.Invoke(this);
         }
 
         /// <summary>
@@ -315,81 +273,22 @@ namespace SS.Controllers {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnOpenClick(object sender, EventArgs e) {
-            if (SpreadsheetCanClose()) {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "Spreadsheet Files|*.sprd|All files (*.*)|*.*";
-                openFileDialog.Title = "Select a Spreadsheet File";
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Spreadsheet Files|*.sprd|All files (*.*)|*.*";
+            openFileDialog.Title = "Select a Spreadsheet File";
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK) {
-                    if (openFileDialog.FilterIndex == 1) {
-                        string ext = Path.GetExtension(openFileDialog.SafeFileName);
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                if (openFileDialog.FilterIndex == 1)
+                {
+                    string ext = Path.GetExtension(openFileDialog.SafeFileName);
 
-                        if (ext != ".sprd") { }
-                    }
-
-                    //AppController.CreateNewWindow(openFileDialog.FileName);
-                    AppController.GetController().LoadModelIntoInstance(openFileDialog.FileName, this);
+                    if (ext != ".sprd") { }
                 }
+
+                //AppController.CreateNewWindow(openFileDialog.FileName);
+                AppController.GetController().LoadModelIntoInstance(openFileDialog.FileName, this);
             }
-        }
-
-        /// <summary>
-        /// Handler for when the autosave feature is toggled in the view.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnAutoSaveClick(object sender, EventArgs e) {
-            _autoSave = !_autoSave;
-
-            if (_autoSave) {
-                Save(out DialogResult result);
-
-                if (result == DialogResult.Cancel) {
-                    _autoSave = false;
-                }
-            }
-            else {
-                UpdateViewTitle(_model.FilePath);
-            }
-
-            _view.ToggleAutoSave(_autoSave);
-        }
-
-        /// <summary>
-        /// Handler for when the save option is clicked.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnSaveClick(object sender, EventArgs e) {
-            Save(out DialogResult result);
-        }
-
-        /// <summary>
-        /// Helper method to encapsulate basic saving.
-        /// </summary>
-        private void Save(out DialogResult result) {
-            result = DialogResult.OK;
-
-            if (Path.HasExtension(_model.FilePath)) {
-                if (_model.SaveSheet(Utilities.ReadWriteErrorAction)) {
-                    UpdateViewTitle(_model.FilePath);
-                }
-                else {
-                    result = DialogResult.Cancel;
-                }
-            }
-            else {
-                PromptSaveAsDialog(out result);
-            }
-        }
-
-        /// <summary>
-        /// Handler for when the save as option is clicked.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnSaveAsClick(object sender, EventArgs e) {
-            PromptSaveAsDialog(out DialogResult result);
         }
 
         /// <summary>
@@ -508,11 +407,11 @@ namespace SS.Controllers {
         /// <param name="e"></param>
         private void OnModelPropertyChange(Object sender, PropertyChangedEventArgs e) {
             if (e.PropertyName == "PendingSave") {
-                if (_model.PendingSave) {
-                    if (_autoSave) {
-                        Save(out DialogResult result);
-                    }
-                }
+                //if (_model.PendingSave) {
+                //    if (_autoSave) {
+                //        Save(out DialogResult result);
+                //    }
+                //}
 
                 UpdateViewTitle(_model.FilePath);
             }
@@ -534,17 +433,11 @@ namespace SS.Controllers {
         /// </summary>
         /// <param name="path">The spreadsheet path.</param>
         private void UpdateViewTitle(string path) {
-            if (_autoSave) {
-                _view.Title = path + " (AutoSave Enabled)";
-            }
-            else {
-                if (_model.PendingSave) {
-                    _view.Title = path + "*";
-                }
-                else {
-                    _view.Title = path;
-                }
-            }
+            _view.Title = path;
+        }
+
+        private void OnOpenSaveClosed(Object sender, EventArgs e) {
+            _view.Close();
         }
     }
 }

@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/09/18                                                     *
  *                                                                                             *
- *                      Modtime : 10/15/18                                                     *
+ *                      Modtime : 04/01/18                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -29,6 +29,8 @@ namespace SS.Controllers {
         private HelpAdditionalFeatures _helpFeatures;
         private OpenSaveView _openSave;
 
+        public event FormClosedEventHandler OpenSaveFormClosed;
+
         /// <summary>
         /// Basic constructor that will create all the subviews.
         /// </summary>
@@ -38,6 +40,8 @@ namespace SS.Controllers {
             _helpCells = new HelpChangingCellsContentsView(mode);
             _helpFeatures = new HelpAdditionalFeatures(mode);
             _openSave = new OpenSaveView(mode);
+
+            _openSave.FormClosed += (o, e) => OpenSaveFormClosed?.Invoke(o, e);
 
             DarkMode(mode);
         }
