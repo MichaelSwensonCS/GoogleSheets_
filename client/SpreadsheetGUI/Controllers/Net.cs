@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 11/03/18                                                     *
  *                                                                                             *
- *                      Modtime : 03/28/19                                                     *
+ *                      Modtime : 04/06/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -17,6 +17,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using SS.Misc;
 using SS.Models;
 
 namespace SS.Controllers {
@@ -27,6 +28,12 @@ namespace SS.Controllers {
     public delegate void NetworkAction(SocketState state);
 
     /// <summary>
+    /// Handles a connection attempt.
+    /// </summary>
+    /// <param name="server">The server address.</param>
+    public delegate void ConnectionHandler(string server);
+
+    /// <summary>
     /// The Net class helps with all basic networking related tasks
     /// </summary>
     public static class Net {
@@ -34,7 +41,7 @@ namespace SS.Controllers {
         /// <summary>
         /// The default port used in the network module.
         /// </summary>
-        public const int DEFAULT_PORT = 11000;
+        public const int DEFAULT_PORT = 2112;
 
         /// <summary>
         /// Creates a new socket object from the specified hostname.
@@ -65,10 +72,10 @@ namespace SS.Controllers {
                 socket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
             }
             catch (Exception e) {
-                //if (Log.Enabled) {
-                //    Log.WriteLine("Net: ERROR - Unable to create socket", true);
-                //    Log.WriteLine($"\t messsage: {e.Message}", false);
-                //}
+                if (Log.Enabled) {
+                    Log.WriteLine("Net: ERROR - Unable to create socket", true);
+                    Log.WriteLine($"\t messsage: {e.Message}", false);
+                }
 
                 throw new ArgumentException("Invalid address");
             }
@@ -111,10 +118,10 @@ namespace SS.Controllers {
                         ss.Callback(ss);
                     }
                     catch (Exception e) {
-                        //if (Log.Enabled) {
-                        //    Log.WriteLine("Net: ERROR - Unable to connect to server", true);
-                        //    Log.WriteLine($"\t messsage: {e.Message}", false);
-                        //}
+                        if (Log.Enabled) {
+                            Log.WriteLine("Net: ERROR - Unable to connect to server", true);
+                            Log.WriteLine($"\t messsage: {e.Message}", false);
+                        }
 
                         SetErrorState(ss, e.Message);
                         ss.Callback(ss);

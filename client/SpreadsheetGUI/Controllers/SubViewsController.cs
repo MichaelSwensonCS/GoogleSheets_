@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/09/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/02/18                                                     *
+ *                      Modtime : 04/06/18                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -29,27 +29,28 @@ namespace SS.Controllers {
         private HelpNavView _helpNav;
         private HelpChangingCellsContentsView _helpCells;
         private HelpAdditionalFeatures _helpFeatures;
-        private OpenSaveView _openSave;
+        private ConnectView _connectView;
+        private OpenNewView _openNew;
 
-        public event FormClosedEventHandler OpenSaveFormClosed;
-        public event EventHandler OpenSaveOpenClicked;
-        public event EventHandler OpenSaveNewClicked;
+        public event FormClosedEventHandler ConnectFormClosed;
+        public event FormClosedEventHandler OpenNewFormClosed;
+        public event ConnectionHandler ConnectToServer;
 
-        private bool _openSaveIsInitialLoad;
+        private bool _initialLoad;
 
-        public string OpenSaveUsername {
-            get { return _openSave.Username; }
-            set { _openSave.Username = value; }
+        public string OpenNewUsername {
+            get { return _openNew.Username; }
+            set { _openNew.Username = value; }
         }
 
-        public string OpenSavePassword {
-            get { return _openSave.Password; }
-            set { _openSave.Password = value; }
+        public string OpenNewPassword {
+            get { return _openNew.Password; }
+            set { _openNew.Password = value; }
         }
 
-        public string OpenSaveServer {
-            get { return _openSave.Server; }
-            set { _openSave.Server = value; }
+        public string OpenNewSpreadsheet {
+            get { return _openNew.Spreadsheet; }
+            set { _openNew.Spreadsheet = value; }
         }
 
         /// <summary>
@@ -60,13 +61,15 @@ namespace SS.Controllers {
             _helpNav = new HelpNavView(mode);
             _helpCells = new HelpChangingCellsContentsView(mode);
             _helpFeatures = new HelpAdditionalFeatures(mode);
-            _openSave = new OpenSaveView(mode);
+            _connectView = new ConnectView(mode);
+            _openNew = new OpenNewView(mode);
 
-            _openSaveIsInitialLoad = false;
+            _initialLoad = false;
 
-            _openSave.FormClosed += OnOpenSaveClose;
-            _openSave.OpenClicked += OnOpenSaveOpen;
-            _openSave.NewClicked += OnOpenSaveNew;
+            _connectView.FormClosed += OnConnectClose;
+            _connectView.ConnectClicked += OnConnectConnect;
+            _openNew.FormClosed += OnOpenNewClose;
+            _openNew.OpenClicked += OnOpenNewOpen;
 
             DarkMode(mode);
         }
@@ -100,13 +103,21 @@ namespace SS.Controllers {
         }
 
         /// <summary>
-        /// Show the "Open/Save" dialog.
+        /// Show the "Connect" dialog.
         /// </summary>
         /// <param name="isInitialLoad">If true then treats the dialog as the anchor for the main
         /// running process.</param>
-        public void ShowOpenSaveView(bool isInitialLoad) {
-            _openSaveIsInitialLoad = isInitialLoad;
-            _openSave.ShowDialog();
+        public void ShowConnectView(bool isInitialLoad) {
+            _initialLoad = isInitialLoad;
+            _connectView.ShowDialog();
+        }
+
+        /// <summary>
+        /// Show the "Open/New" dialog.
+        /// </summary>
+        /// running process.</param>
+        public void ShowOpenNewView() {
+            _openNew.ShowDialog();
         }
 
         /// <summary>
@@ -118,73 +129,97 @@ namespace SS.Controllers {
             _helpNav.DarkMode(mode);
             _helpCells.DarkMode(mode);
             _helpFeatures.DarkMode(mode);
-            _openSave.DarkMode(mode);
+            _openNew.DarkMode(mode);
         }
 
         /// <summary>
-        /// Handler for the OpenSave view when it closes.
+        /// Handler for the Connect view when it closes.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnOpenSaveClose(Object sender, FormClosedEventArgs e) {
-            if (_openSaveIsInitialLoad) {
-                OpenSaveFormClosed?.Invoke(sender, e);
+        private void OnConnectClose(Object sender, FormClosedEventArgs e) {
+            if (_initialLoad) {
+                ConnectFormClosed?.Invoke(sender, e);
             }
             else {
-                _openSave.Username = "";
-                _openSave.Password = "";
-                _openSave.Server = "";
+                _connectView.Server = "";
             }
         }
 
         /// <summary>
-        /// Handler for the OpenSave view when the open action is triggered.
+        /// Handler for the Connect view when the connect action is triggered.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnOpenSaveOpen(Object sender, EventArgs e) {
-            _openSave.ToggleInputs(false);
-            if (OpenSaveAreValidInputs(out List<string> values, out string msg)) {
-                MessageBox.Show($"{{{values[0]}, {values[1]}, {values[2]}}}", "Open");
+        private void OnConnectConnect(Object sender, EventArgs e) {
+            _connectView.ToggleInputs(false);
+
+            string server = _connectView.Server;
+            if (string.IsNullOrEmpty(server)) {
+                MessageBox.Show("Please provide a valid server address.", "Error");
+            }
+            else {
+                ConnectToServer?.Invoke(server);
+            }
+
+            _connectView.ToggleInputs(true);
+        }
+
+        /// <summary>
+        /// Handler for the OpenNew view when it closes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnOpenNewClose(Object sender, FormClosedEventArgs e) {
+            if (_initialLoad) {
+                OpenNewFormClosed?.Invoke(sender, e);
+            }
+            else {
+                _openNew.Username = "";
+                _openNew.Password = "";
+                _openNew.Spreadsheet = "";
+            }
+        }
+
+        /// <summary>
+        /// Handler for the OpenNew view when the open/new action is triggered.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnOpenNewOpen(Object sender, EventArgs e) {
+            _openNew.ToggleInputs(false);
+            if (OpenNewAreValidInputs(out List<string> values, out string msg)) {
+                //MessageBox.Show($"{{{values[0]}, {values[1]}, {values[2]}}}", "Open");
+                //Net.ConnectToServer()
+
+                if (_initialLoad) {
+                    _initialLoad = false;
+                    _connectView.Close();
+                }
+                _openNew.Close();
+                
             }
             else {
                 MessageBox.Show(msg, "Error");
             }
 
-            _openSave.ToggleInputs(true);
+            _openNew.ToggleInputs(true);
         }
 
         /// <summary>
-        /// Handler for the OpenSave view when the new action is triggered.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnOpenSaveNew(Object sender, EventArgs e) {
-            _openSave.ToggleInputs(false);
-            if (OpenSaveAreValidInputs(out List<string> values, out string msg)) {
-                MessageBox.Show($"{{{values[0]}, {values[1]}, {values[2]}}}", "New");
-            }
-            else {
-                MessageBox.Show(msg, "Error");
-            }
-
-            _openSave.ToggleInputs(true);
-        }
-
-        /// <summary>
-        /// Helper function that validates the inputs of the OpenSave view and returns the
+        /// Helper function that validates the inputs of the OpenNew view and returns the
         /// inputs if they are valid.
         /// </summary>
         /// <param name="values">Output of all the inputs if they are valid.</param>
         /// <param name="msg">A message that provides detail on an invalid input.</param>
         /// <returns>True if the inputs are valid and false otherwise.</returns>
-        private bool OpenSaveAreValidInputs(out List<string> values, out string msg) {
+        private bool OpenNewAreValidInputs(out List<string> values, out string msg) {
             values = new List<string>();
             msg = "";
 
-            string username = _openSave.Username;
-            string password = _openSave.Password;
-            string server = _openSave.Server;
+            string username = _openNew.Username;
+            string password = _openNew.Password;
+            string spreadsheet = _openNew.Spreadsheet;
 
             if (string.IsNullOrEmpty(username)) {
                 msg = "Please provide a valid username.";
@@ -202,12 +237,12 @@ namespace SS.Controllers {
                 values.Add(password);
             }
 
-            if (string.IsNullOrEmpty(server)) {
-                msg = "Please provide a valid server address.";
+            if (string.IsNullOrEmpty(spreadsheet)) {
+                msg = "Please provide a valid spreadsheet name.";
                 return false;
             }
             else {
-                values.Add(server);
+                values.Add(spreadsheet);
             }
 
             return true;

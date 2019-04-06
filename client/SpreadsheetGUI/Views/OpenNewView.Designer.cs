@@ -1,5 +1,5 @@
 ﻿namespace SS.Views {
-    partial class OpenSaveView {
+    partial class OpenNewView {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -27,11 +27,11 @@
             this.passwordBox = new System.Windows.Forms.TextBox();
             this.usernameLbl = new System.Windows.Forms.Label();
             this.passwordLbl = new System.Windows.Forms.Label();
-            this.newBtn = new System.Windows.Forms.Button();
-            this.openBtn = new System.Windows.Forms.Button();
+            this.openNewBtn = new System.Windows.Forms.Button();
             this.authLbl = new System.Windows.Forms.Label();
-            this.serverLbl = new System.Windows.Forms.Label();
-            this.serverBox = new System.Windows.Forms.TextBox();
+            this.spreadsheetLbl = new System.Windows.Forms.Label();
+            this.spreadsheetBox = new System.Windows.Forms.TextBox();
+            this.spreadsheetList = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // usernameBox
@@ -73,27 +73,16 @@
             this.passwordLbl.TabIndex = 52;
             this.passwordLbl.Text = "Password";
             // 
-            // newBtn
+            // openNewBtn
             // 
-            this.newBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.newBtn.Location = new System.Drawing.Point(458, 181);
-            this.newBtn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.newBtn.Name = "newBtn";
-            this.newBtn.Size = new System.Drawing.Size(112, 35);
-            this.newBtn.TabIndex = 4;
-            this.newBtn.Text = "New";
-            this.newBtn.UseVisualStyleBackColor = true;
-            // 
-            // openBtn
-            // 
-            this.openBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.openBtn.Location = new System.Drawing.Point(332, 181);
-            this.openBtn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.openBtn.Name = "openBtn";
-            this.openBtn.Size = new System.Drawing.Size(112, 35);
-            this.openBtn.TabIndex = 3;
-            this.openBtn.Text = "Open";
-            this.openBtn.UseVisualStyleBackColor = true;
+            this.openNewBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.openNewBtn.Location = new System.Drawing.Point(434, 528);
+            this.openNewBtn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.openNewBtn.Name = "openNewBtn";
+            this.openNewBtn.Size = new System.Drawing.Size(136, 35);
+            this.openNewBtn.TabIndex = 4;
+            this.openNewBtn.Text = "Open / New";
+            this.openNewBtn.UseVisualStyleBackColor = true;
             // 
             // authLbl
             // 
@@ -104,35 +93,45 @@
             this.authLbl.TabIndex = 50;
             this.authLbl.Text = "A username and password must be provided to open or create a spreadsheet.";
             // 
-            // serverLbl
+            // spreadsheetLbl
             // 
-            this.serverLbl.AutoSize = true;
-            this.serverLbl.Location = new System.Drawing.Point(13, 101);
-            this.serverLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.serverLbl.Name = "serverLbl";
-            this.serverLbl.Size = new System.Drawing.Size(55, 20);
-            this.serverLbl.TabIndex = 53;
-            this.serverLbl.Text = "Server";
+            this.spreadsheetLbl.AutoSize = true;
+            this.spreadsheetLbl.Location = new System.Drawing.Point(13, 101);
+            this.spreadsheetLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.spreadsheetLbl.Name = "spreadsheetLbl";
+            this.spreadsheetLbl.Size = new System.Drawing.Size(101, 20);
+            this.spreadsheetLbl.TabIndex = 53;
+            this.spreadsheetLbl.Text = "Spreadsheet";
             // 
-            // serverBox
+            // spreadsheetBox
             // 
-            this.serverBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.serverBox.Location = new System.Drawing.Point(17, 126);
-            this.serverBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.serverBox.Name = "serverBox";
-            this.serverBox.Size = new System.Drawing.Size(553, 26);
-            this.serverBox.TabIndex = 2;
+            this.spreadsheetBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.spreadsheetBox.Location = new System.Drawing.Point(17, 126);
+            this.spreadsheetBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.spreadsheetBox.Name = "spreadsheetBox";
+            this.spreadsheetBox.Size = new System.Drawing.Size(553, 26);
+            this.spreadsheetBox.TabIndex = 2;
             // 
-            // OpenSaveView
+            // spreadsheetList
+            // 
+            this.spreadsheetList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.spreadsheetList.FormattingEnabled = true;
+            this.spreadsheetList.ItemHeight = 20;
+            this.spreadsheetList.Location = new System.Drawing.Point(17, 170);
+            this.spreadsheetList.Name = "spreadsheetList";
+            this.spreadsheetList.Size = new System.Drawing.Size(553, 342);
+            this.spreadsheetList.TabIndex = 3;
+            // 
+            // OpenNewView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(589, 230);
-            this.Controls.Add(this.serverLbl);
-            this.Controls.Add(this.serverBox);
+            this.ClientSize = new System.Drawing.Size(589, 577);
+            this.Controls.Add(this.spreadsheetList);
+            this.Controls.Add(this.spreadsheetLbl);
+            this.Controls.Add(this.spreadsheetBox);
             this.Controls.Add(this.authLbl);
-            this.Controls.Add(this.openBtn);
-            this.Controls.Add(this.newBtn);
+            this.Controls.Add(this.openNewBtn);
             this.Controls.Add(this.passwordLbl);
             this.Controls.Add(this.usernameLbl);
             this.Controls.Add(this.passwordBox);
@@ -141,10 +140,10 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "OpenSaveView";
+            this.Name = "OpenNewView";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Open/Save Spreadsheet";
+            this.Text = "Open/New Spreadsheet";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -156,10 +155,10 @@
         private System.Windows.Forms.TextBox passwordBox;
         private System.Windows.Forms.Label usernameLbl;
         private System.Windows.Forms.Label passwordLbl;
-        private System.Windows.Forms.Button newBtn;
-        private System.Windows.Forms.Button openBtn;
+        private System.Windows.Forms.Button openNewBtn;
         private System.Windows.Forms.Label authLbl;
-        private System.Windows.Forms.Label serverLbl;
-        private System.Windows.Forms.TextBox serverBox;
+        private System.Windows.Forms.Label spreadsheetLbl;
+        private System.Windows.Forms.TextBox spreadsheetBox;
+        private System.Windows.Forms.ListBox spreadsheetList;
     }
 }

@@ -8,13 +8,14 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/02/18                                                     *
+ *                      Modtime : 04/06/18                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 using SpreadsheetUtilities;
+using SS.Misc;
 using SS.Models;
 using SS.Views;
 using System;
@@ -22,6 +23,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace SS.Controllers {
@@ -37,6 +39,10 @@ namespace SS.Controllers {
     /// between the model and view are handled by the controller.
     /// </summary>
     public class SpreadsheetController : ISpreadsheetController {
+        // Used to try to safely disconnect from a server.
+        private CancellationTokenSource _client;
+        private CancellationToken _cancelToken;
+
         private static readonly string CircularExceptionMessage =
             "This current modification to the cell has created a circular dependence either directly or indirectly" +
             "through the cells that rely on it.\n\nNo cells have been updated.";
@@ -73,7 +79,7 @@ namespace SS.Controllers {
             _subViews = subviews;
 
             Load(appController);
-            _subViews.ShowOpenSaveView(true);
+            _subViews.ShowConnectView(true);
         }
 
         /// <summary>
@@ -82,6 +88,9 @@ namespace SS.Controllers {
         /// <param name="appController">The main application controller.</param>
         private void Load(AppController appController) {
             LoadModel(_model);
+
+            _client = new CancellationTokenSource();
+            _cancelToken = _client.Token;
 
             PropagateHandlers();
 
@@ -138,9 +147,9 @@ namespace SS.Controllers {
 
             _model.PropertyChanged += OnModelPropertyChange;
 
-            _subViews.OpenSaveFormClosed += OnOpenSaveClosed;
-            _subViews.OpenSaveOpenClicked += OnOpenSaveOpen;
-            _subViews.OpenSaveNewClicked += OnOpenSaveNew;
+            _subViews.ConnectFormClosed += OnConnectClosed;
+            _subViews.OpenNewFormClosed += OnOpenSaveClosed;
+            _subViews.ConnectToServer += OnConnectToServer;
         }
 
         /// <summary>
@@ -292,36 +301,7 @@ namespace SS.Controllers {
             //    AppController.GetController().LoadModelIntoInstance(openFileDialog.FileName, this);
             //}
 
-            _subViews.ShowOpenSaveView(false);
-        }
-
-        /// <summary>
-        /// Opens the dialog to save a file and saves it to the specified path.
-        /// </summary>
-        /// <returns></returns>
-        private string PromptSaveAsDialog(out DialogResult result) {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Spreadsheet Files|*.sprd|All files (*.*)|*.*";
-            saveFileDialog.Title = "Save spreadsheet as";
-            saveFileDialog.OverwritePrompt = true;
-
-            result = saveFileDialog.ShowDialog();
-
-            string filename = null;
-            if (result == DialogResult.OK) {
-                filename = saveFileDialog.FileName;
-                if (filename != "") {
-                    string originalFilename = _model.FilePath;
-                    _model.FilePath = filename;
-
-                    if (_model.SaveSheet(Utilities.ReadWriteErrorAction)) {
-                        AppController.UpdateInstanceTitle(originalFilename, _model.FilePath);
-                        UpdateViewTitle(_model.FilePath);
-                    }
-                }
-            }
-
-            return filename;
+            _subViews.ShowOpenNewView();
         }
 
         /// <summary>
@@ -440,16 +420,85 @@ namespace SS.Controllers {
             _view.Title = path;
         }
 
+        private void OnConnectClosed(Object sender, EventArgs e) {
+            _view.Close();
+        }
+
         private void OnOpenSaveClosed(Object sender, EventArgs e) {
             _view.Close();
         }
 
-        private void OnOpenSaveOpen(Object sender, EventArgs e) {
-            Console.WriteLine("Open");
+        /*---------------------------------------------------------------------------------------------*
+         * Networking Related Calls and Callbacks                                                      *
+         *---------------------------------------------------------------------------------------------*/
+        
+
+        private void OnConnectToServer(string server) {
+            if (Log.Enabled) {
+                Log.WriteLine($"Attempting to connect to {server}...", true);
+            }
+
+            try {
+                Net.ConnectToServer(InitialConnection, server, _cancelToken);
+            }
+            catch (Exception exception) {
+
+            }
         }
 
-        private void OnOpenSaveNew(Object sender, EventArgs e) {
-            Console.WriteLine("New");
+        /// <summary>
+        /// Callback function that is used when a client first connects to a server.
+        /// </summary>
+        /// <param name="state">The socket state.</param>
+        private void InitialConnection(SocketState state) {
+            if (state.Error) {
+                //_viewForm.Invoke(new MethodInvoker(() => {
+                //    _view.ShowErrorMessage(state.ErrorMessage, _model.DarkMode);
+                //    _view.ToggleConnectionControls(true);
+                //}));
+                if (Log.Enabled) {
+                    Log.WriteLine($"Connection failed.", true);
+                }
+            }
+            else {
+                if (Log.Enabled) {
+                    Log.WriteLine($"Connection created.", true);
+                }
+                _subViews.ShowOpenNewView();
+
+                state.Callback = ReceiveInitialData;
+                Net.Send(state.Socket, "Wassup world");
+                Net.GetData(state);
+            }
+        }
+
+        /// <summary>
+        /// Callback function that is used when the client first receives data transmission.
+        /// </summary>
+        /// <param name="state">The socket state.</param>
+        private void ReceiveInitialData(SocketState state) {
+            //if (state.Error) {
+            //    _viewForm.Invoke(new MethodInvoker(() => {
+            //        _view.ShowErrorMessage(state.ErrorMessage, _model.DarkMode);
+            //        _view.ToggleConnectionControls(true);
+            //    }));
+            //}
+            //else {
+            //    // Acknowledge this is the first message received and process it.
+            //    state.InitialMessage = true;
+            //    ProcessMessagesAndUpdate(state);
+
+            //    // Notify view and model of being connectd.
+            //    _model.Connected = true;
+            //    _model.InGame = true;
+            //    _viewForm.Invoke(new MethodInvoker(() => {
+            //        _view.ServerConnected(_model.Connected);
+            //    }));
+
+            //    // Request more data.
+            //    state.Callback = ReceiveWorld;
+            //    Net.GetData(state);
+            //}
         }
     }
 }

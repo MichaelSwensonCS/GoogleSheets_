@@ -8,12 +8,13 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/02/19                                                     *
+ *                      Modtime : 04/06/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+using SS.Misc;
 using SS.Models;
 using SS.Views;
 using System.Collections.Generic;
@@ -89,6 +90,25 @@ namespace SS.Controllers {
         }
 
         /// <summary>
+        /// Helps parse any command line arguments that may have been passed to the program.
+        /// </summary>
+        /// <param name="args">The arguments to parse.</param>
+        public void ParseCommandLineArgs(string[] args) {
+            foreach (string s in args) {
+                if (string.IsNullOrEmpty(s)) {
+                    continue;
+                }
+
+                string temp = s.ToLower();
+                switch (temp) {
+                    case "-log":
+                        EnableLogging();
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
         /// Loads a new model into an already existing controller.
         /// </summary>
         /// <param name="path">The spreadsheet file to load.</param>
@@ -146,6 +166,14 @@ namespace SS.Controllers {
         /// <param name="controller"></param>
         public void OnInstanceClosing(ISpreadsheetController controller) {
             InstanceTitles.Remove(controller.ModelPath);
+        }
+
+        /// <summary>
+        /// Helper method that enables logging for the application.
+        /// </summary>
+        private void EnableLogging() {
+            string path = $"{System.IO.Path.GetDirectoryName(Application.ExecutablePath)}/client.log";
+            Log.Start(path);
         }
     }
 }

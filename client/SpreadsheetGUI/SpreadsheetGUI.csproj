@@ -38,6 +38,9 @@
     <Reference Include="Formula">
       <HintPath>..\Resources\Libraries\Formula.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Spreadsheet">
       <HintPath>..\Resources\Libraries\Spreadsheet.dll</HintPath>
     </Reference>
@@ -62,11 +65,13 @@
     <Compile Include="Controllers\Net.cs" />
     <Compile Include="Controllers\SpreadsheetController.cs" />
     <Compile Include="Controllers\SubViewsController.cs" />
+    <Compile Include="Misc\Log.cs" />
     <Compile Include="Models\Cell.cs" />
     <Compile Include="Models\ConnectState.cs" />
     <Compile Include="Models\DialogColors.cs" />
     <Compile Include="Models\ISpreadsheetModel.cs" />
     <Compile Include="Models\MenuColorTable.cs" />
+    <Compile Include="Models\NetMessages\OpenMessage.cs" />
     <Compile Include="Models\SocketState.cs" />
     <Compile Include="Models\SpreadsheetModel.cs" />
     <Compile Include="Program.cs" />
@@ -76,6 +81,12 @@
     </Compile>
     <Compile Include="Views\AboutView.Designer.cs">
       <DependentUpon>AboutView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConnectView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ConnectView.Designer.cs">
+      <DependentUpon>ConnectView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\HelpAdditionalFeatures.cs">
       <SubType>Form</SubType>
@@ -102,11 +113,11 @@
     <Compile Include="Views\MessageBoxSave.Designer.cs">
       <DependentUpon>MessageBoxSave.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\OpenSaveView.cs">
+    <Compile Include="Views\OpenNewView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Views\OpenSaveView.Designer.cs">
-      <DependentUpon>OpenSaveView.cs</DependentUpon>
+    <Compile Include="Views\OpenNewView.Designer.cs">
+      <DependentUpon>OpenNewView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\SpreadsheetView.cs">
       <SubType>Form</SubType>
@@ -128,6 +139,9 @@
     <EmbeddedResource Include="Views\AboutView.resx">
       <DependentUpon>AboutView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\ConnectView.resx">
+      <DependentUpon>ConnectView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\HelpAdditionalFeatures.resx">
       <DependentUpon>HelpAdditionalFeatures.cs</DependentUpon>
     </EmbeddedResource>
@@ -140,12 +154,13 @@
     <EmbeddedResource Include="Views\MessageBoxSave.resx">
       <DependentUpon>MessageBoxSave.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\OpenSaveView.resx">
-      <DependentUpon>OpenSaveView.cs</DependentUpon>
+    <EmbeddedResource Include="Views\OpenNewView.resx">
+      <DependentUpon>OpenNewView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\SpreadsheetView.resx">
       <DependentUpon>SpreadsheetView.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

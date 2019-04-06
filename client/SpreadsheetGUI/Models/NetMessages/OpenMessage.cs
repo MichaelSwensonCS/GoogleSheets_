@@ -1,12 +1,12 @@
 ﻿/***********************************************************************************************
  *                                                                                             *
- *                 Project Name : PS6                                                          *
+ *                 Project Name : CS3505 Final                                                 *
  *                                                                                             *
- *                        File  : Program.cs                                                   *
+ *                        File  : Models/NetMessages/OpenMessage.cs                            *
  *                                                                                             *
  *                       Author : Josh Perkins                                                 *
  *                                                                                             *
- *                   Start Date : 10/13/18                                                     *
+ *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
  *                      Modtime : 04/06/19                                                     *
  *                                                                                             *
@@ -14,25 +14,30 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-using SS.Controllers;
-using System;
-using System.Windows.Forms;
+using Newtonsoft.Json;
 
-namespace SS {
-    class Program {
+namespace SS.Models.NetMessages {
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main(string[] args) {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+    [JsonObject(MemberSerialization.OptIn)]
+    public class OpenMessage {
 
-            AppController controller = AppController.GetController();
-            controller.ParseCommandLineArgs(args);
-            controller.CreateNewWindow();
-            Application.Run(controller);
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("name")]
+        public string SpreadsheetName { get; set; }
+
+        [JsonProperty("username")]
+        public string Username { get; set; }
+
+        [JsonProperty("password")]
+        public string Password { get; set; }
+
+        public OpenMessage(string type, string name, string username, string password) {
+            Type = type;
+            SpreadsheetName = name;
+            Username = username;
+            Password = password;
         }
     }
 }

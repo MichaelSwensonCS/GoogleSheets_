@@ -2,13 +2,13 @@
  *                                                                                             *
  *                 Project Name : CS3505 Final                                                 *
  *                                                                                             *
- *                        File  : Views/OpenSaveView.cs                                        *
+ *                        File  : Views/ConnectView.cs                                         *
  *                                                                                             *
  *                       Author : Josh Perkins                                                 *
  *                                                                                             *
- *                   Start Date : 03/28/19                                                     *
+ *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/02/19                                                     *
+ *                      Modtime : 04/06/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -22,32 +22,12 @@ using System;
 namespace SS.Views {
 
     /// <summary>
-    /// Represents the Open/Save view.
+    /// Represents the Connect view.
     /// </summary>
-    public partial class OpenSaveView : Form {
+    public partial class ConnectView : Form {
 
-        public event EventHandler OpenClicked;
-        public event EventHandler NewClicked;
+        public event EventHandler ConnectClicked;
 
-        /// <summary>
-        /// The user to use to connect to a server.
-        /// </summary>
-        public string Username {
-            get { return usernameBox.Text; }
-            set { usernameBox.Text = value; }
-        }
-
-        /// <summary>
-        /// The password for a given user.
-        /// </summary>
-        public string Password {
-            get { return passwordBox.Text; }
-            set { passwordBox.Text = value; }
-        }
-
-        /// <summary>
-        /// The address of the server to connect to.
-        /// </summary>
         public string Server {
             get { return serverBox.Text; }
             set { serverBox.Text = value; }
@@ -57,12 +37,11 @@ namespace SS.Views {
         /// Basic constructor.
         /// </summary>
         /// <param name="mode">Determines whether the theme is set to dark mode.</param>
-        public OpenSaveView(bool mode) {
+        public ConnectView(bool mode) {
             InitializeComponent();
             DarkMode(mode);
 
-            openBtn.Click += (o, e) => OpenClicked?.Invoke(o, e);
-            newBtn.Click += (o, e) => NewClicked?.Invoke(o, e);
+            connectBtn.Click += (o, e) => ConnectClicked?.Invoke(o, e);
         }
 
         /// <summary>
@@ -89,11 +68,8 @@ namespace SS.Views {
         /// </summary>
         /// <param name="enable">Flag that enables inputs if true and disables inputs if false.</param>
         public void ToggleInputs(bool enable) {
-            usernameBox.Enabled = enable;
-            passwordBox.Enabled = enable;
             serverBox.Enabled = enable;
-            openBtn.Enabled = enable;
-            newBtn.Enabled = enable;
+            connectBtn.Enabled = enable;
         }
 
         /// <summary>
@@ -101,9 +77,6 @@ namespace SS.Views {
         /// </summary>
         /// <param name="c">The new text color.</param>
         private void ChangeTextColors(Color c) {
-            authLbl.ForeColor = c;
-            usernameLbl.ForeColor = c;
-            passwordLbl.ForeColor = c;
             serverLbl.ForeColor = c;
         }
 
@@ -114,12 +87,9 @@ namespace SS.Views {
         /// <param name="fg">The new foreground color.</param>
         /// <param name="outline">The new outline color.</param>
         private void ChangeButtonColors(Color bg, Color fg, Color outline) {
-            openBtn.BackColor = bg;
-            openBtn.ForeColor = fg;
-            openBtn.FlatAppearance.BorderColor = outline;
-            newBtn.BackColor = bg;
-            newBtn.ForeColor = fg;
-            newBtn.FlatAppearance.BorderColor = outline;
+            connectBtn.BackColor = bg;
+            connectBtn.ForeColor = fg;
+            connectBtn.FlatAppearance.BorderColor = outline;
         }
 
         /// <summary>
@@ -128,11 +98,7 @@ namespace SS.Views {
         /// <param name="bg">The new background color.</param>
         /// <param name="fg">The new foreground color.</param>
         private void ChangeTextBoxColors(Color bg, Color fg) {
-            usernameBox.BackColor = bg;
-            passwordBox.BackColor = bg;
             serverBox.BackColor = bg;
-            usernameBox.ForeColor = fg;
-            passwordBox.ForeColor = fg;
             serverBox.ForeColor = fg;
         }
     }
