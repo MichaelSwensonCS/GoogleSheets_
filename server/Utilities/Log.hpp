@@ -21,6 +21,7 @@
 class Log {
 private:
 public:
+	static void Message(const std::string &msg);
 	static void Success(const std::string &msg);
 	static void Error(const std::string &msg);
 };

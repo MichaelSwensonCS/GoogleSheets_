@@ -20,6 +20,7 @@ Server::Server() {}
 
 void Server::Start() {
 	Log::Success("Server started.");
+	Log::Message("Beginning socket stuff, probably...");
 }
 
 void Server::Update() {

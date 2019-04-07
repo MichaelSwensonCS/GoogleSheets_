@@ -15,6 +15,10 @@
 
 #include "Log.hpp"
 
+void Log::Message(const std::string &msg) {
+	std::cout << "[ MESSAGE ]:   " << msg << std::endl;
+}
+
 void Log::Success(const std::string &msg) {
 	std::cout << '[' << "\033[32m" <<  " SUCCESS " << "\033[0m" << "]:   " << msg << std::endl;
 }
