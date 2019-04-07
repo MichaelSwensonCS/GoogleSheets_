@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "nlohmann/json.hpp"
+#include "Server.hpp"
 
 using json = nlohmann::json;
 
@@ -21,6 +22,9 @@ void json_example(const std::string &filename) {
 }
 
 int main(int argc, char **argv) {
+	Server srv = Server();
+	srv.Start();
+
 	json_example("test.json");
 	return 0;
 }
