@@ -1,1 +1,5 @@
 Put server code here.
+server .cpp examples are in the server folder.
+
+g++ -std=c++11 -DASIO_STANDALONE chat_server.cpp chat_message.hpp -I /home/u0585863/Documents/asio-1.12.2/include/ -pthread
+g++ -std=c++11 -DASIO_STANDALONE chat_client.cpp chat_message.hpp -I /home/u0585863/Documents/asio-1.12.2/include/ -pthread
