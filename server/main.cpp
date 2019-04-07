@@ -1,13 +1,26 @@
 #include <iostream>
-#include <iterator>
-#include <algorithm>
-#include "boost/lambda/lambda.hpp"
+#include <fstream>
 #include "nlohmann/json.hpp"
 
-int main() {
-    using namespace boost::lambda;
-    typedef std::istream_iterator<int> in;
+using json = nlohmann::json;
 
-    std::for_each(
-        in(std::cin), in(), std::cout << (_1 * 3) << " " );
+void json_example(const std::string &filename) {	
+	json j;
+	std::ifstream file(filename);
+	if (file.is_open()) {
+		file >> j;
+		file.close();
+	}
+	else {
+		std::cout << "Unable to open JSON file." << std::endl; 
+	}
+
+	std::cout << "JSON data:" << std::endl;
+	std::cout << j.dump() << "\n" << std::endl;
+	std::cout << "User " << j["username"] << " wants to open " << j["name"] <<std::endl;
+}
+
+int main(int argc, char **argv) {
+	json_example("test.json");
+	return 0;
 }
