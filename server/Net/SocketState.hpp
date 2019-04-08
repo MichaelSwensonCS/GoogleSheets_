@@ -16,7 +16,7 @@
 #ifndef SOCKETSTATE_RS_H
 #define SOCKETSTATE_RS_H
 
-#include "Utilities/Log.hpp"
+#include "../Utilities/Log.hpp"
 
 class SocketState {
 private:

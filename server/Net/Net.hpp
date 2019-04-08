@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/07/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/07/19                                                     *
+ *                      Modtime : 04/08/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Net:                                                                                        *
@@ -16,15 +16,13 @@
 #ifndef NET_RS_H
 #define NET_RS_H
 
-#include "Utilities/Log.hpp"
+#include "../Utilities/Log.hpp"
 
 class Net {
 private:
-	bool _running;
-
 public:
-	static void Start();
-	static void Update();
+	static void Create_Socket(const std::string &hostname);
+
 };
 
 #endif
