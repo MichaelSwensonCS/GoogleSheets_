@@ -24,6 +24,7 @@ using asio::ip::tcp;
 class Net {
 private:
 public:
+	static const int DEFAULT_PORT = 2112;
 	// static tcp::socket Create_Socket(const std::string &hostname);
 
 };

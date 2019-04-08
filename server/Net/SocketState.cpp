@@ -67,5 +67,5 @@ void SocketState::Error(bool error) {
 }
 
 void SocketState::Error_Message(std::string msg) {
-
+	_error_msg = msg;
 }
