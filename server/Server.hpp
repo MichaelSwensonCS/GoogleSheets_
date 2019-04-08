@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/06/19                                                     *
+ *                      Modtime : 04/08/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -18,6 +18,7 @@
 #define SERVER_RS_H
 
 #include "Utilities/Log.hpp"
+#include "asio.hpp"
 
 class Server {
 private:

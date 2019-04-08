@@ -15,6 +15,9 @@
 
 #include "Net.hpp"
 
-void Net::Create_Socket(const std::string &hostname) {
+using asio::ip::tcp;
 
+tcp::socket Net::Create_Socket(const std::string &hostname) {
+	tcp::socket socket;
+	return socket;
 }

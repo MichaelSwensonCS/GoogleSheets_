@@ -17,11 +17,14 @@
 #define NET_RS_H
 
 #include "../Utilities/Log.hpp"
+#include "asio.hpp"
+
+using asio::ip::tcp;
 
 class Net {
 private:
 public:
-	static void Create_Socket(const std::string &hostname);
+	static tcp::socket Create_Socket(const std::string &hostname);
 
 };
 

@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/07/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/07/19                                                     *
+ *                      Modtime : 04/08/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * SocketState:                                                                                *
@@ -17,6 +17,9 @@
 #define SOCKETSTATE_RS_H
 
 #include "../Utilities/Log.hpp"
+#include "asio.hpp"
+
+using asio::ip::tcp;
 
 class SocketState {
 private:
