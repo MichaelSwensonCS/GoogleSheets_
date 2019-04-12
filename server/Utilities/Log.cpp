@@ -15,18 +15,30 @@
 
 #include "Log.hpp"
 
+char Log::timestamp[0x20] = "\0";
+
 void Log::Message(const std::string &msg) {
-	std::cout << "[ MESSAGE ]:   " << msg << std::endl;
+	Do_Msg("[ MESSAGE ]:   " + msg);
 }
 
 void Log::Success(const std::string &msg) {
-	std::cout << '[' << "\033[32m" <<  " SUCCESS " << "\033[0m" << "]:   " << msg << std::endl;
+	Do_Msg("[\033[32m SUCCESS \033[0m]:   " + msg);
 }
 
 void Log::Warning(const std::string &msg) {
-	std::cout << '[' << "\033[33m" <<  " WARNING " << "\033[0m" << "]:   " << msg << std::endl;
+	Do_Msg("[\033[33m WARNING \033[0m]:   " + msg);
 }
 
 void Log::Error(const std::string &msg) {
-	std::cout << '[' << "\033[31m" <<  "  ERROR  " << "\033[0m" << "]:   " << msg << std::endl;
+	Do_Msg("[\033[31m  ERROR  \033[0m]:   " + msg);
+}
+
+void Log::Do_Timestamp() {
+	time_t t = time(NULL);
+	strftime(Log::timestamp, 0x20, "%m/%d/%Y %I:%M:%S %p", localtime(&t));
+}
+
+void Log::Do_Msg(const std::string &msg) {
+	Do_Timestamp();
+	std::cout << '[' << timestamp << ']' << msg << std::endl;
 }

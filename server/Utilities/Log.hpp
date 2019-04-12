@@ -16,10 +16,15 @@
 #ifndef LOG_RS_H
 #define LOG_RS_H
 
+#include <ctime>
 #include <iostream>
 
 class Log {
 private:
+	static char timestamp[0x20];
+
+	static void Do_Timestamp();
+	static void Do_Msg(const std::string &msg);
 public:
 	static void Message(const std::string &msg);
 	static void Success(const std::string &msg);
