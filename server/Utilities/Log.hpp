@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/06/19                                                     *
+ *                      Modtime : 04/11/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Log:                                                                                        *
@@ -23,6 +23,7 @@ private:
 public:
 	static void Message(const std::string &msg);
 	static void Success(const std::string &msg);
+	static void Warning(const std::string &msg);
 	static void Error(const std::string &msg);
 };
 
