@@ -1,7 +1,23 @@
+/***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : CS3505 Final Project                                         *
+ *                                                                                             *
+ *                        File  : main.cpp                                                     *
+ *                                                                                             *
+ *                   Start Date : 04/06/19                                                     *
+ *                                                                                             *
+ *                      Modtime : 04/11/19                                                     *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * main:                                                                                       *
+ *   The main entrypoint for the application.                                                  *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #include <iostream>
 #include <fstream>
 #include "nlohmann/json.hpp"
 #include "Server.hpp"
+#include "Utilities/AParser.hpp"
 
 using json = nlohmann::json;
 
@@ -22,7 +38,11 @@ void json_example(const std::string &filename) {
 }
 
 int main(int argc, char **argv) {
-	Server srv = Server();
+	RS::AParser argparse(argc, argv);
+
+	std::shared_ptr< asio::io_service > io_service(new asio::io_service);
+
+	Server srv = Server(io_service, "127.0.0.1", RS::Net::DEFAULT_PORT);
 	srv.Start();
 
 	json_example("test.json");

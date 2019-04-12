@@ -2,11 +2,11 @@
  *                                                                                             *
  *                 Project Name : CS3505 Final Project                                         *
  *                                                                                             *
- *                        File  : File.hpp                                                     *
+ *                        File  : Utilities/File.hpp                                           *
  *                                                                                             *
  *                   Start Date : 04/10/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/10/19                                                     *
+ *                      Modtime : 04/11/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * File:                                                                                       *
@@ -16,7 +16,7 @@
 #ifndef FILE_RS_H
 #define FILE_RS_H
 
-#include "Utilities/Log.hpp"
+#include "Log.hpp"
 
 namespace RS {
 	class File {
