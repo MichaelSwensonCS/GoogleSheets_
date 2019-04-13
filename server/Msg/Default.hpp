@@ -32,9 +32,6 @@ namespace RS { namespace Message {
 
 		virtual json Json() const;
 		const std::string& Type() const;
-
-		virtual void Json(json);
-		void Type(const std::string&);
 	};
 }}
 

@@ -54,26 +54,4 @@ namespace RS { namespace Message {
 	const std::string& Default::Type() const {
 		return type_;
 	}
-
-	/*---------------------------------------------------------------------------------------------*
-	 * Mutator Methods                                                                             *
-	 *---------------------------------------------------------------------------------------------*/
-
-	/*
-	 * Sets the fields of this class to those specified in the given JSON object.
-	 *
-	 * @param j The JSON object to use.
-	 */
-	void Default::Json(json j) {
-		type_ = j["type"];
-	}
-
-	/*
-	 * Sets the message type.
-	 *
-	 * @param type The type to set the message to.
-	 */
-	void Default::Type(const std::string &type) {
-		type_ = type;
-	}
 }}
