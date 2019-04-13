@@ -21,12 +21,12 @@
 #include "Log.hpp"
 
 namespace RS {
-	enum class CL_Action_Type { Account, Spreadsheet };
-
 	class AParser {
 	private:
+		enum class CL_Action_Type { Account, Spreadsheet };
+
 		static std::string Get_Arg(int, char **);
-		static void Do_Action(RS::CL_Action_Type, const std::string&);
+		static void Do_Action(CL_Action_Type, const std::string&);
 	public:
 		AParser(int, char **);
 	};
