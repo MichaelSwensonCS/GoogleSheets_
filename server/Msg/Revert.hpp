@@ -2,38 +2,37 @@
  *                                                                                             *
  *                 Project Name : CS3505 Final Project                                         *
  *                                                                                             *
- *                        File  : Msg/Default.hpp                                              *
+ *                        File  : Msg/Revert.hpp                                               *
  *                                                                                             *
  *                   Start Date : 04/13/19                                                     *
  *                                                                                             *
  *                      Modtime : 04/13/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
- * Default:                                                                                    *
- *   The default class is the base model for any network message.                              *
+ * Revert:                                                                                     *
+ *   The revert class is the model for an "revert" message.                                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef MESSAGE_RS_H
-#define MESSAGE_RS_H
+#ifndef REVERT_RS_H
+#define REVERT_RS_H
 
-#include <string>
-#include "../nlohmann/json.hpp"
+#include "Default.hpp"
 
 using json = nlohmann::json;
 
 namespace RS { namespace Message {
-	
-	class Default {
-	protected:
-		std::string type_;
+
+	class Revert : Default {
+	private:
+		std::string cell_;
 	public:
-		Default(const std::string&);
+		Revert(const std::string&, const std::string&);
 
-		virtual json Json() const;
-		const std::string& Type() const;
+		json Json() const;
+		const std::string& Cell() const;
 
-		virtual void Json(json);
-		void Type(const std::string&);
+		void Json(json);
+		void Cell(const std::string&);
 	};
 }}
 

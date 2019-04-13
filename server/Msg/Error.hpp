@@ -2,38 +2,40 @@
  *                                                                                             *
  *                 Project Name : CS3505 Final Project                                         *
  *                                                                                             *
- *                        File  : Msg/Default.hpp                                              *
+ *                        File  : Msg/Error.hpp                                                *
  *                                                                                             *
  *                   Start Date : 04/13/19                                                     *
  *                                                                                             *
  *                      Modtime : 04/13/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
- * Default:                                                                                    *
- *   The default class is the base model for any network message.                              *
+ * Error:                                                                                      *
+ *   The error class is the model for an "error" message.                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef MESSAGE_RS_H
-#define MESSAGE_RS_H
+#ifndef ERROR_RS_H
+#define ERROR_RS_H
 
-#include <string>
-#include "../nlohmann/json.hpp"
+#include "Default.hpp"
 
 using json = nlohmann::json;
 
 namespace RS { namespace Message {
-	
-	class Default {
-	protected:
-		std::string type_;
+
+	class Error : Default {
+	private:
+		int code_;
+		std::string src_;
 	public:
-		Default(const std::string&);
+		Error(const std::string&, int, const std::string&);
 
-		virtual json Json() const;
-		const std::string& Type() const;
+		json Json() const;
+		int Code() const;
+		const std::string& Source() const;
 
-		virtual void Json(json);
-		void Type(const std::string&);
+		void Json(json);
+		void Code(int);
+		void Source(const std::string&);
 	};
 }}
 

@@ -44,7 +44,7 @@ namespace RS { namespace Message {
 	 */
 	json Open::Json() const {
 		json j = {
-				{"type", Default::Type()},
+				{"type", type_},
 				{"name", name_},
 				{"username", user_},
 				{"password", pass_}
@@ -58,7 +58,7 @@ namespace RS { namespace Message {
 	 *
 	 * @return String of the spreadsheet name.
 	 */
-	std::string Open::Spreadsheet() const {
+	const std::string& Open::Spreadsheet() const {
 		return name_;
 	}
 
@@ -67,7 +67,7 @@ namespace RS { namespace Message {
 	 *
 	 * @return String of the username.
 	 */
-	std::string Open::Username() const {
+	const std::string& Open::Username() const {
 		return user_;
 	}
 
@@ -76,7 +76,7 @@ namespace RS { namespace Message {
 	 *
 	 * @return String of the user's password.
 	 */
-	std::string Open::Password() const {
+	const std::string& Open::Password() const {
 		return pass_;
 	}
 
@@ -90,7 +90,7 @@ namespace RS { namespace Message {
 	 * @param j The JSON object to use.
 	 */
 	void Open::Json(json j) {
-		Default::Type(j["type"]);
+		type_ = j["type_"];
 		name_ = j["name"];
 		user_ = j["username"];
 		pass_ = j["password"];

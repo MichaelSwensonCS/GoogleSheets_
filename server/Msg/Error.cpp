@@ -2,18 +2,18 @@
  *                                                                                             *
  *                 Project Name : CS3505 Final Project                                         *
  *                                                                                             *
- *                        File  : Msg/Default.cpp                                              *
+ *                        File  : Msg/Error.cpp                                                *
  *                                                                                             *
  *                   Start Date : 04/13/19                                                     *
  *                                                                                             *
  *                      Modtime : 04/13/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
- * Default:                                                                                    *
- *   The default class is the base model for any network message.                              *
+ * Error:                                                                                      *
+ *   The error class is the model for an "error" message.                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "Default.hpp"
+#include "Error.hpp"
 
 namespace RS { namespace Message {
 
@@ -25,9 +25,12 @@ namespace RS { namespace Message {
 	 * Paramaterized constructor.
 	 *
 	 * @param type The message type.
-	 * @return A new Default instance with a value of the provided type.
+	 * @param code The error code.
+	 * @param source The error source.
+	 * @return A new Error instance with a values of the provided parameters.
 	 */
-	Default::Default(const std::string &type) : type_(type) {}
+	Error::Error(const std::string &type, int code, const std::string &source) :
+		Default(type), code_(code), src_(source) {}
 
 	/*---------------------------------------------------------------------------------------------*
 	 * Accessor Methods                                                                            *
@@ -38,21 +41,32 @@ namespace RS { namespace Message {
 	 *
 	 * @return JSON object of this class.
 	 */
-	json Default::Json() const {
+	json Error::Json() const {
 		json j = {
-				{"type", type_}
+				{"type", type_},
+				{"code", code_},
+				{"source", src_}
 		};
 
 		return j;
 	}
 
 	/*
-	 * Gets the message type.
+	 * Gets error code.
 	 *
-	 * @return String of the message type.
+	 * @return Error code integer.
 	 */
-	const std::string& Default::Type() const {
-		return type_;
+	int Error::Code() const {
+		return code_;
+	}
+
+	/*
+	 * Gets the error source.
+	 *
+	 * @return String of the error source.
+	 */
+	const std::string& Error::Source() const {
+		return src_;
 	}
 
 	/*---------------------------------------------------------------------------------------------*
@@ -64,16 +78,27 @@ namespace RS { namespace Message {
 	 *
 	 * @param j The JSON object to use.
 	 */
-	void Default::Json(json j) {
-		type_ = j["type"];
+	void Error::Json(json j) {
+		type_ = j["type_"];
+		code_ = j["code"];
+		src_ = j["source"];
 	}
 
 	/*
-	 * Sets the message type.
+	 * Sets the error code.
 	 *
-	 * @param type The type to set the message to.
+	 * @param code The error code.
 	 */
-	void Default::Type(const std::string &type) {
-		type_ = type;
+	void Error::Code(int code) {
+		code_ = code;
+	}
+
+	/*
+	 * Sets the error source.
+	 *
+	 * @param source The source of the error.
+	 */
+	void Error::Source(const std::string &source) {
+		src_ = source;
 	}
 }}

@@ -29,9 +29,9 @@ namespace RS { namespace Message {
 		Open(const std::string&, const std::string&, const std::string&, const std::string&);
 
 		json Json() const;
-		std::string Spreadsheet() const;
-		std::string Username() const;
-		std::string Password() const;
+		const std::string& Spreadsheet() const;
+		const std::string& Username() const;
+		const std::string& Password() const;
 
 		void Json(json);
 		void Spreadsheet(const std::string&);

@@ -2,18 +2,18 @@
  *                                                                                             *
  *                 Project Name : CS3505 Final Project                                         *
  *                                                                                             *
- *                        File  : Msg/Default.cpp                                              *
+ *                        File  : Msg/Revert.cpp                                               *
  *                                                                                             *
  *                   Start Date : 04/13/19                                                     *
  *                                                                                             *
  *                      Modtime : 04/13/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
- * Default:                                                                                    *
- *   The default class is the base model for any network message.                              *
+ * Revert:                                                                                     *
+ *   The revert class is the model for an "revert" message.                                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "Default.hpp"
+#include "Revert.hpp"
 
 namespace RS { namespace Message {
 
@@ -25,9 +25,11 @@ namespace RS { namespace Message {
 	 * Paramaterized constructor.
 	 *
 	 * @param type The message type.
-	 * @return A new Default instance with a value of the provided type.
+	 * @param cell The cell to revert.
+	 * @return A new Revert instance with a values of the provided parameters.
 	 */
-	Default::Default(const std::string &type) : type_(type) {}
+	Revert::Revert(const std::string &type, const std::string &cell) :
+		Default(type), cell_(cell) {}
 
 	/*---------------------------------------------------------------------------------------------*
 	 * Accessor Methods                                                                            *
@@ -38,21 +40,22 @@ namespace RS { namespace Message {
 	 *
 	 * @return JSON object of this class.
 	 */
-	json Default::Json() const {
+	json Revert::Json() const {
 		json j = {
-				{"type", type_}
+				{"type", type_},
+				{"cell", cell_}
 		};
 
 		return j;
 	}
 
 	/*
-	 * Gets the message type.
+	 * Gets the cell to revert.
 	 *
-	 * @return String of the message type.
+	 * @return String of the cell.
 	 */
-	const std::string& Default::Type() const {
-		return type_;
+	const std::string& Revert::Cell() const {
+		return cell_;
 	}
 
 	/*---------------------------------------------------------------------------------------------*
@@ -64,16 +67,17 @@ namespace RS { namespace Message {
 	 *
 	 * @param j The JSON object to use.
 	 */
-	void Default::Json(json j) {
-		type_ = j["type"];
+	void Revert::Json(json j) {
+		type_ = j["type_"];
+		cell_ = j["cell"];
 	}
 
 	/*
-	 * Sets the message type.
+	 * Sets the cell to revert.
 	 *
-	 * @param type The type to set the message to.
+	 * @param cell The cell to revert.
 	 */
-	void Default::Type(const std::string &type) {
-		type_ = type;
+	void Revert::Cell(const std::string &cell) {
+		cell_ = cell;
 	}
 }}
