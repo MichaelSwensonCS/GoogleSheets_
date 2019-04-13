@@ -24,12 +24,10 @@ namespace RS { namespace Message {
 	/*
 	 * Paramaterized constructor.
 	 *
-	 * @param type The message type.
 	 * @param cell The cell to revert.
 	 * @return A new Revert instance with a values of the provided parameters.
 	 */
-	Revert::Revert(const std::string &type, const std::string &cell) :
-		Default(type), cell_(cell) {}
+	Revert::Revert(const std::string &cell) : Default("revert"), cell_(cell) {}
 
 	/*---------------------------------------------------------------------------------------------*
 	 * Accessor Methods                                                                            *
@@ -68,7 +66,6 @@ namespace RS { namespace Message {
 	 * @param j The JSON object to use.
 	 */
 	void Revert::Json(json j) {
-		type_ = j["type_"];
 		cell_ = j["cell"];
 	}
 

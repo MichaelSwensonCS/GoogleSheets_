@@ -24,13 +24,12 @@ namespace RS { namespace Message {
 	/*
 	 * Paramaterized constructor.
 	 *
-	 * @param type The message type.
 	 * @param code The error code.
 	 * @param source The error source.
 	 * @return A new Error instance with a values of the provided parameters.
 	 */
-	Error::Error(const std::string &type, int code, const std::string &source) :
-		Default(type), code_(code), src_(source) {}
+	Error::Error(int code, const std::string &source) :
+		Default("error"), code_(code), src_(source) {}
 
 	/*---------------------------------------------------------------------------------------------*
 	 * Accessor Methods                                                                            *
@@ -79,7 +78,6 @@ namespace RS { namespace Message {
 	 * @param j The JSON object to use.
 	 */
 	void Error::Json(json j) {
-		type_ = j["type_"];
 		code_ = j["code"];
 		src_ = j["source"];
 	}

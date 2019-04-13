@@ -18,6 +18,7 @@
 
 #include <string>
 #include "../nlohmann/json.hpp"
+#include "../Utilities/Log.hpp"
 
 using json = nlohmann::json;
 

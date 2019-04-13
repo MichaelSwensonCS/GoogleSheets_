@@ -27,7 +27,7 @@ namespace RS { namespace Message {
 		int code_;
 		std::string src_;
 	public:
-		Error(const std::string&, int, const std::string&);
+		Error(int, const std::string&);
 
 		json Json() const;
 		int Code() const;

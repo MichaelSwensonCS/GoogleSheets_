@@ -2,18 +2,18 @@
  *                                                                                             *
  *                 Project Name : CS3505 Final Project                                         *
  *                                                                                             *
- *                        File  : Msg/Open.cpp                                                 *
+ *                        File  : Msg/List.cpp                                                 *
  *                                                                                             *
  *                   Start Date : 04/13/19                                                     *
  *                                                                                             *
  *                      Modtime : 04/13/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
- * Open:                                                                                       *
- *   The open class is the model for an "open" message.                                        *
+ * List:                                                                                       *
+ *   The list class is the model for an "spreadsheet list" message.                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "Open.hpp"
+#include "List.hpp"
 
 namespace RS { namespace Message {
 
@@ -21,16 +21,15 @@ namespace RS { namespace Message {
 	 * Constructor/Destructor Methods                                                              *
 	 *---------------------------------------------------------------------------------------------*/
 
+	List::List() : Default("list"), list_(std::vector<std::string>()) {}
+
 	/*
 	 * Paramaterized constructor.
 	 *
-	 * @param name The spreadsheet name.
-	 * @param user The user's name.
-	 * @param pass The user's password.
-	 * @return A new Open instance with a values of the provided parameters.
+	 * @param sprd_list List of spreadsheet names.
+	 * @return A new List instance with a values of the provided parameters.
 	 */
-	Open::Open(const std::string &name, const std::string &user, const std::string &pass) :
-		Default("open"), name_(name), user_(user), pass_(pass) {}
+	List::List(const std::vector<std::string> &sprd_list) : Default("list"), list_(sprd_list) {}
 
 	/*---------------------------------------------------------------------------------------------*
 	 * Accessor Methods                                                                            *
@@ -41,42 +40,22 @@ namespace RS { namespace Message {
 	 *
 	 * @return JSON object of this class.
 	 */
-	json Open::Json() const {
+	json List::Json() const {
 		json j = {
 				{"type", type_},
-				{"name", name_},
-				{"username", user_},
-				{"password", pass_}
+				{"spreadsheets", list_}
 		};
 
 		return j;
 	}
 
 	/*
-	 * Gets the spreadsheet name.
+	 * Gets the list of spreadsheet names.
 	 *
-	 * @return String of the spreadsheet name.
+	 * @return List of spreadsheet names.
 	 */
-	const std::string& Open::Spreadsheet() const {
-		return name_;
-	}
-
-	/*
-	 * Gets the username.
-	 *
-	 * @return String of the username.
-	 */
-	const std::string& Open::Username() const {
-		return user_;
-	}
-
-	/*
-	 * Gets the user's password.
-	 *
-	 * @return String of the user's password.
-	 */
-	const std::string& Open::Password() const {
-		return pass_;
+	const std::vector<std::string>& List::Spreadsheet_List() const {
+		return list_;
 	}
 
 	/*---------------------------------------------------------------------------------------------*
@@ -88,10 +67,14 @@ namespace RS { namespace Message {
 	 *
 	 * @param j The JSON object to use.
 	 */
-	void Open::Json(json j) {
-		name_ = j["name"];
-		user_ = j["username"];
-		pass_ = j["password"];
+	void List::Json(json j) {
+		if (j.is_array()) {
+			list_.clear();
+
+			for (auto& s : j.items()) {
+				list_.push_back(s.value());
+			}
+		}
 	}
 
 	/*
@@ -99,25 +82,7 @@ namespace RS { namespace Message {
 	 *
 	 * @param name The name of the spreadsheet to open/create.
 	 */
-	void Open::Spreadsheet(const std::string &name) {
-		name_ = name;
-	}
-
-	/*
-	 * Sets the username.
-	 *
-	 * @param name The username for authentication.
-	 */
-	void Open::Username(const std::string &user) {
-		user_ = user;
-	}
-
-	/*
-	 * Sets the user's password.
-	 *
-	 * @param name The password for authentication.
-	 */
-	void Open::Password(const std::string &pass) {
-		pass_ = pass;
+	void List::Spreadsheet_List(const std::vector<std::string> &sprd_list) {
+		list_ = sprd_list;
 	}
 }}
