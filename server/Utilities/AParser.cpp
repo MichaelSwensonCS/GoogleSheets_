@@ -26,6 +26,17 @@
 
 namespace RS {
 	
+	/*---------------------------------------------------------------------------------------------*
+	 * Constructor/Destructor Methods                                                              *
+	 *---------------------------------------------------------------------------------------------*/
+
+	/*
+	 * Paramaterized constructor.
+	 *
+	 * @param argc The argument count.
+	 * @param argv The array of arguments.
+	 * @return A new AParser instance that has evaluated the given arguments.
+	 */
 	AParser::AParser(int argc, char **argv) {
 		if (argc > 1) {
 			Log::Message("Total arguments provided: " + std::to_string(argc - 1));
@@ -45,12 +56,29 @@ namespace RS {
 		}
 	}
 
+	/*---------------------------------------------------------------------------------------------*
+	 * Helper Methods                                                                              *
+	 *---------------------------------------------------------------------------------------------*/
+
+	/*
+	 * Gets an argument from the specified index as a std::string with all characters made lowercase.
+	 *
+	 * @param idx The index to pull from.
+	 * @param argv The argument array.
+	 * @return The single argument as a lowercase string.
+	 */
 	std::string AParser::Get_Arg(int idx, char **argv) {
 		std::string arg(argv[idx]);
 		std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
 		return arg;
 	}
 
+	/*
+	 * Performs an action depending on the given action type and action string.
+	 *
+	 * @param type The desired action type.
+	 * @param action The desired action to perform.
+	 */
 	void AParser::Do_Action(CL_Action_Type type, const std::string &action) {
 		switch(type) {
 			case CL_Action_Type::Account:

@@ -27,8 +27,8 @@ Server::Server(std::shared_ptr<asio::io_service> io_service, const std::string &
 void Server::Start() {
 	io_service_->run();
 
-	Log::Success("Server started.");
-	Log::Message("Listening at " + host_ + " on port " + std::to_string(port_));
+	RS::Log::Success("Server started.");
+	RS::Log::Message("Listening at " + host_ + " on port " + std::to_string(port_));
 }
 
 void Server::Update() {
