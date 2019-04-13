@@ -106,7 +106,7 @@ namespace RS { namespace Message {
 	/*
 	 * Sets the username.
 	 *
-	 * @param name The username for authentication.
+	 * @param user The username for authentication.
 	 */
 	void Open::Username(const std::string &user) {
 		user_ = user;
@@ -115,7 +115,7 @@ namespace RS { namespace Message {
 	/*
 	 * Sets the user's password.
 	 *
-	 * @param name The password for authentication.
+	 * @param pass The password for authentication.
 	 */
 	void Open::Password(const std::string &pass) {
 		pass_ = pass;
