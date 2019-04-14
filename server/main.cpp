@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/11/19                                                     *
+ *                      Modtime : 04/13/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * main:                                                                                       *
@@ -18,7 +18,6 @@
 #include "nlohmann/json.hpp"
 #include "Server.hpp"
 #include "Utilities/AParser.hpp"
-#include "Spreadsheet/Dependency_Graph.hpp"
 
 using json = nlohmann::json;
 
@@ -39,16 +38,12 @@ void json_example(const std::string &filename) {
 }
 
 int main(int argc, char **argv) {
-	RS::Dependency_Graph dg;
-	dg.Add_Dependency("A", "B");
-	dg.Add_Dependency("A", "B");
-
 	RS::AParser argparse(argc, argv);
 
 	std::shared_ptr< asio::io_service > io_service(new asio::io_service);
 
-	Server srv = Server(io_service, "127.0.0.1", RS::Net::DEFAULT_PORT);
-	srv.Start();
+	// Server srv = Server(io_service, "127.0.0.1", RS::Net::DEFAULT_PORT);
+	// srv.Start();
 
 	json_example("test.json");
 	return 0;

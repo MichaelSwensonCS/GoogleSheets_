@@ -17,11 +17,10 @@
 #ifndef DEPGRAPH_RS_H
 #define DEPGRAPH_RS_H
 
-#include <functional>
 #include <map>
-#include <memory>
 #include <unordered_set>
 #include <vector>
+#include <memory>
 
 namespace RS {
 	
@@ -29,38 +28,39 @@ namespace RS {
 	private:
 		enum class Relation { Dependents, Dependees };
 
-		// See https://stackoverflow.com/questions/29855908/c-unordered-set-of-vectors
-		struct VectorHash {
-			size_t operator()(const std::vector<std::string>& v) const {
-				std::hash<std::string> hasher;
-				size_t seed = 0;
-				for (auto& i : v) {
-					seed ^= hasher(i) + 0x9e3779b9 + (seed<<6) + (seed>>2);
-				}
-				return seed;
-			}
+		class Node {
+			std::unordered_set<std::string> *dependents_;
+			std::unordered_set<std::string> *dependees_;
+
+		public:
+			Node();
+			~Node();
+			std::unordered_set<std::string>* Dependents();
+			std::unordered_set<std::string>* Dependees();
 		};
 
-		std::map< std::string, std::unordered_set< std::vector< std::string >, VectorHash > > graph_;
+		std::map<std::string, Node*> graph_;
 		int size_;
 
-		int Relation_Index(Relation);
-		bool Try_Get_Relation_Set(const std::string&, Relation, std::shared_ptr<std::unordered_set<std::string>>);
 		bool Has_Relation(const std::string&, Relation) const;
 		bool Add_Relation(const std::string&, const std::string&, Relation);
+		bool Remove_Relation(const std::string&, const std::string&, Relation);
+		std::unordered_set<std::string>* Get_Relation_Set(const std::string&, Relation);
+		void Replace_Relation(const std::string&, const std::unordered_set<std::string>&, Relation);
 	public:
 		Dependency_Graph();
+		~Dependency_Graph();
 
 		int Size();
 		bool Has_Dependents(const std::string&) const;
 		bool Has_Dependees(const std::string&) const;
-		const std::vector<std::string>& Get_Dependents(const std::string&) const;
-		const std::vector<std::string>& Get_Dependees(const std::string&) const;
+		const std::unordered_set<std::string>& Get_Dependents(const std::string&);
+		const std::unordered_set<std::string>& Get_Dependees(const std::string&);
 
 		void Add_Dependency(const std::string&, const std::string&);
 		void Remove_Dependency(const std::string&, const std::string&);
-		void Replace_Dependents(const std::string&, const std::vector<std::string>&);
-		void Replace_Dependees(const std::string&, const std::vector<std::string>&);
+		void Replace_Dependents(const std::string&, const std::unordered_set<std::string>&);
+		void Replace_Dependees(const std::string&, const std::unordered_set<std::string>&);
 	};
 }
 

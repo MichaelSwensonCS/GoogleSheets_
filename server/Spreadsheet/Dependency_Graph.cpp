@@ -23,15 +23,60 @@ namespace RS {
 	 *---------------------------------------------------------------------------------------------*/
 
 	/*
+	 * Nested Node class constructor.
+	 *
+	 * @return A new Node instance.
+	 */
+	Dependency_Graph::Node::Node() : dependents_(new std::unordered_set<std::string>()),
+			dependees_(new std::unordered_set<std::string>()) {}
+
+	/*
+	 * Nested Node class destructor.
+	 *
+	 */
+	Dependency_Graph::Node::~Node() {
+		delete dependents_;
+		delete dependees_;
+	}
+
+	/*
 	 * Paramaterized constructor.
 	 *
 	 * @return A new Dependency_Graph instance with a value of the provided type.
 	 */
 	Dependency_Graph::Dependency_Graph() : size_(0) {}
 
+	/*
+	 * Destructor.
+	 *
+	 */
+	Dependency_Graph::~Dependency_Graph() {
+		for (auto &pair : graph_) {
+			delete pair.second;
+		}
+	}
+
 	/*---------------------------------------------------------------------------------------------*
 	 * Accessor Methods                                                                            *
 	 *---------------------------------------------------------------------------------------------*/
+
+	/*
+	 * Get dependents for node.
+	 *
+	 * @return A set of dependents for the node.
+	 */
+	std::unordered_set<std::string>* Dependency_Graph::Node::Dependents() {
+		return dependents_;
+	}
+
+	/*
+	 * Get dependees for node.
+	 *
+	 * @return A set of dependees for the node.
+	 */
+	std::unordered_set<std::string>* Dependency_Graph::Node::Dependees() {
+		return dependees_;
+	}
 
 	int Dependency_Graph::Size() {
 		return size_;
@@ -45,14 +90,14 @@ namespace RS {
 		return Has_Relation(s, Relation::Dependees);
 	}
 
-	const std::vector<std::string>& Dependency_Graph::Get_Dependents(const std::string &s) const {
-		std::vector<std::string> blah;
-		return blah;
+	const std::unordered_set<std::string>& Dependency_Graph::Get_Dependents(const std::string &s) {
+		std::unordered_set<std::string> *set = Get_Relation_Set(s, Relation::Dependents);
+		return *set;
 	}
 
-	const std::vector<std::string>& Dependency_Graph::Get_Dependees(const std::string &s) const {
-		std::vector<std::string> blah;
-		return blah;
+	const std::unordered_set<std::string>& Dependency_Graph::Get_Dependees(const std::string &s) {
+		std::unordered_set<std::string> *set = Get_Relation_Set(s, Relation::Dependees);
+		return *set;
 	}
 
 	/*---------------------------------------------------------------------------------------------*
@@ -66,69 +111,114 @@ namespace RS {
 	}
 
 	void Dependency_Graph::Remove_Dependency(const std::string &s, const std::string &t) {
-
+		if (Remove_Relation(s, t, Relation::Dependents) && Remove_Relation(t, s, Relation::Dependees)) {
+			size_--;
+		}
 	}
 
-	void Dependency_Graph::Replace_Dependents(const std::string &s, const std::vector<std::string> &new_dep) {
-
+	void Dependency_Graph::Replace_Dependents(const std::string &s, const std::unordered_set<std::string> &set) {
+		Replace_Relation(s, set, Relation::Dependents);
 	}
 
-	void Dependency_Graph::Replace_Dependees(const std::string &s, const std::vector<std::string> &new_dep) {
-
+	void Dependency_Graph::Replace_Dependees(const std::string &s, const std::unordered_set<std::string> &set) {
+		Replace_Relation(s, set, Relation::Dependees);
 	}
 
 	/*---------------------------------------------------------------------------------------------*
 	 * Helper Methods                                                                              *
 	 *---------------------------------------------------------------------------------------------*/
 
-	int Dependency_Graph::Relation_Index(Relation r) {
-		int val = -1;
-		switch(r) {
-			case Relation::Dependents:
-				val = 0;
-				break;
-			case Relation::Dependees:
-				val = 1;
-				break;
-			default:
-				break;
-		}
-
-		return val;
-	}
-
-	bool Dependency_Graph::Try_Get_Relation_Set(const std::string &key,
-			Relation r, std::shared_ptr<std::unordered_set<std::string>> set) {
+	std::unordered_set<std::string>* Dependency_Graph::Get_Relation_Set(const std::string &key, Relation r) {
+		if (key.empty()) { return nullptr; }
 
 		auto it = graph_.find(key);
 		if (it != graph_.end()) {
-			auto test = it->second;
-			return true;
+			auto n = it->second;
+			if (r == Relation::Dependents) {
+				return n->Dependents();
+			}
+			else {
+				return n->Dependees();
+			}
 		}
 
-		return false;
+		return nullptr;
 	}
 
-	bool Dependency_Graph::Has_Relation(const std::string &s, Relation r) const {
+	bool Dependency_Graph::Has_Relation(const std::string &key, Relation r) const {
+		if (key.empty()) { return false; }
+
+		auto it = graph_.find(key);
+		if (it != graph_.end()) {
+			auto n = it->second;
+			if (r == Relation::Dependents) {
+				return n->Dependents()->size() > 0;
+			}
+			else {
+				return n->Dependees()->size() > 0;
+			}
+		}
+
 		return false;
 	}
 
 	bool Dependency_Graph::Add_Relation(const std::string &key, const std::string &val, Relation r) {
 		if (key.empty() || val.empty()) { return false; }
 
-		std::shared_ptr<std::unordered_set<std::string>> set;
-
 		bool added = false;
-		if (Try_Get_Relation_Set(key, r, set)) {
+		auto set = Get_Relation_Set(key, r);
+		if (set != nullptr) {
+			set->insert(val);
 			added = true;
 		}
 		else {
-			std::unordered_set<std::vector<std::string>, VectorHash> new_set;
-			graph_[key] = new_set;
+			Node *n = new Node();
+			if (r == Relation::Dependents) {
+				n->Dependents()->insert(val);
+			}
+			else {
+				n->Dependees()->insert(val);
+			}
+
+			graph_[key] = n;
 			added = true;
 		}
 
 		return added;
 	}
 
+	bool Dependency_Graph::Remove_Relation(const std::string &key, const std::string &val, Relation r) {
+		if (key.empty() || val.empty()) { return false; }
+
+		bool removed = false;
+		auto set = Get_Relation_Set(key, r);
+		if (set != nullptr) {
+			set->erase(val);
+			removed = true;
+		}
+
+		return removed;
+	}
+
+	void Dependency_Graph::Replace_Relation(const std::string &key, const std::unordered_set<std::string> &set, Relation r) {
+		if (key.empty()) { return; }
+
+		auto dep = Get_Relation_Set(key, r);
+		if (dep != nullptr) {
+			*dep = set;
+		}
+		else {
+			Node *n = new Node();
+			if (r == Relation::Dependents) {
+				dep = n->Dependents();
+				*dep = set;
+			}
+			else {
+				dep = n->Dependees();
+				*dep = set;
+			}
+
+			graph_[key] = n;
+		}
+	}
 }
