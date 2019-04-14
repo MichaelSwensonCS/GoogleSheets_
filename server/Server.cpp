@@ -49,9 +49,11 @@ namespace RS {
 	}
 
 	void Server::Update(kn::tcp_socket &listen_socket) {
-		RS::Log::Message("Waiting for client connections...");
+		RS::Log::Message("Waiting for client connections.");
 
 		while(true) {
+			RS::Log::Message("Client connecting...");
+
 			sockets_.emplace_back(listen_socket.accept());
 			auto &sock = sockets_.back();
 

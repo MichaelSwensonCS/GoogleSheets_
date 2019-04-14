@@ -25,8 +25,11 @@
 #include "kissnet.hpp"
 #include "Msg/List.hpp"
 #include "Net/Connection.hpp"
+#include "nlohmann/json.hpp"
+#include "Utilities/File.hpp"
 #include "Utilities/Log.hpp"
 
+using json = nlohmann::json;
 namespace kn = kissnet;
 
 namespace RS {
