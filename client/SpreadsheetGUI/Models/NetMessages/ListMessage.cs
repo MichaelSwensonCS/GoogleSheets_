@@ -2,11 +2,11 @@
  *                                                                                             *
  *                 Project Name : CS3505 Final                                                 *
  *                                                                                             *
- *                        File  : Models/NetMessages/OpenMessage.cs                            *
+ *                        File  : Models/NetMessages/ListMessage.cs                            *
  *                                                                                             *
  *                       Author : Josh Perkins                                                 *
  *                                                                                             *
- *                   Start Date : 04/06/19                                                     *
+ *                   Start Date : 04/14/19                                                     *
  *                                                                                             *
  *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
@@ -15,25 +15,18 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace SS.Models.NetMessages {
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class OpenMessage : DefaultMessage {
+    public class ListMessage : DefaultMessage {
 
-        [JsonProperty("name")]
-        public string SpreadsheetName { get; set; }
+        [JsonProperty("spreadsheets")]
+        public List<string> Spreadsheets { get; set; }
 
-        [JsonProperty("username")]
-        public string Username { get; set; }
-
-        [JsonProperty("password")]
-        public string Password { get; set; }
-
-        public OpenMessage(string name, string username, string password) : base("open") {
-            SpreadsheetName = name;
-            Username = username;
-            Password = password;
+        public ListMessage(List<string> spreadsheets) : base("list") {
+            Spreadsheets = spreadsheets;
         }
     }
 }

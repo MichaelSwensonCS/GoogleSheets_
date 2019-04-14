@@ -57,7 +57,7 @@ namespace RS {
 
 			auto sprds = std::vector<std::string>{ "test.sprd", "test2.sprd" };
 			auto list = RS::Message::List{ sprds };
-			auto first_msg = std::string{ list.Json().dump() };
+			auto first_msg = std::string{ list.Json().dump() + "\n\n" };
 
 			sock.send(reinterpret_cast<const std::byte*>(first_msg.c_str()), first_msg.size());
 

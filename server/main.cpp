@@ -39,8 +39,10 @@ void json_example(const std::string &filename) {
 
 int main(int argc, char **argv) {
 	RS::AParser argparse(argc, argv);
+	auto host = argparse.Host().empty() ? "127.0.0.1" : argparse.Host();
+	auto port = argparse.Port() == -1 ? 2112 : argparse.Port();
 
-	RS::Server srv("lab1-1.eng.utah.edu", 2112);
+	RS::Server srv(host, port);
 	srv.Start();
 
 	json_example("test.json");

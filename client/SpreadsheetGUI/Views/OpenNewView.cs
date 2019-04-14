@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 03/28/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/06/19                                                     *
+ *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -18,6 +18,7 @@ using SS.Models;
 using System.Windows.Forms;
 using System.Drawing;
 using System;
+using System.Collections.Generic;
 
 namespace SS.Views {
 
@@ -50,6 +51,22 @@ namespace SS.Views {
         public string Spreadsheet {
             get { return spreadsheetBox.Text; }
             set { spreadsheetBox.Text = value; }
+        }
+
+        public List<string> SpreadsheetList {
+            get {
+                List<string> items = new List<string>();
+                foreach (string e in spreadsheetList.Items) {
+                    items.Add(e);
+                }
+                return items;
+            }
+            set {
+                spreadsheetList.Items.Clear();
+                foreach (string e in value) {
+                    spreadsheetList.Items.Add(e);
+                }
+            }
         }
 
         /// <summary>

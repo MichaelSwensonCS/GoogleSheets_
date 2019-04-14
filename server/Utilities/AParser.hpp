@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/11/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/13/19                                                     *
+ *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * AParser:                                                                                    *
@@ -22,6 +22,9 @@
 
 namespace RS {
 	class AParser {
+		std::string host_;
+		uint16_t port_;
+
 	private:
 		enum class CL_Action_Type { Account, Spreadsheet };
 
@@ -29,6 +32,9 @@ namespace RS {
 		static void Do_Action(CL_Action_Type, const std::string&);
 	public:
 		AParser(int, char **);
+
+		const std::string& Host();
+		uint16_t Port();
 	};
 }
 

@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/12/18                                                     *
  *                                                                                             *
- *                      Modtime : 10/15/18                                                     *
+ *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -37,14 +37,14 @@ namespace SS.Models {
         string FilePath { get; set; }
 
         /// <summary>
-        /// Represents whether the spreadsheet has been modified and needs to be saved.
-        /// </summary>
-        bool PendingSave { get; }
-
-        /// <summary>
         /// Represents whether the current theme is dark or not.
         /// </summary>
         bool DarkMode { get; set; }
+
+        /// <summary>
+        /// Represents whether the current spreadsheet is connected to a server.
+        /// </summary>
+        bool Connected { get; set; }
 
         /// <summary>
         /// The currently selected cell.
@@ -55,13 +55,6 @@ namespace SS.Models {
         /// The previously selected cell.
         /// </summary>
         Cell Previous { get; set; }
-
-        /// <summary>
-        /// Method for saving the spreadsheet.
-        /// </summary>
-        /// <param name="notifyError">An outside action to trigger if an error happens.</param>
-        /// <returns>True if the save succeeded, false otherwise.</returns>
-        bool SaveSheet(Action<Exception> notifyError);
 
         /// <summary>
         /// Gets the values associated with the given cells.

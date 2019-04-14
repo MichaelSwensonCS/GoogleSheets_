@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/12/18                                                     *
  *                                                                                             *
- *                      Modtime : 10/15/18                                                     *
+ *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -32,7 +32,6 @@ namespace SS.Models {
 
         private string _version = "ps6";
         private string _initCellName = "A1";
-        private bool _pendingSave;
 
         /// <summary>
         /// The spreadsheet data. Holds all information about cells and their contents.
@@ -45,20 +44,14 @@ namespace SS.Models {
         public string FilePath { get; set; }
 
         /// <summary>
-        /// Represents whether the spreadsheet has been modified and needs to be saved. Notifies
-        /// on property changes.
-        /// </summary>
-        public bool PendingSave {
-            get { return _pendingSave; }
-            private set {
-                _pendingSave = value;
-                NotifyPropertyChange();
-            } }
-
-        /// <summary>
         /// Represents whether the current theme is dark or not.
         /// </summary>
         public bool DarkMode { get; set; }
+
+        /// <summary>
+        /// Represents whether the current spreadsheet is connected to a server.
+        /// </summary>
+        public bool Connected { get; set; }
 
         /// <summary>
         /// The currently selected cell.
@@ -93,8 +86,7 @@ namespace SS.Models {
         /// Helper method to load the initial model.
         /// </summary>
         private void LoadModel() {
-            PendingSave = false;
-
+            Connected = false;
             Previous = null;
 
             Point coords = Cell.NameToCoords(_initCellName);
@@ -102,26 +94,6 @@ namespace SS.Models {
 
             Current = new Cell(_initCellName, coords.X, coords.Y);
             Current.Contents = ParseContents(contents);
-        }
-
-        /// <summary>
-        /// Method for saving the spreadsheet.
-        /// </summary>
-        /// <param name="notifyError">An outside action to trigger if an error happens.</param>
-        /// <returns>True if the save succeeded, false otherwise.</returns>
-        public bool SaveSheet(Action<Exception> notifyError) {
-            bool saved = false;
-
-            try {
-                Sheet.Save(FilePath);
-                PendingSave = false;
-                saved = true;
-            }
-            catch (SpreadsheetReadWriteException e) {
-                notifyError(e);
-            }
-
-            return saved;
         }
 
         /// <summary>
@@ -199,8 +171,6 @@ namespace SS.Models {
             CalculateCellsToUpdate(cell, notifyError, out ISet<string> cellsToUpdate);
             if (cellsToUpdate != null) {
                 cells = GetCellValues(cellsToUpdate);
-
-                SheetModified();
             }
 
             return cells;
@@ -225,15 +195,6 @@ namespace SS.Models {
             catch (FormulaFormatException e) {
                 cell.Contents = cell.OriginalContents;
                 notifyError(e);
-            }
-        }
-
-        /// <summary>
-        /// Simple helper method for managing the save state of the spreadsheet.
-        /// </summary>
-        private void SheetModified() {
-            if (Sheet.Changed) {
-                PendingSave = true;
             }
         }
 

@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/09/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/06/18                                                     *
+ *                      Modtime : 04/14/18                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -51,6 +51,11 @@ namespace SS.Controllers {
         public string OpenNewSpreadsheet {
             get { return _openNew.Spreadsheet; }
             set { _openNew.Spreadsheet = value; }
+        }
+
+        public List<string> OpenNewSpreadsheetList {
+            get { return _openNew.SpreadsheetList; }
+            set { _openNew.SpreadsheetList = value; }
         }
 
         /// <summary>
@@ -116,7 +121,8 @@ namespace SS.Controllers {
         /// Show the "Open/New" dialog.
         /// </summary>
         /// running process.</param>
-        public void ShowOpenNewView() {
+        public void ShowOpenNewView(List<string> spreadsheets) {
+            _openNew.SpreadsheetList = spreadsheets;
             _openNew.ShowDialog();
         }
 
@@ -178,6 +184,7 @@ namespace SS.Controllers {
                 _openNew.Username = "";
                 _openNew.Password = "";
                 _openNew.Spreadsheet = "";
+                _openNew.SpreadsheetList = new List<string>();
             }
         }
 

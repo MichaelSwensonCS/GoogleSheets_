@@ -8,21 +8,25 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/06/18                                                     *
+ *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SpreadsheetUtilities;
 using SS.Misc;
 using SS.Models;
+using SS.Models.NetMessages;
 using SS.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -39,6 +43,8 @@ namespace SS.Controllers {
     /// between the model and view are handled by the controller.
     /// </summary>
     public class SpreadsheetController : ISpreadsheetController {
+        List<string> _serverSheets;
+
         // Used to try to safely disconnect from a server.
         private CancellationTokenSource _client;
         private CancellationToken _cancelToken;
@@ -91,6 +97,8 @@ namespace SS.Controllers {
 
             _client = new CancellationTokenSource();
             _cancelToken = _client.Token;
+
+            _serverSheets = new List<string>();
 
             PropagateHandlers();
 
@@ -300,8 +308,7 @@ namespace SS.Controllers {
             //    //AppController.CreateNewWindow(openFileDialog.FileName);
             //    AppController.GetController().LoadModelIntoInstance(openFileDialog.FileName, this);
             //}
-
-            _subViews.ShowOpenNewView();
+            
         }
 
         /// <summary>
@@ -431,18 +438,20 @@ namespace SS.Controllers {
         /*---------------------------------------------------------------------------------------------*
          * Networking Related Calls and Callbacks                                                      *
          *---------------------------------------------------------------------------------------------*/
-        
 
+        /// <summary>
+        /// Event handler for when a user wants to establish a connection.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnConnectToServer(string server) {
-            if (Log.Enabled) {
-                Log.WriteLine($"Attempting to connect to {server}...", true);
-            }
+            if (Log.Enabled) { Log.WriteLine($"Attempting to connect to {server}...", true); }
 
             try {
                 Net.ConnectToServer(InitialConnection, server, _cancelToken);
             }
             catch (Exception exception) {
-
+                MessageBox.Show(exception.ToString(), "Error Connecting");
             }
         }
 
@@ -452,22 +461,13 @@ namespace SS.Controllers {
         /// <param name="state">The socket state.</param>
         private void InitialConnection(SocketState state) {
             if (state.Error) {
-                //_viewForm.Invoke(new MethodInvoker(() => {
-                //    _view.ShowErrorMessage(state.ErrorMessage, _model.DarkMode);
-                //    _view.ToggleConnectionControls(true);
-                //}));
-                if (Log.Enabled) {
-                    Log.WriteLine($"Connection failed.", true);
-                }
+                if (Log.Enabled) { Log.WriteLine(state.ErrorMessage, true); }
+                MessageBox.Show(state.ErrorMessage, "Error");
             }
             else {
-                if (Log.Enabled) {
-                    Log.WriteLine($"Connection created.", true);
-                }
-                //_subViews.ShowOpenNewView();
+                if (Log.Enabled) {  Log.WriteLine("Connection created.", true); }
 
                 state.Callback = ReceiveInitialData;
-                Net.Send(state.Socket, "Wassup world");
                 Net.GetData(state);
             }
         }
@@ -477,32 +477,92 @@ namespace SS.Controllers {
         /// </summary>
         /// <param name="state">The socket state.</param>
         private void ReceiveInitialData(SocketState state) {
-            Log.WriteLine($"ReceiveInitialData called.", true);
+            if (state.Error) {
+                if (Log.Enabled) { Log.WriteLine(state.ErrorMessage, true); }
+                MessageBox.Show(state.ErrorMessage, "Error");
+            }
+            else {
+                if (Log.Enabled) { Log.WriteLine("Connection created.", true); }
+
+                state.InitialMessage = true;
+                ProcessMessagesAndUpdate(state);
+                _subViews.ShowOpenNewView(_serverSheets);
+
+                _model.Connected = true;
+                state.Callback = ReceiveUpdates;
+                Net.GetData(state);
+            }
+        }
+
+        /// <summary>
+        /// Callback function that begins looping on server data changes.
+        /// </summary>
+        /// <param name="state">The socket state.</param>
+        private void ReceiveUpdates(SocketState state) {
+            if (state.Error) {
+                _model.Connected = false;
+                if (Log.Enabled) { Log.WriteLine(state.ErrorMessage, true); }
+                MessageBox.Show(state.ErrorMessage, "Error");
+            }
+            else {
+                // Process incoming messages
+                ProcessMessagesAndUpdate(state);
+
+                // Display updates.
+
+                // Send any messages to server.
+
+                // Request more data.
+                Net.GetData(state);
+            }
+        }
+
+        /// <summary>
+        /// Processes network messages for a given socket.
+        /// </summary>
+        /// <param name="state">The socket state.</param>
+        private void ProcessMessagesAndUpdate(SocketState state) {
             string totalData = state.SB.ToString();
-            Log.WriteLine(totalData, true);
+            string[] tokens = Regex.Split(totalData, @"(?<=[\n]{2})");
 
-            //if (state.Error) {
-            //    _viewForm.Invoke(new MethodInvoker(() => {
-            //        _view.ShowErrorMessage(state.ErrorMessage, _model.DarkMode);
-            //        _view.ToggleConnectionControls(true);
-            //    }));
-            //}
-            //else {
-            //    // Acknowledge this is the first message received and process it.
-            //    state.InitialMessage = true;
-            //    ProcessMessagesAndUpdate(state);
+            if (state.InitialMessage) {
+                state.InitialMessage = false;
 
-            //    // Notify view and model of being connectd.
-            //    _model.Connected = true;
-            //    _model.InGame = true;
-            //    _viewForm.Invoke(new MethodInvoker(() => {
-            //        _view.ServerConnected(_model.Connected);
-            //    }));
+                var msg = JsonConvert.DeserializeObject<ListMessage>(tokens[0]);
+                _serverSheets = msg.Spreadsheets;
+                state.SB.Remove(0, tokens[0].Length + tokens[1].Length);
+            }
+            else {
+                for (int i = 0; i < tokens.Length; i++) {
+                    if (IsValidToken(tokens[i])) {
+                        //UpdateObject(tokens[i]);
+                        state.SB.Remove(0, tokens[i].Length);
 
-            //    // Request more data.
-            //    state.Callback = ReceiveWorld;
-            //    Net.GetData(state);
-            //}
+                    }
+                }
+
+                //Update();
+            }
+        }
+
+        /// <summary>
+        /// Checks the validity of part of a message from the server.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        private bool IsValidToken(string token) {
+            if (token.Length <= 0) {
+                return false;
+            }
+
+            if (token[token.Length - 1] != '\n') {
+                return false;
+            }
+            if (token[token.Length - 2] != '\n') {
+                return false;
+            }
+
+            return true;
         }
     }
 }

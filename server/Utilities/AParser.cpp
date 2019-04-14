@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/11/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/13/19                                                     *
+ *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * AParser:                                                                                    *
@@ -38,6 +38,9 @@ namespace RS {
 	 * @return A new AParser instance that has evaluated the given arguments.
 	 */
 	AParser::AParser(int argc, char **argv) {
+		host_ = "";
+		port_ = -1;
+
 		if (argc > 1) {
 			Log::Message("Total arguments provided: " + std::to_string(argc - 1));
 
@@ -52,8 +55,38 @@ namespace RS {
 					std::string action(Get_Arg(++i, argv));
 					Do_Action(CL_Action_Type::Spreadsheet, action);
 				}
+				else if (arg == "-host" && i + 1 < argc) {
+					std::string host(Get_Arg(++i, argv));
+					host_ = host;
+				}
+				else if (arg == "-port" && i + 1 < argc) {
+					std::string port(Get_Arg(++i, argv));
+					port_ = std::stoi(port);
+				}
 			}
 		}
+	}
+
+	/*---------------------------------------------------------------------------------------------*
+	 * Accessor Methods                                                                            *
+	 *---------------------------------------------------------------------------------------------*/
+
+	/*
+	 * Gets the host address loaded from the command line.
+	 *
+	 * @return Host address.
+	 */
+	const std::string& AParser::Host() {
+		return host_;
+	}
+
+	/*
+	 * Gets the port loaded from the command line.
+	 *
+	 * @return JSON object of this class.
+	 */
+	uint16_t AParser::Port() {
+		return port_;
 	}
 
 	/*---------------------------------------------------------------------------------------------*
