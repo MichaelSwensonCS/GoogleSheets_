@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/11/19                                                     *
+ *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -17,26 +17,35 @@
 #ifndef SERVER_RS_H
 #define SERVER_RS_H
 
+#include <functional>
 #include <thread>
 #include <vector>
-#include "asio.hpp"
-#include "Net/Net.hpp"
+#include <algorithm>
+#include <csignal>
+#include "kissnet.hpp"
+#include "Msg/List.hpp"
+#include "Net/Connection.hpp"
 #include "Utilities/Log.hpp"
 
-class Server {
-private:
-	std::string host_;
-	uint16_t port_;
+namespace kn = kissnet;
 
-	std::shared_ptr< asio::io_service > io_service_;
-	asio::ip::tcp::acceptor acceptor_;
+namespace RS {
 
-	void Listen();
-public:
-	Server(std::shared_ptr<asio::io_service>, const std::string&, const uint16_t&);
+	class Server {
+	private:
+		std::string host_;
+		uint16_t port_;
 
-	void Start();
-	void Update();
-};
+		std::vector<std::thread> threads_;
+		std::vector<kn::tcp_socket> sockets_;
+	public:
+		static const uint16_t DEFAULT_PORT = 2112;
+
+		Server(const std::string&, const uint16_t&);
+
+		void Start();
+		void Update(kn::tcp_socket&);
+	};
+}
 
 #endif

@@ -464,7 +464,7 @@ namespace SS.Controllers {
                 if (Log.Enabled) {
                     Log.WriteLine($"Connection created.", true);
                 }
-                _subViews.ShowOpenNewView();
+                //_subViews.ShowOpenNewView();
 
                 state.Callback = ReceiveInitialData;
                 Net.Send(state.Socket, "Wassup world");
@@ -477,6 +477,10 @@ namespace SS.Controllers {
         /// </summary>
         /// <param name="state">The socket state.</param>
         private void ReceiveInitialData(SocketState state) {
+            Log.WriteLine($"ReceiveInitialData called.", true);
+            string totalData = state.SB.ToString();
+            Log.WriteLine(totalData, true);
+
             //if (state.Error) {
             //    _viewForm.Invoke(new MethodInvoker(() => {
             //        _view.ShowErrorMessage(state.ErrorMessage, _model.DarkMode);

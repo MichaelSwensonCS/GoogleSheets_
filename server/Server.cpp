@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/11/19                                                     *
+ *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -16,32 +16,79 @@
 
 #include "Server.hpp"
 
-using asio::ip::tcp;
+namespace RS {
+	Server::Server(const std::string &host, const uint16_t &port) : host_(host), port_(port),
+			threads_(), sockets_() {}
 
-Server::Server(std::shared_ptr<asio::io_service> io_service, const std::string &host, const uint16_t &port) :
-	io_service_(io_service),
-	host_(host),
-	port_(port),
-	acceptor_(*io_service, tcp::endpoint(tcp::v4(), port)) {}
+	void Server::Start() {
+		RS::Log::Message("Starting server on " + host_ + ":" + std::to_string(port_));
 
-void Server::Start() {
-	io_service_->run();
+		kn::tcp_socket listen_socket({ host_, port_ });
+		listen_socket.bind();
+		listen_socket.listen();
 
-	RS::Log::Success("Server started.");
-	RS::Log::Message("Listening at " + host_ + " on port " + std::to_string(port_));
-}
+		//close program upon ctrl+c or other signals
+		std::signal(SIGINT, [](int) {
+			RS::Log::Warning("Shutting down.");
+			std::exit(0);
+		});
 
-void Server::Update() {
+		//Send the SIGINT signal to ourself if user press return on "server" terminal
+		std::thread run_th([] {
+			RS::Log::Message("Press 'enter' to shutdown the server.");
+			std::cin.get();
+			std::cin.clear();
+			std::raise(SIGINT);
+		});
 
-}
+		run_th.detach();
 
-void Server::Listen() {
-	tcp::resolver res(*io_service_);
-	tcp::resolver::query query(host_, std::to_string(port_));
-	tcp::endpoint ep = *res.resolve(query);
+		RS::Log::Success("Server started.");
 
-	acceptor_.open(ep.protocol());
-	acceptor_.set_option(tcp::acceptor::reuse_address(false));
-	acceptor_.bind(ep);
-	acceptor_.listen(asio::socket_base::max_connections);
+		Update(listen_socket);
+	}
+
+	void Server::Update(kn::tcp_socket &listen_socket) {
+		RS::Log::Message("Waiting for client connections...");
+
+		while(true) {
+			sockets_.emplace_back(listen_socket.accept());
+			auto &sock = sockets_.back();
+
+			auto sprds = std::vector<std::string>{ "test.sprd", "test2.sprd" };
+			auto list = RS::Message::List{ sprds };
+			auto first_msg = std::string{ list.Json().dump() };
+
+			sock.send(reinterpret_cast<const std::byte*>(first_msg.c_str()), first_msg.size());
+
+			// example below echos whatever message comes into the server...
+
+			// threads_.emplace_back([&]{
+			// 	bool receive = true;
+			// 	kn::buffer<1024> buff;
+
+			// 	while(receive) {
+			// 		if (auto [size, valid] = sock.recv(buff); valid) {
+			// 			if (valid.value == kn::socket_status::cleanly_disconnected) {
+			// 				receive = false;
+			// 			}
+			// 			else {
+			// 				sock.send(buff.data(), size);
+			// 			}
+			// 		}
+			// 		else {
+			// 			receive = false;
+			// 		}
+			// 	}
+
+			// 	RS::Log::Message("Disconnect");
+			// 	if (const auto it = std::find(sockets_.begin(), sockets_.end(), std::ref(sock)); it != sockets_.end()) {
+			// 		RS::Log::Message("Closing socket...");
+			// 		sockets_.erase(it);
+			// 	}
+			// });
+
+			// threads_.back().detach();
+		}
+	}
 }

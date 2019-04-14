@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/13/19                                                     *
+ *                      Modtime : 04/14/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * main:                                                                                       *
@@ -40,10 +40,8 @@ void json_example(const std::string &filename) {
 int main(int argc, char **argv) {
 	RS::AParser argparse(argc, argv);
 
-	std::shared_ptr< asio::io_service > io_service(new asio::io_service);
-
-	// Server srv = Server(io_service, "127.0.0.1", RS::Net::DEFAULT_PORT);
-	// srv.Start();
+	RS::Server srv("lab1-1.eng.utah.edu", 2112);
+	srv.Start();
 
 	json_example("test.json");
 	return 0;
