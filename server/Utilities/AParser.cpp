@@ -43,7 +43,6 @@ namespace RS {
 
 		if (argc > 1) {
 			Log::Message("Total arguments provided: " + std::to_string(argc - 1));
-
 			for (int i = 1; i < argc; i++) {
 				std::string arg(Get_Arg(i, argv));
 

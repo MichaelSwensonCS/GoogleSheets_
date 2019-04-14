@@ -16,10 +16,12 @@
 #ifndef FILE_RS_H
 #define FILE_RS_H
 
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
+#include <vector>
 #include "Log.hpp"
-#include "../nlohmann/json.hpp"
+#include "../Libraries/json.hpp"
 
 using json = nlohmann::json;
 
@@ -30,6 +32,8 @@ namespace RS {
 	public:
 		static json Load_Json(const std::string&);
 		static void Save_Json(const std::string&, json&);
+
+		static std::vector<std::string> List_Spreadsheets(const std::string&);
 	};
 }
 

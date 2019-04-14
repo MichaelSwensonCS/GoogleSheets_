@@ -17,7 +17,7 @@
 #define MESSAGE_RS_H
 
 #include <string>
-#include "../nlohmann/json.hpp"
+#include "../Libraries/json.hpp"
 #include "../Utilities/Log.hpp"
 
 using json = nlohmann::json;

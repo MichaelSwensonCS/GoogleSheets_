@@ -52,12 +52,10 @@ namespace RS {
 		RS::Log::Message("Waiting for client connections.");
 
 		while(true) {
-			RS::Log::Message("Client connecting...");
-
 			sockets_.emplace_back(listen_socket.accept());
 			auto &sock = sockets_.back();
 
-			auto sprds = std::vector<std::string>{ "test.sprd", "test2.sprd" };
+			auto sprds = RS::File::List_Spreadsheets(std::filesystem::current_path());
 			auto list = RS::Message::List{ sprds };
 			auto first_msg = std::string{ list.Json().dump() + "\n\n" };
 
