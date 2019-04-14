@@ -85,7 +85,7 @@ namespace RS {
 	 *
 	 * @return JSON object of this class.
 	 */
-	uint16_t AParser::Port() {
+	int AParser::Port() {
 		return port_;
 	}
 

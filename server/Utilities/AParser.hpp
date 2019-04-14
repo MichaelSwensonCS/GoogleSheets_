@@ -23,7 +23,7 @@
 namespace RS {
 	class AParser {
 		std::string host_;
-		uint16_t port_;
+		int port_;
 
 	private:
 		enum class CL_Action_Type { Account, Spreadsheet };
@@ -34,7 +34,7 @@ namespace RS {
 		AParser(int, char **);
 
 		const std::string& Host();
-		uint16_t Port();
+		int Port();
 	};
 }
 

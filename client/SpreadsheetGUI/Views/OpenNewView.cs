@@ -149,5 +149,17 @@ namespace SS.Views {
             spreadsheetList.BackColor = bg;
             spreadsheetList.ForeColor = fg;
         }
+
+        /// <summary>
+        /// Action method when a user selects an object in the spreadsheet listbox.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void spreadsheetList_SelectedValueChanged(object sender, EventArgs e) {
+            var s = sender as System.Windows.Forms.ListBox;
+            if (s != null) {
+                spreadsheetBox.Text = s.Text;
+            }
+        }
     }
 }

@@ -121,6 +121,7 @@
             this.spreadsheetList.Name = "spreadsheetList";
             this.spreadsheetList.Size = new System.Drawing.Size(553, 342);
             this.spreadsheetList.TabIndex = 3;
+            this.spreadsheetList.SelectedValueChanged += new System.EventHandler(this.spreadsheetList_SelectedValueChanged);
             // 
             // OpenNewView
             // 
