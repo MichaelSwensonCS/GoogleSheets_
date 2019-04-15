@@ -8,14 +8,13 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/19                                                     *
+ *                      Modtime : 04/15/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SpreadsheetUtilities;
 using SS.Misc;
 using SS.Models;
@@ -25,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -158,6 +156,7 @@ namespace SS.Controllers {
             _subViews.ConnectFormClosed += OnConnectClosed;
             _subViews.OpenNewFormClosed += OnOpenSaveClosed;
             _subViews.ConnectToServer += OnConnectToServer;
+            _subViews.OpenSheet += OnOpenSheet;
         }
 
         /// <summary>
@@ -455,6 +454,14 @@ namespace SS.Controllers {
             }
         }
 
+        private void OnOpenSheet(OpenMessage om, SocketState state) {
+            if (Log.Enabled) { Log.WriteLine($"Attempting to open/create {om.SpreadsheetName}...", true); }
+
+            state.Callback = OpenCallback;
+            Net.Send(state.Socket, JsonConvert.SerializeObject(om));
+            Net.GetData(state);
+        }
+
         /// <summary>
         /// Callback function that is used when a client first connects to a server.
         /// </summary>
@@ -486,11 +493,19 @@ namespace SS.Controllers {
 
                 state.InitialMessage = true;
                 ProcessMessagesAndUpdate(state);
-                _subViews.ShowOpenNewView(_serverSheets);
+                _subViews.ShowOpenNewView(_serverSheets, state);
+            }
+        }
 
-                _model.Connected = true;
-                state.Callback = ReceiveUpdates;
-                Net.GetData(state);
+        private void OpenCallback(SocketState state) {
+            if (state.Error) {
+                if (Log.Enabled) { Log.WriteLine(state.ErrorMessage, true); }
+                MessageBox.Show(state.ErrorMessage, "Error");
+            }
+            else {
+                if (Log.Enabled) { Log.WriteLine("Sheet opened.", true); }
+
+                Console.WriteLine(state.SB.ToString());
             }
         }
 

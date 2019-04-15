@@ -61,34 +61,36 @@ namespace RS {
 
 			sock.send(reinterpret_cast<const std::byte*>(first_msg.c_str()), first_msg.size());
 
-			// example below echos whatever message comes into the server...
+			// Example below will display message from clients in the terminal.
 
-			// threads_.emplace_back([&]{
-			// 	bool receive = true;
-			// 	kn::buffer<1024> buff;
+			threads_.emplace_back([&]{
+				bool receive = true;
+				kn::buffer<1024> buff;
 
-			// 	while(receive) {
-			// 		if (auto [size, valid] = sock.recv(buff); valid) {
-			// 			if (valid.value == kn::socket_status::cleanly_disconnected) {
-			// 				receive = false;
-			// 			}
-			// 			else {
-			// 				sock.send(buff.data(), size);
-			// 			}
-			// 		}
-			// 		else {
-			// 			receive = false;
-			// 		}
-			// 	}
+				while(receive) {
+					if (auto [size, valid] = sock.recv(buff); valid) {
+						if (valid.value == kn::socket_status::cleanly_disconnected) {
+							receive = false;
+						}
+						else {
+							// sock.send(buff.data(), size);
+							auto output = std::string(reinterpret_cast<char*>(buff.data()), size);
+							RS::Log::Message();
+						}
+					}
+					else {
+						receive = false;
+					}
+				}
 
-			// 	RS::Log::Message("Disconnect");
-			// 	if (const auto it = std::find(sockets_.begin(), sockets_.end(), std::ref(sock)); it != sockets_.end()) {
-			// 		RS::Log::Message("Closing socket...");
-			// 		sockets_.erase(it);
-			// 	}
-			// });
+				RS::Log::Message("Disconnect");
+				if (const auto it = std::find(sockets_.begin(), sockets_.end(), std::ref(sock)); it != sockets_.end()) {
+					RS::Log::Message("Closing socket...");
+					sockets_.erase(it);
+				}
+			});
 
-			// threads_.back().detach();
+			threads_.back().detach();
 		}
 	}
 }

@@ -8,18 +8,26 @@
  *                                                                                             *
  *                   Start Date : 10/09/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/18                                                     *
+ *                      Modtime : 04/15/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+using SS.Models;
+using SS.Models.NetMessages;
 using SS.Views;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace SS.Controllers {
+
+    /// <summary>
+    /// Handles an "open" command.
+    /// </summary>
+    /// <param name="server">The server address.</param>
+    public delegate void OpenSheetHandler(OpenMessage om, SocketState state);
 
     /// <summary>
     /// Handles additional subviews that popup from the parent view.
@@ -35,8 +43,10 @@ namespace SS.Controllers {
         public event FormClosedEventHandler ConnectFormClosed;
         public event FormClosedEventHandler OpenNewFormClosed;
         public event ConnectionHandler ConnectToServer;
+        public event OpenSheetHandler OpenSheet;
 
         private bool _initialLoad;
+        private SocketState _state;
 
         public string OpenNewUsername {
             get { return _openNew.Username; }
@@ -121,7 +131,8 @@ namespace SS.Controllers {
         /// Show the "Open/New" dialog.
         /// </summary>
         /// running process.</param>
-        public void ShowOpenNewView(List<string> spreadsheets) {
+        public void ShowOpenNewView(List<string> spreadsheets, SocketState state) {
+            _state = state;
             _openNew.SpreadsheetList = spreadsheets;
             _openNew.ShowDialog();
         }
@@ -196,15 +207,21 @@ namespace SS.Controllers {
         private void OnOpenNewOpen(Object sender, EventArgs e) {
             _openNew.ToggleInputs(false);
             if (OpenNewAreValidInputs(out List<string> values, out string msg)) {
-                //MessageBox.Show($"{{{values[0]}, {values[1]}, {values[2]}}}", "Open");
-                //Net.ConnectToServer()
+
+                OpenMessage om = new OpenMessage(values[2], values[0], values[1]);
+                OpenSheet?.Invoke(om, _state);
 
                 if (_initialLoad) {
                     _initialLoad = false;
-                    _connectView.Close();
+                    _connectView.Invoke(new MethodInvoker(() => {
+                        _connectView.Close();
+                    }));
                 }
-                _openNew.Close();
-                
+                _openNew.Invoke(new MethodInvoker(() => {
+                    _openNew.Close();
+                    _openNew.ToggleInputs(true);
+                }));
+                return;
             }
             else {
                 MessageBox.Show(msg, "Error");
