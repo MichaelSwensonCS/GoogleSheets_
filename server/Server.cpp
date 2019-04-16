@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/19                                                     *
+ *                      Modtime : 04/15/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -27,7 +27,6 @@ namespace RS {
 		listen_socket.bind();
 		listen_socket.listen();
 
-		//close program upon ctrl+c or other signals
 		std::signal(SIGINT, [](int) {
 			RS::Log::Warning("Shutting down.");
 			std::exit(0);
@@ -61,21 +60,22 @@ namespace RS {
 
 			sock.send(reinterpret_cast<const std::byte*>(first_msg.c_str()), first_msg.size());
 
-			// Example below will display message from clients in the terminal.
-
 			threads_.emplace_back([&]{
 				bool receive = true;
 				kn::buffer<1024> buff;
 
 				while(receive) {
-					if (auto [size, valid] = sock.recv(buff); valid) {
+					auto [size, valid] = sock.recv(buff);
+
+					if (valid) {
 						if (valid.value == kn::socket_status::cleanly_disconnected) {
 							receive = false;
 						}
 						else {
 							// sock.send(buff.data(), size);
 							auto output = std::string(reinterpret_cast<char*>(buff.data()), size);
-							RS::Log::Message();
+							auto j_open = json::parse(output);
+							Client_Select_Sheet(j_open["name"], j_open["username"], j_open["password"], sock);
 						}
 					}
 					else {
@@ -83,8 +83,9 @@ namespace RS {
 					}
 				}
 
-				RS::Log::Message("Disconnect");
-				if (const auto it = std::find(sockets_.begin(), sockets_.end(), std::ref(sock)); it != sockets_.end()) {
+				RS::Log::Message("Client disconnect.");
+				const auto it = std::find(sockets_.begin(), sockets_.end(), std::ref(sock));
+				if (it != sockets_.end()) {
 					RS::Log::Message("Closing socket...");
 					sockets_.erase(it);
 				}
@@ -92,5 +93,53 @@ namespace RS {
 
 			threads_.back().detach();
 		}
+	}
+
+	bool Server::Valid_Auth(const std::string &username, const std::string &password) {
+		// Do auth stuff...
+		return true;
+	}
+
+	void Server::Client_Select_Sheet(const std::string &filename, const std::string &username,
+			const std::string &password, kn::tcp_socket &sock) {
+
+		if (Valid_Auth(username, password)) {
+			json full_send;
+			full_send["type"] = "full send";
+
+			if (std::filesystem::exists(filename)) {
+				// auto cells = File::Load_Json(filename);
+				// full_send["spreadsheet"] = cells;
+				
+				auto new_sheet = Spreadsheet{ filename };
+				full_send["spreadsheet"] = {};
+			}
+			else {
+				auto new_sheet = Spreadsheet{ filename };
+				full_send["spreadsheet"] = {};
+			}
+
+			Do_Full_Send(full_send, sock);
+		}
+		else {
+			Do_Error("Bad password.", sock);
+		}
+
+
+	}
+
+	void Server::Do_Full_Send(const json &full_send, kn::tcp_socket &sock) {
+		auto msg = std::string{ full_send.dump() + "\n\n" };
+		sock.send(reinterpret_cast<const std::byte*>(msg.c_str()), msg.size());
+	}
+
+	void Server::Do_Error(const std::string &error_msg, kn::tcp_socket &sock) {
+		json j_error = {
+			{"type", "error"},
+			{"code", 1},
+			{"source", ""}
+		};
+		auto msg = std::string{ j_error.dump() + "\n\n" };
+		sock.send(reinterpret_cast<const std::byte*>(msg.c_str()), msg.size());
 	}
 }

@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/19                                                     *
+ *                      Modtime : 04/15/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -27,6 +27,7 @@
 #include "Libraries/kissnet.hpp"
 #include "Msg/List.hpp"
 #include "Net/Connection.hpp"
+#include "Spreadsheet/Spreadsheet.hpp"
 #include "Utilities/File.hpp"
 #include "Utilities/Log.hpp"
 
@@ -42,6 +43,12 @@ namespace RS {
 
 		std::vector<std::thread> threads_;
 		std::vector<kn::tcp_socket> sockets_;
+		std::vector<Spreadsheet> sheets_;
+
+		bool Valid_Auth(const std::string&, const std::string&);
+		void Client_Select_Sheet(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);
+		void Do_Full_Send(const json&, kn::tcp_socket&);
+		void Do_Error(const std::string&, kn::tcp_socket&);
 	public:
 		static const uint16_t DEFAULT_PORT = 2112;
 
