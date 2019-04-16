@@ -82,14 +82,31 @@ namespace RS {
 	 * Mutator Methods                                                                         *
 	 *-----------------------------------------------------------------------------------------*/
 
+	/*
+	 * Sets the spreadsheet's name.
+	 *
+	 * @param name The new name of the spreadsheet.
+	 */
 	void Spreadsheet::Name(const std::string &name) {
 		name_ = name;
 	}
 
+	/*
+	 * Sets the cells of the spreadsheet to a new set of cells.
+	 *
+	 * @param cells The new cells.
+	 */
 	void Spreadsheet::Cells(const json &cells) {
 		cells_ = cells;
 	}
 
+	/*
+	 * Inserts a new cell into the spreadsheet. If the cell already exists then its contents
+	 * will be overwritten with the newly provided contents.
+	 *
+	 * @param key The cell to insert.
+	 * @param value The contents associated with the cell.
+	 */
 	void Spreadsheet::Insert(const std::string &key, const std::string &value) {
 		cells_[key] = value;
 	}

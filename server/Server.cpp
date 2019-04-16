@@ -205,10 +205,7 @@ namespace RS {
 		bool valid = false;
 		if (users_.find(username) == users_.end()) {
 			users_[username] = password;
-
-			// Temporary {
 			RS::Server::Save_Auth();
-			// }
 
 			valid = true;
 		}
