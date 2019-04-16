@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/14/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/19                                                     *
+ *                      Modtime : 04/16/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Spreadsheet:                                                                                *
@@ -30,8 +30,9 @@ namespace RS {
 	Spreadsheet::Spreadsheet() : name_(), cells_() {}
 
 	/*
-	 * Default constructor.
+	 * Parameterized constructor.
 	 *
+	 * @param name The name of the spreadsheet.
 	 * @return A new Spreadsheet instance with a value of the provided type.
 	 */
 	Spreadsheet::Spreadsheet(const std::string &name) : name_(name), cells_() {}
@@ -70,6 +71,7 @@ namespace RS {
 	/*
 	 * Gets the contents of a specific cell.
 	 *
+	 * @param key The cell to lookup.
 	 * @return The cell's contents.
 	 */
 	std::string Spreadsheet::Cell(const std::string &key) const {

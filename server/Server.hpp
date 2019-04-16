@@ -56,7 +56,6 @@ namespace RS {
 
 		bool Valid_Auth(const std::string&, const std::string&);
 		void Client_Select_Sheet(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);
-		void Do_Full_Send(const json&, kn::tcp_socket&);
 		void Do_Error(int, const std::string&, kn::tcp_socket&);
 
 		void Send_Message(const json&, kn::tcp_socket&);
