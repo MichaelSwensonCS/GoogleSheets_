@@ -17,16 +17,22 @@
 #include "Server.hpp"
 
 namespace RS {
+	const std::string Server::AUTH_FILENAME = "radical_panda$.txt";
+
 	Server::Server(const std::string &host, const uint16_t &port) : host_(host), port_(port),
-			threads_(), sockets_() {}
+			threads_(), sockets_(), sheets_(), users_() {}
 
 	void Server::Start() {
 		RS::Log::Message("Starting server on " + host_ + ":" + std::to_string(port_));
+
+		Load_Auth();
 
 		kn::tcp_socket listen_socket({ host_, port_ });
 		listen_socket.bind();
 		listen_socket.listen();
 
+		// Must be non-capturing lambda
+		// https://stackoverflow.com/questions/11468414/using-auto-and-lambda-to-handle-signal
 		std::signal(SIGINT, [](int) {
 			RS::Log::Warning("Shutting down.");
 			std::exit(0);
@@ -47,6 +53,30 @@ namespace RS {
 		Update(listen_socket);
 	}
 
+	void Server::Load_Auth() {
+		json j;
+		if (std::filesystem::exists(AUTH_FILENAME)) {
+			Log::Success("Found " + AUTH_FILENAME);
+			j = File::Load_Json(AUTH_FILENAME);
+
+			for (auto& [key, value] : j.items()) {
+				users_[key] = value;
+			}
+		}
+		else {
+			Log::Warning("Couldn't find " + AUTH_FILENAME);
+			File::Save_Json(AUTH_FILENAME, j);
+		}
+	}
+
+	void Server::Save_Auth() {
+		json j;
+		for (auto& [key, value] : users_) {
+			j[key] = value;
+		}
+		File::Save_Json(AUTH_FILENAME, j);
+	}
+
 	void Server::Update(kn::tcp_socket &listen_socket) {
 		RS::Log::Message("Waiting for client connections.");
 
@@ -56,9 +86,7 @@ namespace RS {
 
 			auto sprds = RS::File::List_Spreadsheets(std::filesystem::current_path());
 			auto list = RS::Message::List{ sprds };
-			auto first_msg = std::string{ list.Json().dump() + "\n\n" };
-
-			sock.send(reinterpret_cast<const std::byte*>(first_msg.c_str()), first_msg.size());
+			Send_Message(list.Json(), sock);
 
 			threads_.emplace_back([&]{
 				bool receive = true;
@@ -72,7 +100,6 @@ namespace RS {
 							receive = false;
 						}
 						else {
-							// sock.send(buff.data(), size);
 							auto output = std::string(reinterpret_cast<char*>(buff.data()), size);
 							auto j_open = json::parse(output);
 							Client_Select_Sheet(j_open["name"], j_open["username"], j_open["password"], sock);
@@ -96,21 +123,38 @@ namespace RS {
 	}
 
 	bool Server::Valid_Auth(const std::string &username, const std::string &password) {
-		// Do auth stuff...
-		return true;
+		bool valid = false;
+		if (users_.find(username) == users_.end()) {
+			users_[username] = password;
+
+			// Temporary {
+			RS::Server::Save_Auth();
+			// }
+
+			valid = true;
+		}
+		else {
+			valid = users_[username] == password;
+		}
+
+		return valid;
 	}
 
 	void Server::Client_Select_Sheet(const std::string &filename, const std::string &username,
 			const std::string &password, kn::tcp_socket &sock) {
 
 		if (Valid_Auth(username, password)) {
+			Log::Message(username + " authenticated.");
 			json full_send;
 			full_send["type"] = "full send";
 
 			if (std::filesystem::exists(filename)) {
+				// Do stuff to actually load spreadsheet...
+
 				// auto cells = File::Load_Json(filename);
 				// full_send["spreadsheet"] = cells;
-				
+
+				// Temp to make just work
 				auto new_sheet = Spreadsheet{ filename };
 				full_send["spreadsheet"] = {};
 			}
@@ -122,24 +166,28 @@ namespace RS {
 			Do_Full_Send(full_send, sock);
 		}
 		else {
-			Do_Error("Bad password.", sock);
+			Do_Error(1, "", sock);
 		}
 
 
 	}
 
 	void Server::Do_Full_Send(const json &full_send, kn::tcp_socket &sock) {
-		auto msg = std::string{ full_send.dump() + "\n\n" };
-		sock.send(reinterpret_cast<const std::byte*>(msg.c_str()), msg.size());
+		Send_Message(full_send, sock);
 	}
 
-	void Server::Do_Error(const std::string &error_msg, kn::tcp_socket &sock) {
+	void Server::Do_Error(int code, const std::string &source, kn::tcp_socket &sock) {
 		json j_error = {
 			{"type", "error"},
-			{"code", 1},
-			{"source", ""}
+			{"code", code},
+			{"source", source}
 		};
-		auto msg = std::string{ j_error.dump() + "\n\n" };
-		sock.send(reinterpret_cast<const std::byte*>(msg.c_str()), msg.size());
+
+		Send_Message(j_error, sock);
+	}
+
+	void Server::Send_Message(const json &msg, kn::tcp_socket &sock) {
+		auto out = std::string{ msg.dump() + "\n\n" };
+		sock.send(reinterpret_cast<const std::byte*>(out.c_str()), out.size());
 	}
 }

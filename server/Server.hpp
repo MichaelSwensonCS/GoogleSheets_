@@ -38,17 +38,25 @@ namespace RS {
 
 	class Server {
 	private:
+		static const std::string AUTH_FILENAME;
+
 		std::string host_;
 		uint16_t port_;
 
 		std::vector<std::thread> threads_;
 		std::vector<kn::tcp_socket> sockets_;
 		std::vector<Spreadsheet> sheets_;
+		std::map<std::string, std::string> users_;
+
+		void Load_Auth();
+		void Save_Auth();
 
 		bool Valid_Auth(const std::string&, const std::string&);
 		void Client_Select_Sheet(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);
 		void Do_Full_Send(const json&, kn::tcp_socket&);
-		void Do_Error(const std::string&, kn::tcp_socket&);
+		void Do_Error(int, const std::string&, kn::tcp_socket&);
+
+		void Send_Message(const json&, kn::tcp_socket&);
 	public:
 		static const uint16_t DEFAULT_PORT = 2112;
 
