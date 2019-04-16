@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/15/19                                                     *
+ *                      Modtime : 04/16/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -52,6 +52,7 @@ namespace RS {
 		void Save_Auth();
 
 		void Update(kn::tcp_socket&);
+		void Receive_Message(const json&, kn::tcp_socket&);
 
 		bool Valid_Auth(const std::string&, const std::string&);
 		void Client_Select_Sheet(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);

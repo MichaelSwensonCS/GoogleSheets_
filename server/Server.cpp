@@ -118,8 +118,8 @@ namespace RS {
 						}
 						else {
 							auto output = std::string(reinterpret_cast<char*>(buff.data()), size);
-							auto j_open = json::parse(output);
-							Client_Select_Sheet(j_open["name"], j_open["username"], j_open["password"], sock);
+							auto msg = json::parse(output);
+							Receive_Message(msg, sock);
 						}
 					}
 					else {
@@ -136,6 +136,25 @@ namespace RS {
 			});
 
 			threads_.back().detach();
+		}
+	}
+
+	void Server::Receive_Message(const json &msg, kn::tcp_socket &sock) {
+		std::string type = msg["type"];
+		if (type == "open") {
+			Client_Select_Sheet(msg["name"], msg["username"], msg["password"], sock);
+		}
+		else if (type == "edit") {
+
+		}
+		else if (type == "undo") {
+
+		}
+		else if (type == "revert") {
+
+		}
+		else {
+
 		}
 	}
 
