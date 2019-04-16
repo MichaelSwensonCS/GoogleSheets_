@@ -15,6 +15,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SpreadsheetUtilities;
 using SS.Misc;
 using SS.Models;
@@ -491,7 +492,7 @@ namespace SS.Controllers {
             else {
                 if (Log.Enabled) { Log.WriteLine("Connection created.", true); }
 
-                state.InitialMessage = true;
+                state.RecMessage = SocketState.MessageType.Initial;
                 ProcessMessagesAndUpdate(state);
                 _subViews.ShowOpenNewView(_serverSheets, state);
             }
@@ -503,7 +504,10 @@ namespace SS.Controllers {
                 MessageBox.Show(state.ErrorMessage, "Error");
             }
             else {
+
                 if (Log.Enabled) { Log.WriteLine("Sheet opened.", true); }
+                state.RecMessage = SocketState.MessageType.Open;
+                ProcessMessagesAndUpdate(state);
 
                 Console.WriteLine(state.SB.ToString());
             }
@@ -540,23 +544,58 @@ namespace SS.Controllers {
             string totalData = state.SB.ToString();
             string[] tokens = Regex.Split(totalData, @"(?<=[\n]{2})");
 
-            if (state.InitialMessage) {
-                state.InitialMessage = false;
+            switch(state.RecMessage) {
+                case SocketState.MessageType.Initial:
+                    state.RecMessage = SocketState.MessageType.None;
 
-                var msg = JsonConvert.DeserializeObject<ListMessage>(tokens[0]);
-                _serverSheets = msg.Spreadsheets;
-                state.SB.Remove(0, tokens[0].Length + tokens[1].Length);
+                    var msg = JsonConvert.DeserializeObject<ListMessage> (tokens[0]);
+                    _serverSheets = msg.Spreadsheets;
+                    state.SB.Remove(0, tokens[0].Length + tokens[1].Length);
+                    break;
+                case SocketState.MessageType.Open:
+                    state.RecMessage = SocketState.MessageType.None;
+
+                    JObject obj = JsonConvert.DeserializeObject<JObject>(tokens[0]);
+                    HandleOpenMessage(obj);
+                    break;
+                case SocketState.MessageType.None:
+                    break;
             }
-            else {
-                for (int i = 0; i < tokens.Length; i++) {
-                    if (IsValidToken(tokens[i])) {
-                        //UpdateObject(tokens[i]);
-                        state.SB.Remove(0, tokens[i].Length);
 
-                    }
+            //if (state.RecMessage == SocketState.MessageType.Initial) {
+            //    state.RecMessage = SocketState.MessageType.None;
+
+            //    var msg = JsonConvert.DeserializeObject<ListMessage>(tokens[0]);
+            //    _serverSheets = msg.Spreadsheets;
+            //    state.SB.Remove(0, tokens[0].Length + tokens[1].Length);
+            //}
+            //else {
+            //    for (int i = 0; i < tokens.Length; i++) {
+            //        if (IsValidToken(tokens[i])) {
+            //            //UpdateObject(tokens[i]);
+            //            state.SB.Remove(0, tokens[i].Length);
+
+            //        }
+            //    }
+
+            //    //Update();
+            //}
+        }
+
+        private void HandleOpenMessage(JObject obj) {
+            if (obj != null) {
+                var key = obj["type"].ToString();
+                switch(key) {
+                    case "full send":
+                        Console.WriteLine("FULL SEND INBOUND");
+                        break;
+                    case "error":
+                        Console.WriteLine("Shit's broke, errozr for days");
+                        break;
+                    default:
+                        Console.WriteLine("Something definitely went wrong");
+                        break;
                 }
-
-                //Update();
             }
         }
 

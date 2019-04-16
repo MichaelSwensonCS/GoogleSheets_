@@ -24,6 +24,13 @@ namespace SS.Models {
     /// </summary>
     public class SocketState {
 
+        public enum MessageType {
+            None,
+            Initial,
+            Open,
+            Edit
+        }
+
         private CancellationToken _token;
 
         /// <summary>
@@ -53,9 +60,9 @@ namespace SS.Models {
         public StringBuilder SB { get; private set; }
 
         /// <summary>
-        /// Determines whether the socket is delivering the first message.
+        /// Determines what the receving data message would be.
         /// </summary>
-        public bool InitialMessage { get; set; }
+        public MessageType RecMessage { get; set; }
 
         /// <summary>
         /// Determines whether an error has occurred.
@@ -80,7 +87,7 @@ namespace SS.Models {
 
             Buffer = new byte[_bufferLength];
             SB = new StringBuilder();
-            InitialMessage = false;
+            RecMessage = MessageType.None;
 
             Error = false;
             ErrorMessage = "";
