@@ -23,6 +23,8 @@ namespace RS {
 	 *-----------------------------------------------------------------------------------------*/
 
 	const std::string Server::AUTH_FILENAME = "radical_panda$.txt";
+	const std::string Server::DEFAULT_HOST = "127.0.0.1";
+	const uint16_t Server::DEFAULT_PORT = 2112;
 
 	/*-----------------------------------------------------------------------------------------*
 	 * Constructor/Destructor Methods                                                          *

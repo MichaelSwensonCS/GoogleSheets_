@@ -60,7 +60,8 @@ namespace RS {
 
 		void Send_Message(const json&, kn::tcp_socket&);
 	public:
-		static const uint16_t DEFAULT_PORT = 2112;
+		static const std::string DEFAULT_HOST;
+		static const uint16_t DEFAULT_PORT;
 
 		Server(const std::string&, const uint16_t&);
 
