@@ -180,7 +180,7 @@ namespace RS {
 	void Server::Receive_Message(const json &msg, kn::tcp_socket &sock) {
 		std::string type = msg["type"];
 		if (type == "open") {
-			Client_Select_Sheet(msg["name"], msg["username"], msg["password"], sock);
+			On_Open(msg["name"], msg["username"], msg["password"], sock);
 		}
 		else if (type == "edit") {
 
@@ -228,34 +228,45 @@ namespace RS {
 	 * @param sock The socket for the respective client.
 	 * @return True if the provided credentials are valid and false otherwise.
 	 */
-	void Server::Client_Select_Sheet(const std::string &filename, const std::string &username,
+	void Server::On_Open(const std::string &filename, const std::string &username,
 			const std::string &password, kn::tcp_socket &sock) {
 
 		if (Valid_Auth(username, password)) {
-			Log::Message(username + " authenticated.");
-			json full_send;
-			full_send["type"] = "full send";
-
-			if (std::filesystem::exists(filename)) {
-				// Do stuff to actually load spreadsheet...
-
-				// auto cells = File::Load_Json(filename);
-				// full_send["spreadsheet"] = cells;
-
-				// Temp to make just work
-				auto new_sheet = Spreadsheet{ filename };
-				full_send["spreadsheet"] = {};
-			}
-			else {
-				auto new_sheet = Spreadsheet{ filename };
-				full_send["spreadsheet"] = {};
-			}
-
-			Send_Message(full_send, sock);
+			Do_Full_Send(filename, sock);
 		}
 		else {
 			Do_Error(1, "", sock);
 		}
+	}
+
+	/*
+	 * Creates and sends a "full_send" message to a client.
+	 *
+	 * @param filename The name of the spreadsheet to open/create.
+	 * @param sock The socket for the respective client.
+	 */
+	void Server::Do_Full_Send(const std::string &filename, kn::tcp_socket &sock) {
+		json full_send;
+		if (std::filesystem::exists(filename)) {
+			auto it = sheets_.find(filename);
+			if (it != sheets_.end()) {
+				full_send = it->second;
+			}
+			else {
+				full_send = File::Load_Json(filename);
+				sheets_[filename] = full_send;
+			}
+		}
+		else {
+			full_send = {
+				{"type", "full send"},
+				{"spreadsheet", {"A1", ""}}
+			};
+			sheets_[filename] = full_send;
+			File::Save_Json(filename, full_send);
+		}
+
+		Send_Message(full_send, sock);
 	}
 
 	/*

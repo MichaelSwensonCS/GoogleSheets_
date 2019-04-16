@@ -45,8 +45,8 @@ namespace RS {
 
 		std::vector<std::thread> threads_;
 		std::vector<kn::tcp_socket> sockets_;
-		std::vector<Spreadsheet> sheets_;
 		std::map<std::string, std::string> users_;
+		std::map<std::string, json> sheets_;
 
 		void Load_Auth();
 		void Save_Auth();
@@ -55,7 +55,8 @@ namespace RS {
 		void Receive_Message(const json&, kn::tcp_socket&);
 
 		bool Valid_Auth(const std::string&, const std::string&);
-		void Client_Select_Sheet(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);
+		void On_Open(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);
+		void Do_Full_Send(const std::string&, kn::tcp_socket&);
 		void Do_Error(int, const std::string&, kn::tcp_socket&);
 
 		void Send_Message(const json&, kn::tcp_socket&);
