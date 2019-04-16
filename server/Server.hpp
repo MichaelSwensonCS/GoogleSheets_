@@ -25,9 +25,6 @@
 #include <csignal>
 #include "Libraries/json.hpp"
 #include "Libraries/kissnet.hpp"
-#include "Msg/List.hpp"
-#include "Net/Connection.hpp"
-#include "Spreadsheet/Spreadsheet.hpp"
 #include "Utilities/File.hpp"
 #include "Utilities/Log.hpp"
 
@@ -56,6 +53,7 @@ namespace RS {
 
 		bool Valid_Auth(const std::string&, const std::string&);
 		void On_Open(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);
+		void Do_List_Send(kn::tcp_socket&);
 		void Do_Full_Send(const std::string&, kn::tcp_socket&);
 		void Do_Error(int, const std::string&, kn::tcp_socket&);
 

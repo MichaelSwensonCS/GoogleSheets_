@@ -131,9 +131,7 @@ namespace RS {
 			auto &sock = sockets_.back();
 
 			// On initial connection, send list of spreadsheets.
-			auto sprds = RS::File::List_Spreadsheets(std::filesystem::current_path());
-			auto list = RS::Message::List{ sprds };
-			Send_Message(list.Json(), sock);
+			Do_List_Send(sock);
 
 			// Listens to messages from the particular socket.
 			threads_.emplace_back([&]{
@@ -237,6 +235,22 @@ namespace RS {
 		else {
 			Do_Error(1, "", sock);
 		}
+	}
+
+	/*
+	 * Creates and sends a "list" message to a client.
+	 *
+	 * @param sock The socket for the respective client.
+	 */
+	void Server::Do_List_Send(kn::tcp_socket &sock) {
+		auto sprds = RS::File::List_Spreadsheets(std::filesystem::current_path());
+
+		json list = {
+			{"type", "list"},
+			{"spreadsheets", sprds}
+		};
+
+		Send_Message(list, sock);
 	}
 
 	/*
