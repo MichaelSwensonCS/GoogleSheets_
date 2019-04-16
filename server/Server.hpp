@@ -51,6 +51,8 @@ namespace RS {
 		void Load_Auth();
 		void Save_Auth();
 
+		void Update(kn::tcp_socket&);
+
 		bool Valid_Auth(const std::string&, const std::string&);
 		void Client_Select_Sheet(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);
 		void Do_Full_Send(const json&, kn::tcp_socket&);
@@ -63,7 +65,6 @@ namespace RS {
 		Server(const std::string&, const uint16_t&);
 
 		void Start();
-		void Update(kn::tcp_socket&);
 	};
 }
 
