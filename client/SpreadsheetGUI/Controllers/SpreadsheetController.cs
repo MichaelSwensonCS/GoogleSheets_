@@ -370,33 +370,6 @@ namespace SS.Controllers {
         }
 
         /// <summary>
-        /// Helper method to copy a value to the clipboard.
-        /// </summary>
-        /// <param name="value"></param>
-        private void CopyToClipboard(string value) {
-            if (value == "") {
-                Clipboard.Clear();
-            }
-            else {
-                Clipboard.SetText(value);
-            }
-        }
-
-        /// <summary>
-        /// Helper method to paste a value from the clipboard.
-        /// </summary>
-        /// <returns></returns>
-        private string PasteFromClipboard() {
-            string value = Clipboard.GetText();
-            if (string.IsNullOrEmpty(value)) {
-                return "";
-            }
-            else {
-                return value;
-            }
-        }
-
-        /// <summary>
         /// Handler for when a theme change to and from dark mode is toggled.
         /// </summary>
         /// <param name="sender"></param>
