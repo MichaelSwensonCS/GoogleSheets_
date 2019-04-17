@@ -41,7 +41,7 @@ namespace SS.Models {
         /// <summary>
         /// The path that the spreadsheet is stored.
         /// </summary>
-        public string FilePath { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Represents whether the current theme is dark or not.
@@ -78,7 +78,18 @@ namespace SS.Models {
                 Sheet = new Spreadsheet(path, s => true, s => s.ToUpper(), _version);
             }
 
-            FilePath = path;
+            Name = path;
+            LoadModel();
+        }
+
+        public SpreadsheetModel(string name, Dictionary<string, string> cells) {
+            Sheet = new Spreadsheet(s => true, s => s.ToUpper(), _version);
+
+            foreach (KeyValuePair<string, string> cell in cells) {
+                Sheet.SetContentsOfCell(cell.Key, cell.Value);
+            }
+
+            Name = name;
             LoadModel();
         }
 
@@ -86,7 +97,6 @@ namespace SS.Models {
         /// Helper method to load the initial model.
         /// </summary>
         private void LoadModel() {
-            Connected = false;
             Previous = null;
 
             Point coords = Cell.NameToCoords(_initCellName);

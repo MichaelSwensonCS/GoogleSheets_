@@ -42,6 +42,7 @@ namespace SS.Controllers {
     /// between the model and view are handled by the controller.
     /// </summary>
     public class SpreadsheetController : ISpreadsheetController {
+        string _openingSheetName;
         List<string> _serverSheets;
 
         // Used to try to safely disconnect from a server.
@@ -60,6 +61,8 @@ namespace SS.Controllers {
         private ISpreadsheetModel _model;
         private SubViewsController _subViews;
 
+        private Form _viewForm;
+
         /// <summary>
         /// Triggers when the controller commits to closing.
         /// </summary>
@@ -68,7 +71,7 @@ namespace SS.Controllers {
         /// <summary>
         /// The path associated with the controller.
         /// </summary>
-        public string ModelPath { get { return _model.FilePath; } }
+        public string ModelPath { get { return _model.Name; } }
 
         /// <summary>
         /// Constructor that initializes the given view, model, and subviews.
@@ -82,6 +85,8 @@ namespace SS.Controllers {
             _view = view;
             _model = model;
             _subViews = subviews;
+
+            _viewForm = _view as Form;
 
             Load(appController);
             _subViews.ShowConnectView(true);
@@ -110,21 +115,40 @@ namespace SS.Controllers {
         /// <param name="model">The model to load.</param>
         public void LoadModel(ISpreadsheetModel model) {
             _model = model;
+
             _view.Clear();
-            _view.Title = _model.FilePath;
+            _view.Title = _model.Name;
 
             _view.DisplayedCellName = _model.Current.Name;
             _view.DisplayedCellContents = _model.Current.Contents;
             _view.SetSelectedCell(_model.Current.Coords.X, _model.Current.Coords.Y);
-            
+
             List<Tuple<Point, string>> cells = _model.GetCellValues(null);
             foreach (Tuple<Point, string> cell in cells) {
                 _view.SetPanelValueOfCell(cell.Item1.X, cell.Item1.Y, cell.Item2);
             }
 
             _view.DisplayedCellValue = _model.Current.Value;
+        }
 
-            _model.PropertyChanged += OnModelPropertyChange;
+        public void LoadModelThreaded(ISpreadsheetModel model) {
+            _model = model;
+
+            _viewForm.Invoke(new MethodInvoker(() => {
+                _view.Clear();
+                _view.Title = _model.Name;
+
+                _view.DisplayedCellName = _model.Current.Name;
+                _view.DisplayedCellContents = _model.Current.Contents;
+                _view.SetSelectedCell(_model.Current.Coords.X, _model.Current.Coords.Y);
+
+                List<Tuple<Point, string>> cells = _model.GetCellValues(null);
+                foreach (Tuple<Point, string> cell in cells) {
+                    _view.SetPanelValueOfCell(cell.Item1.X, cell.Item1.Y, cell.Item2);
+                }
+
+                _view.DisplayedCellValue = _model.Current.Value;
+            }));
         }
 
         /// <summary>
@@ -137,7 +161,7 @@ namespace SS.Controllers {
 
             _view.SelectionChanged += OnCellSelectionChanged;
             _view.DisplayedContentsKeyPress += OnFormulaBoxKeyPressed;
-            
+
             _view.OpenMenuClick += OnOpenClick;
             _view.CloseMenuClick += (o, e) => _view.Close();
 
@@ -151,8 +175,6 @@ namespace SS.Controllers {
             _view.HelpChangingCellsMenuClick += (o, e) => _subViews.ShowHelpChangingCellsView();
             _view.HelpAddtionalFeaturesMenuClick += (o, e) => _subViews.ShowHelpAdditoinalFeaturesView();
             _view.AboutMenuClick += (o, e) => _subViews.ShowAboutView();
-
-            _model.PropertyChanged += OnModelPropertyChange;
 
             _subViews.ConnectFormClosed += OnConnectClosed;
             _subViews.OpenNewFormClosed += OnOpenSaveClosed;
@@ -391,24 +413,6 @@ namespace SS.Controllers {
         }
 
         /// <summary>
-        /// Handler for when the model's properties change, and specifically the PendingSave state.
-        /// Used for the autosave functionality.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnModelPropertyChange(Object sender, PropertyChangedEventArgs e) {
-            if (e.PropertyName == "PendingSave") {
-                //if (_model.PendingSave) {
-                //    if (_autoSave) {
-                //        Save(out DialogResult result);
-                //    }
-                //}
-
-                UpdateViewTitle(_model.FilePath);
-            }
-        }
-
-        /// <summary>
         /// Helper method to update all the visual components of a selected cell.
         /// </summary>
         /// <param name="cell">The cell to display.</param>
@@ -458,6 +462,8 @@ namespace SS.Controllers {
         private void OnOpenSheet(OpenMessage om, SocketState state) {
             if (Log.Enabled) { Log.WriteLine($"Attempting to open/create {om.SpreadsheetName}...", true); }
 
+            _openingSheetName = om.SpreadsheetName;
+
             state.Callback = OpenCallback;
             Net.Send(state.Socket, JsonConvert.SerializeObject(om));
             Net.GetData(state);
@@ -504,8 +510,6 @@ namespace SS.Controllers {
                 MessageBox.Show(state.ErrorMessage, "Error");
             }
             else {
-
-                if (Log.Enabled) { Log.WriteLine("Sheet opened.", true); }
                 state.RecMessage = SocketState.MessageType.Open;
                 ProcessMessagesAndUpdate(state);
 
@@ -554,6 +558,7 @@ namespace SS.Controllers {
                     break;
                 case SocketState.MessageType.Open:
                     state.RecMessage = SocketState.MessageType.None;
+                    state.SB.Remove(0, tokens[0].Length + tokens[1].Length);
 
                     JObject obj = JsonConvert.DeserializeObject<JObject>(tokens[0]);
                     HandleOpenMessage(obj);
@@ -587,13 +592,14 @@ namespace SS.Controllers {
                 var key = obj["type"].ToString();
                 switch(key) {
                     case "full send":
-                        Console.WriteLine("FULL SEND INBOUND");
+                        FullSendMessage fsm = JsonConvert.DeserializeObject<FullSendMessage>(obj.ToString());
+                        AppController.GetController().LoadModelIntoInstance(_openingSheetName, fsm.Cells, this);
+                        _subViews.EndOpenNew();
                         break;
                     case "error":
-                        Console.WriteLine("Shit's broke, errozr for days");
+                        MessageBox.Show("Incorrect password", "Error");
                         break;
                     default:
-                        Console.WriteLine("Something definitely went wrong");
                         break;
                 }
             }

@@ -34,7 +34,7 @@ namespace SS.Models {
         /// <summary>
         /// The path that the spreadsheet is stored.
         /// </summary>
-        string FilePath { get; set; }
+        string Name { get; set; }
 
         /// <summary>
         /// Represents whether the current theme is dark or not.

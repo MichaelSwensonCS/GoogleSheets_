@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/06/19                                                     *
+ *                      Modtime : 04/16/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -34,11 +34,6 @@ namespace SS.Controllers {
         /// Tally of spreadsheet windows currently open and running.
         /// </summary>
         public int Instances { get; private set; } = 0;
-
-        /// <summary>
-        /// A set of the current titles in use by the applicatoin's instances.
-        /// </summary>
-        public HashSet<string> InstanceTitles { get; } = new HashSet<string>();
 
         /// <summary>
         /// Singleton constructor.
@@ -78,14 +73,13 @@ namespace SS.Controllers {
         /// <returns>The application context.</returns>
         public void CreateNewWindow() {
             string path = "";
-            if (TryCreateModel(path, out ISpreadsheetModel model)) {
+            Dictionary<string, string>  cells = new Dictionary<string, string>();
+            if (TryCreateModel(path, cells, out ISpreadsheetModel model)) {
                 ISpreadsheetView view = new SpreadsheetView(path, false);
                 SubViewsController subViews = new SubViewsController(false);
                 ISpreadsheetController controller = new SpreadsheetController(this, view, model, subViews);
 
                 controller.ClosingInitiated += OnInstanceClosing;
-
-                InstanceTitles.Add(path);
             }
         }
 
@@ -111,30 +105,26 @@ namespace SS.Controllers {
         /// <summary>
         /// Loads a new model into an already existing controller.
         /// </summary>
-        /// <param name="path">The spreadsheet file to load.</param>
+        /// <param name="name">The spreadsheet file to load.</param>
         /// <param name="controller">The instance of the controller to load into.</param>
-        public void LoadModelIntoInstance(string path, ISpreadsheetController controller) {
-            if (TryCreateModel(path, out ISpreadsheetModel model)) {
-                InstanceTitles.Remove(controller.ModelPath);
-
-                controller.LoadModel(model);
-
-                InstanceTitles.Add(path);
+        public void LoadModelIntoInstance(string name, Dictionary<string, string> cells, ISpreadsheetController controller) {
+            if (TryCreateModel(name, cells, out ISpreadsheetModel model)) {
+                controller.LoadModelThreaded(model);
             }
         }
 
         /// <summary>
         /// Safely tries to create a new spreadsheet model.
         /// </summary>
-        /// <param name="path">Path to the spreadsheet if available.</param>
+        /// <param name="name">The name of the spreadsheet.</param>
         /// <param name="model">The model object to output.</param>
         /// <returns></returns>
-        private bool TryCreateModel(string path, out ISpreadsheetModel model) {
+        private bool TryCreateModel(string name, Dictionary<string, string> cells, out ISpreadsheetModel model) {
             bool modelCreated = false;
 
             model = null;
             try {
-                model = new SpreadsheetModel(path);
+                model = new SpreadsheetModel(name, cells);
                 modelCreated = true;
             }
             catch (SpreadsheetReadWriteException e) {
@@ -145,27 +135,10 @@ namespace SS.Controllers {
         }
 
         /// <summary>
-        /// Swaps the title of a given instance.
-        /// </summary>
-        /// <param name="original">The original instance's title.</param>
-        /// <param name="updated">The new title for the instance.</param>
-        public static void UpdateInstanceTitle(string original, string updated) {
-            AppController appController = AppController.GetController();
-
-            if (appController.InstanceTitles.Contains(original)) {
-                if(!appController.InstanceTitles.Contains(updated)) {
-                    appController.InstanceTitles.Remove(original);
-                    appController.InstanceTitles.Add(updated);
-                }
-            }
-        }
-
-        /// <summary>
         /// Handler for when an instance commits to closing.
         /// </summary>
         /// <param name="controller"></param>
         public void OnInstanceClosing(ISpreadsheetController controller) {
-            InstanceTitles.Remove(controller.ModelPath);
         }
 
         /// <summary>

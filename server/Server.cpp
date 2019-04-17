@@ -274,7 +274,10 @@ namespace RS {
 		else {
 			full_send = {
 				{"type", "full send"},
-				{"spreadsheet", {"A1", ""}}
+				{"spreadsheet", {
+					{"A1", ""},
+					{"A2", ""}
+				}}
 			};
 			sheets_[filename] = full_send;
 			File::Save_Json(filename, full_send);

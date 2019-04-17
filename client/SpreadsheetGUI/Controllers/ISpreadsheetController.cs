@@ -39,5 +39,7 @@ namespace SS.Controllers {
         /// </summary>
         /// <param name="model">The model to load.</param>
         void LoadModel(ISpreadsheetModel model);
+
+        void LoadModelThreaded(ISpreadsheetModel model);
     }
 }

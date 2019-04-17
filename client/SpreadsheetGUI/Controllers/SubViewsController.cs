@@ -149,6 +149,19 @@ namespace SS.Controllers {
             _openNew.DarkMode(mode);
         }
 
+        public void EndOpenNew() {
+            if (_initialLoad) {
+                _initialLoad = false;
+                _connectView.Invoke(new MethodInvoker(() => {
+                    _connectView.Close();
+                }));
+            }
+            _openNew.Invoke(new MethodInvoker(() => {
+                _openNew.Close();
+                _openNew.ToggleInputs(true);
+            }));
+        }
+
         /// <summary>
         /// Handler for the Connect view when it closes.
         /// </summary>
@@ -211,16 +224,10 @@ namespace SS.Controllers {
                 OpenMessage om = new OpenMessage(values[2], values[0], values[1]);
                 OpenSheet?.Invoke(om, _state);
 
-                if (_initialLoad) {
-                    _initialLoad = false;
-                    _connectView.Invoke(new MethodInvoker(() => {
-                        _connectView.Close();
-                    }));
-                }
                 _openNew.Invoke(new MethodInvoker(() => {
-                    _openNew.Close();
                     _openNew.ToggleInputs(true);
                 }));
+
                 return;
             }
             else {
