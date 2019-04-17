@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -255,6 +256,10 @@ namespace SS.Controllers {
         private void OnCellSelectionChanged(SpreadsheetPanel sp) {
             sp.GetSelection(out int col, out int row);
             _model.Current.Contents = _view.DisplayedCellContents;
+
+            string cellName = Cell.CoordsToName(col, row);
+            EditMessage em = new EditMessage(cellName, _model.Current.Contents, _model.GetDirectDependents(cellName).ToList());
+
             List<Tuple<Point, string>> cellsToUpdate = _model.ChangeCurrentCell(col, row, CellUpdateActionError);
 
             if (cellsToUpdate != null) {
@@ -467,6 +472,10 @@ namespace SS.Controllers {
             state.Callback = OpenCallback;
             Net.Send(state.Socket, JsonConvert.SerializeObject(om));
             Net.GetData(state);
+        }
+
+        private void OnEdit() {
+
         }
 
         /// <summary>

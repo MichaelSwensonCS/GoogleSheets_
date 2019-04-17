@@ -181,7 +181,7 @@ namespace RS {
 			On_Open(msg["name"], msg["username"], msg["password"], sock);
 		}
 		else if (type == "edit") {
-
+			On_Edit(msg["cell"], msg["value"], msg["dependencies"], sock);
 		}
 		else if (type == "undo") {
 
@@ -235,6 +235,11 @@ namespace RS {
 		else {
 			Do_Error(1, "", sock);
 		}
+	}
+
+	void On_Edit(const std::string &cell, const std::string &contents,
+			const std::vector<std::string> &dependencies, kn::tcp_socket &sock) {
+
 	}
 
 	/*

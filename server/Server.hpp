@@ -53,6 +53,7 @@ namespace RS {
 
 		bool Valid_Auth(const std::string&, const std::string&);
 		void On_Open(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);
+		void On_Edit(const std::string&, const std::string&, const std::vector<std::string>&, kn::tcp_socket&);
 		void Do_List_Send(kn::tcp_socket&);
 		void Do_Full_Send(const std::string&, kn::tcp_socket&);
 		void Do_Error(int, const std::string&, kn::tcp_socket&);

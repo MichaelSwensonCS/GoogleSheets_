@@ -186,6 +186,10 @@ namespace SS.Models {
             return cells;
         }
 
+        public IEnumerable<string> GetDirectDependents(string cell) {
+            return Sheet.GetDirectDependents(cell);
+        }
+
         /// <summary>
         /// Helper method to safely set the contents of a cell and get back the cells that need updating.
         /// </summary>

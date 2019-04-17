@@ -82,5 +82,7 @@ namespace SS.Models {
         /// <param name="notifyError">An outside action to trigger if an error happens.</param>
         /// <returns>List of cells that were affected by the contents being changed of the particular cell.</returns>
         List<Tuple<Point, string>> UpdateCellContents(Cell cell, Action<Exception> notifyError);
+
+        IEnumerable<string> GetDirectDependents(string cell);
     }
 }
