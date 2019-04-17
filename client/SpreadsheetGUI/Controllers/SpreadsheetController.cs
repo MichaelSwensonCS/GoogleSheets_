@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -45,6 +46,7 @@ namespace SS.Controllers {
     public class SpreadsheetController : ISpreadsheetController {
         string _openingSheetName;
         List<string> _serverSheets;
+        
 
         // Used to try to safely disconnect from a server.
         private CancellationTokenSource _client;
@@ -61,6 +63,8 @@ namespace SS.Controllers {
         private ISpreadsheetView _view;
         private ISpreadsheetModel _model;
         private SubViewsController _subViews;
+        private List<DefaultMessage> _messageList;
+        private StringBuilder _sbmsg;
 
         private Form _viewForm;
 
@@ -91,6 +95,9 @@ namespace SS.Controllers {
 
             Load(appController);
             _subViews.ShowConnectView(true);
+
+            _messageList = new List<DefaultMessage>();
+            _sbmsg = new StringBuilder();
         }
 
         /// <summary>
@@ -247,6 +254,7 @@ namespace SS.Controllers {
             }
         }
 
+        
         /// <summary>
         /// Handler for responding to a cell selection change. It's responsible for
         /// displaying the correct information of the newly selected cell. Also responsible
@@ -256,9 +264,14 @@ namespace SS.Controllers {
         private void OnCellSelectionChanged(SpreadsheetPanel sp) {
             sp.GetSelection(out int col, out int row);
             _model.Current.Contents = _view.DisplayedCellContents;
-
+            
+            if(_messageList == null)
+            {
+                _messageList = new List<DefaultMessage>();
+            }
             string cellName = Cell.CoordsToName(col, row);
             EditMessage em = new EditMessage(cellName, _model.Current.Contents, _model.GetDirectDependents(cellName).ToList());
+            _messageList.Add(em);
 
             List<Tuple<Point, string>> cellsToUpdate = _model.ChangeCurrentCell(col, row, CellUpdateActionError);
 
@@ -469,7 +482,8 @@ namespace SS.Controllers {
 
             _openingSheetName = om.SpreadsheetName;
 
-            state.Callback = OpenCallback;
+            state.Callback = ReceiveUpdates;
+            state.RecMessage = SocketState.MessageType.Open;
             Net.Send(state.Socket, JsonConvert.SerializeObject(om));
             Net.GetData(state);
         }
@@ -521,7 +535,9 @@ namespace SS.Controllers {
             else {
                 state.RecMessage = SocketState.MessageType.Open;
                 ProcessMessagesAndUpdate(state);
-
+                state.Callback = ReceiveUpdates;
+                
+                Net.GetData(state);
                 Console.WriteLine(state.SB.ToString());
             }
         }
@@ -543,10 +559,32 @@ namespace SS.Controllers {
                 // Display updates.
 
                 // Send any messages to server.
-
+                
+                Net.Send(state.Socket, BuildSendMessage(ref _sbmsg));
                 // Request more data.
+                state.Callback = ReceiveUpdates;
                 Net.GetData(state);
             }
+        }
+
+        
+        private string BuildSendMessage(ref StringBuilder sb)
+        {
+            string msg = "";
+            if(_sbmsg == null)
+            {
+                _sbmsg = new StringBuilder();
+            }
+            foreach (DefaultMessage m in _messageList)
+            {
+                var jmsg = JsonConvert.SerializeObject(m);
+                sb.Append(jmsg.ToString());
+                sb.Append("\n\n");
+            }
+            msg = sb.ToString();
+            sb.Clear();
+
+            return msg;
         }
 
         /// <summary>
