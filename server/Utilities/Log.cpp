@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/15/19                                                     *
+ *                      Modtime : 04/17/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Log:                                                                                        *
@@ -61,6 +61,30 @@ namespace RS {
 	 */
 	void Log::Error(const std::string &msg) {
 		Do_Msg("[\033[31m  ERROR  \033[0m]:   " + msg);
+	}
+
+	/*
+	 * Prompt for new user creation which returns a password that the user enters.
+	 *
+	 * @param account Name of the new account being created.
+	 */
+	std::string Log::Prompt_Password(const std::string &account) {
+		std::string pw;
+		Message("Please provide a password for the new account, " + account + ":");
+		std::cin >> pw;
+		return pw;
+	}
+
+	/*
+	 * Prompt for when a spreadsheet could be overwritten.
+	 *
+	 * @param spreadsheet The filename of the spreadsheet.
+	 */
+	std::string Log::Prompt_Overwrite(const std::string &spreadsheet) {
+		std::string resp;
+		Warning("Spreadsheet, " + spreadsheet + " already exists. Overwrite? (Y/N):");
+		std::cin >> resp;
+		return resp;
 	}
 
 	/*-----------------------------------------------------------------------------------------*

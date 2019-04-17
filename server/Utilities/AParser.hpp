@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/11/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/19                                                     *
+ *                      Modtime : 04/17/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * AParser:                                                                                    *
@@ -18,22 +18,25 @@
 
 #include <algorithm>
 #include <string> 
+#include <vector>
+#include "Action.hpp"
 #include "Log.hpp"
 
 namespace RS {
+
 	class AParser {
+	private:
+		std::vector<Action> actions_;
 		std::string host_;
 		int port_;
 
-	private:
-		enum class CL_Action_Type { Account, Spreadsheet };
-
 		static std::string Get_Arg(int, char **);
-		static void Do_Action(CL_Action_Type, const std::string&);
+		void Register_Action(CL_Action_Type, const std::string&, const std::string&);
 	public:
 		AParser(int, char **);
 
-		const std::string& Host();
+		const std::vector<Action>& Actions() const;
+		const std::string& Host() const;
 		int Port();
 	};
 }

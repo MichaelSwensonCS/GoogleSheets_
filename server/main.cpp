@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/16/19                                                     *
+ *                      Modtime : 04/17/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * main:                                                                                       *
@@ -24,11 +24,11 @@
  * @param argv The arguments that have been provided.
  */
 int main(int argc, char **argv) {
-	RS::AParser argparse(argc, argv);
-	auto host = argparse.Host().empty() ? RS::Server::DEFAULT_HOST : argparse.Host();
-	auto port = argparse.Port() == -1 ? RS::Server::DEFAULT_PORT : argparse.Port();
+	RS::AParser ap(argc, argv);
+	auto host = ap.Host().empty() ? RS::Server::DEFAULT_HOST : ap.Host();
+	auto port = ap.Port() == -1 ? RS::Server::DEFAULT_PORT : ap.Port();
 
-	RS::Server srv(host, port);
+	RS::Server srv(host, port, ap.Actions());
 	srv.Start();
 
 	return 0;

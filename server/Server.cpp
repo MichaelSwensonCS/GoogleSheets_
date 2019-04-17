@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/16/19                                                     *
+ *                      Modtime : 04/17/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -37,8 +37,8 @@ namespace RS {
 	 * @param port The port that the server will listen on.
 	 * @return A new Spreadsheet instance with a value of the provided type.
 	 */
-	Server::Server(const std::string &host, const uint16_t &port) : host_(host), port_(port),
-			threads_(), sockets_(), sheets_(), users_() {}
+	Server::Server(const std::string &host, const uint16_t &port, const std::vector<Action> &actions)
+			: host_(host), port_(port), actions_(actions), threads_(), sockets_(), sheets_(), users_() {}
 
 	/*-----------------------------------------------------------------------------------------*
 	 * Public Methods                                                                          *
@@ -55,6 +55,9 @@ namespace RS {
 		// Load the authentication file.
 		Load_Auth();
 
+		// Execute any actions provided from command line arguments.
+		Do_Actions();
+
 		// Must be non-capturing lambda.
 		// https://stackoverflow.com/questions/11468414/using-auto-and-lambda-to-handle-signal
 		std::signal(SIGINT, [](int) {
@@ -62,22 +65,13 @@ namespace RS {
 			std::exit(0);
 		});
 
-		// Send SIGINT if user presses 'enter'.
-		std::thread run_th([] {
-			RS::Log::Message("Press 'enter' to shutdown the server.");
-			std::cin.get();
-			std::cin.clear();
-			std::raise(SIGINT);
-		});
-
-		run_th.detach();
-
 		// Begin listening.
 		kn::tcp_socket listen_socket({ host_, port_ });
 		listen_socket.bind();
 		listen_socket.listen();
 
 		RS::Log::Success("Server started.");
+		RS::Log::Message("Press ctrl+c to shutdown the server.");
 
 		Update(listen_socket);
 	}
@@ -85,6 +79,133 @@ namespace RS {
 	/*-----------------------------------------------------------------------------------------*
 	 * Helper Methods                                                                          *
 	 *-----------------------------------------------------------------------------------------*/
+
+	/*
+	 * Executes any actions that were provided from command line arguments.
+	 *
+	 */
+	void Server::Do_Actions() {
+		for (const auto &action : actions_) {
+			switch(action.Action_Type()) {
+				case CL_Action_Type::Account:
+					switch(action.The_Action()) {
+						case CL_Action::Create:
+							Do_Account_Create(action);
+							break;
+						case CL_Action::Delete:
+							Do_Account_Delete(action);
+							break;
+					}
+					break;
+				case CL_Action_Type::Spreadsheet:
+					switch(action.The_Action()) {
+						case CL_Action::Create:
+							Do_Spreadsheet_Create(action);
+							break;
+						case CL_Action::Delete:
+							Do_Spreadsheet_Delete(action);
+							break;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	/*
+	 * Attempts to create a new user account, based on data provided from the action.
+	 *
+	 * @param action The related action object.
+	 */
+	void Server::Do_Account_Create(const Action &action) {
+		// Get password from user.
+		std::string pw(RS::Log::Prompt_Password(action.Arg01()));
+
+		// Verify.
+		if (users_.find(action.Arg01()) == users_.end()) {
+			users_[action.Arg01()] = pw;
+			RS::Server::Save_Auth();
+			RS::Log::Success("User " + action.Arg01() + " created.");
+		}
+		else {
+			RS::Log::Error("User already exists! No changes applied.");
+		}
+	}
+
+	/*
+	 * Attempts to delete a user account, based on the data provided from the action.
+	 *
+	 * @param action The related action object.
+	 */
+	void Server::Do_Account_Delete(const Action &action) {
+		auto it = users_.find(action.Arg01());
+		if (it != users_.end()) {
+			users_.erase(it);
+			RS::Server::Save_Auth();
+			RS::Log::Success("User " + action.Arg01() + " deleted.");
+		}
+		else {
+			RS::Log::Error("Can't delete user " + action.Arg01() + " because user doesn't exist.");
+		}
+	}
+
+	/*
+	 * Attempts to create a new spreadsheet, based on data provided from the action.
+	 *
+	 * @param action The related action object.
+	 */
+	void Server::Do_Spreadsheet_Create(const Action &action) {
+		bool create_new = false;
+
+		if (std::filesystem::exists(action.Arg01())) {
+			std::string response;
+
+		response_check:
+			response = RS::Log::Prompt_Overwrite(action.Arg01());
+			std::transform(response.begin(), response.end(), response.begin(), ::tolower);
+			if (response == "y" || response == "yes") {
+				create_new = true;
+			}
+			else if (response == "n" || response == "no") {
+				RS::Log::Message("No action taken.");
+			}
+			else {
+				goto response_check;
+			}
+		}
+		else {
+			create_new = true;
+		}
+
+		if (create_new) {
+			json sheet = {
+				{"type", "full send"},
+				{"spreadsheet", {
+					{"A1", ""},
+					{"A2", ""}
+				}}
+			};
+
+			File::Save_Json(action.Arg01(), sheet);
+			RS::Log::Success("Spreadsheet " + action.Arg01() + " created.");
+		}
+	}
+
+	/*
+	 * Attempts to delete a spreadsheet, based on the data provided from the action.
+	 *
+	 * @param action The related action object.
+	 */
+	void Server::Do_Spreadsheet_Delete(const Action &action) {
+		if (std::filesystem::exists(action.Arg01())) {
+			unlink(action.Arg01().c_str());
+			RS::Log::Success("Spreadsheet " + action.Arg01() + " deleted.");
+		}
+		else {
+			RS::Log::Error("Can't delete spreadsheet " + action.Arg01() + " because it doesn't exist.");
+		}
+	}
 
 	/*
 	 * Loads the local authentication file that is specified by AUTH_FILENAME. If the file cannot
@@ -224,7 +345,6 @@ namespace RS {
 	 * @param username The username specified from the client.
 	 * @param password The password specified from the client.
 	 * @param sock The socket for the respective client.
-	 * @return True if the provided credentials are valid and false otherwise.
 	 */
 	void Server::On_Open(const std::string &filename, const std::string &username,
 			const std::string &password, kn::tcp_socket &sock) {
@@ -237,9 +357,17 @@ namespace RS {
 		}
 	}
 
-	void On_Edit(const std::string &cell, const std::string &contents,
+	/*
+	 * Action for when a client sends an edit.
+	 *
+	 * @param cell The cell that was edited.
+	 * @param contents The new contents of the cell.
+	 * @param dependencies The direct dependents of the cell.
+	 * @param sock The socket for the respective client.
+	 */
+	void Server::On_Edit(const std::string &cell, const std::string &contents,
 			const std::vector<std::string> &dependencies, kn::tcp_socket &sock) {
-
+		Log::Message("Edit for cell " + cell + " is: " + contents);
 	}
 
 	/*

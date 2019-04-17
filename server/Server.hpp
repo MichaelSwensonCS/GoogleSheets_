@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/16/19                                                     *
+ *                      Modtime : 04/17/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -17,14 +17,16 @@
 #ifndef SERVER_RS_H
 #define SERVER_RS_H
 
+#include <algorithm>
+#include <csignal>
 #include <filesystem>
 #include <functional>
 #include <thread>
+#include <unistd.h>
 #include <vector>
-#include <algorithm>
-#include <csignal>
 #include "Libraries/json.hpp"
 #include "Libraries/kissnet.hpp"
+#include "Utilities/Action.hpp"
 #include "Utilities/File.hpp"
 #include "Utilities/Log.hpp"
 
@@ -40,10 +42,18 @@ namespace RS {
 		std::string host_;
 		uint16_t port_;
 
+		std::vector<Action> actions_;
+
 		std::vector<std::thread> threads_;
 		std::vector<kn::tcp_socket> sockets_;
 		std::map<std::string, std::string> users_;
 		std::map<std::string, json> sheets_;
+
+		void Do_Actions();
+		void Do_Account_Create(const Action&);
+		void Do_Account_Delete(const Action&);
+		void Do_Spreadsheet_Create(const Action&);
+		void Do_Spreadsheet_Delete(const Action&);
 
 		void Load_Auth();
 		void Save_Auth();
@@ -63,7 +73,7 @@ namespace RS {
 		static const std::string DEFAULT_HOST;
 		static const uint16_t DEFAULT_PORT;
 
-		Server(const std::string&, const uint16_t&);
+		Server(const std::string&, const uint16_t&, const std::vector<Action>&);
 
 		void Start();
 	};
