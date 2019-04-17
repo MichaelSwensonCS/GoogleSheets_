@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/12/18                                                     *
  *                                                                                             *
- *                      Modtime : 10/15/18                                                     *
+ *                      Modtime : 10/17/18                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -34,9 +34,8 @@ namespace SS.Views {
         event EventHandler OpenMenuClick;
         event EventHandler CloseMenuClick;
 
-        event EventHandler CutMenuClick;
-        event EventHandler CopyMenuClick;
-        event EventHandler PasteMenuClick;
+        event EventHandler UndoMenuClick;
+        event EventHandler RevertMenuClick;
 
         event EventHandler DarkModeMenuClick;
 

@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/15/19                                                     *
+ *                      Modtime : 04/17/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -47,7 +47,6 @@ namespace SS.Controllers {
         string _openingSheetName;
         List<string> _serverSheets;
         
-
         // Used to try to safely disconnect from a server.
         private CancellationTokenSource _client;
         private CancellationToken _cancelToken;
@@ -173,9 +172,8 @@ namespace SS.Controllers {
             _view.OpenMenuClick += OnOpenClick;
             _view.CloseMenuClick += (o, e) => _view.Close();
 
-            _view.CutMenuClick += OnCutClick;
-            _view.CopyMenuClick += OnCopyClick;
-            _view.PasteMenuClick += OnPasteClick;
+            _view.UndoMenuClick += OnUndoClick;
+            _view.RevertMenuClick += OnRevertClick;
 
             _view.DarkModeMenuClick += OnDarkModeClick;
 
@@ -352,43 +350,23 @@ namespace SS.Controllers {
         }
 
         /// <summary>
-        /// Handler for when a cut event is triggered. Cuts out the selected cell contents and stores
-        /// them in the clipboard.
+        /// Handler that is responsible for when an undo action is fired.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnCutClick(object sender, EventArgs e) {
-            CopyToClipboard(_view.DisplayedCellValue);
+        private void OnUndoClick(object sender, EventArgs e) {
+            Console.WriteLine("Undo clicked.");
 
-            _model.Current.OriginalContents = _model.Current.Contents;
-            _model.Current.Contents = "";
-
-            _model.UpdateCellContents(_model.Current, CellUpdateActionError);
-            UpdateSelectedCellDisplayValues(_model.Current);
         }
 
         /// <summary>
-        /// Handler for when a copy event is triggered. Copies the selected cell contents and stores
-        /// them in the clipboard.
+        /// Handler that is responsible for when an undo action is fired.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnCopyClick(object sender, EventArgs e) {
-            CopyToClipboard(_view.DisplayedCellValue);
-        }
+        private void OnRevertClick(object sender, EventArgs e) {
+            Console.WriteLine("Revert clicked.");
 
-        /// <summary>
-        /// Handler for when a paste event is triggered. Pastes whatever is stored in the clipboard
-        /// into the selected cell.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnPasteClick(object sender, EventArgs e) {
-            _model.Current.OriginalContents = _model.Current.Contents;
-            _model.Current.Contents = PasteFromClipboard();
-
-            _model.UpdateCellContents(_model.Current, CellUpdateActionError);
-            UpdateSelectedCellDisplayValues(_model.Current);
         }
 
         /// <summary>

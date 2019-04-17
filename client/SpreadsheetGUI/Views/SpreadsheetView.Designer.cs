@@ -29,9 +29,8 @@
             this.openMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.cutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pasteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.undoMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.revertMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.darkModeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,9 +44,8 @@
             this.nameLabel = new System.Windows.Forms.Label();
             this.valueBox = new System.Windows.Forms.TextBox();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reverToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spreadsheetPanel = new SS.SpreadsheetPanel();
             this.menuStrip.SuspendLayout();
             this.contextMenu.SuspendLayout();
@@ -63,8 +61,7 @@
             this.helpMenu});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
-            this.menuStrip.Size = new System.Drawing.Size(668, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1002, 33);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -74,61 +71,54 @@
             this.openMenuItem,
             this.closeMenuItem});
             this.fileMenu.Name = "fileMenu";
-            this.fileMenu.Size = new System.Drawing.Size(37, 22);
+            this.fileMenu.Size = new System.Drawing.Size(50, 29);
             this.fileMenu.Text = "File";
             // 
             // openMenuItem
             // 
             this.openMenuItem.Name = "openMenuItem";
-            this.openMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openMenuItem.Size = new System.Drawing.Size(182, 30);
             this.openMenuItem.Text = "New/Open";
             // 
             // closeMenuItem
             // 
             this.closeMenuItem.Name = "closeMenuItem";
-            this.closeMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeMenuItem.Size = new System.Drawing.Size(182, 30);
             this.closeMenuItem.Text = "Close";
             // 
             // editMenu
             // 
             this.editMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cutMenuItem,
-            this.copyMenuItem,
-            this.pasteMenuItem});
+            this.undoMenuItem,
+            this.revertMenuItem});
             this.editMenu.Name = "editMenu";
-            this.editMenu.Size = new System.Drawing.Size(39, 22);
+            this.editMenu.Size = new System.Drawing.Size(54, 29);
             this.editMenu.Text = "Edit";
             // 
-            // cutMenuItem
+            // undoMenuItem
             // 
-            this.cutMenuItem.Name = "cutMenuItem";
-            this.cutMenuItem.Size = new System.Drawing.Size(102, 22);
-            this.cutMenuItem.Text = "Cut";
+            this.undoMenuItem.Name = "undoMenuItem";
+            this.undoMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.undoMenuItem.Text = "Undo";
             // 
-            // copyMenuItem
+            // revertMenuItem
             // 
-            this.copyMenuItem.Name = "copyMenuItem";
-            this.copyMenuItem.Size = new System.Drawing.Size(102, 22);
-            this.copyMenuItem.Text = "Copy";
-            // 
-            // pasteMenuItem
-            // 
-            this.pasteMenuItem.Name = "pasteMenuItem";
-            this.pasteMenuItem.Size = new System.Drawing.Size(102, 22);
-            this.pasteMenuItem.Text = "Paste";
+            this.revertMenuItem.Name = "revertMenuItem";
+            this.revertMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.revertMenuItem.Text = "Revert";
             // 
             // viewMenu
             // 
             this.viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.darkModeMenuItem});
             this.viewMenu.Name = "viewMenu";
-            this.viewMenu.Size = new System.Drawing.Size(44, 22);
+            this.viewMenu.Size = new System.Drawing.Size(61, 29);
             this.viewMenu.Text = "View";
             // 
             // darkModeMenuItem
             // 
             this.darkModeMenuItem.Name = "darkModeMenuItem";
-            this.darkModeMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.darkModeMenuItem.Size = new System.Drawing.Size(185, 30);
             this.darkModeMenuItem.Text = "Dark Mode";
             // 
             // helpMenu
@@ -140,36 +130,36 @@
             this.toolStripSeparator3,
             this.aboutMenuItem});
             this.helpMenu.Name = "helpMenu";
-            this.helpMenu.Size = new System.Drawing.Size(44, 22);
+            this.helpMenu.Size = new System.Drawing.Size(61, 29);
             this.helpMenu.Text = "Help";
             // 
             // navMenuItem
             // 
             this.navMenuItem.Name = "navMenuItem";
-            this.navMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.navMenuItem.Size = new System.Drawing.Size(281, 30);
             this.navMenuItem.Text = "Navigating Cells";
             // 
             // changingCellsMenuItem
             // 
             this.changingCellsMenuItem.Name = "changingCellsMenuItem";
-            this.changingCellsMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.changingCellsMenuItem.Size = new System.Drawing.Size(281, 30);
             this.changingCellsMenuItem.Text = "Changing Cell Contents";
             // 
             // featuresMenuItem
             // 
             this.featuresMenuItem.Name = "featuresMenuItem";
-            this.featuresMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.featuresMenuItem.Size = new System.Drawing.Size(281, 30);
             this.featuresMenuItem.Text = "Additional Features";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(197, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(278, 6);
             // 
             // aboutMenuItem
             // 
             this.aboutMenuItem.Name = "aboutMenuItem";
-            this.aboutMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.aboutMenuItem.Size = new System.Drawing.Size(281, 30);
             this.aboutMenuItem.Text = "About";
             // 
             // formulaBox
@@ -178,10 +168,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.formulaBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.formulaBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.formulaBox.Location = new System.Drawing.Point(144, 55);
-            this.formulaBox.Margin = new System.Windows.Forms.Padding(2);
+            this.formulaBox.Location = new System.Drawing.Point(216, 85);
             this.formulaBox.Name = "formulaBox";
-            this.formulaBox.Size = new System.Drawing.Size(525, 23);
+            this.formulaBox.Size = new System.Drawing.Size(786, 30);
             this.formulaBox.TabIndex = 2;
             // 
             // fxLabel
@@ -189,10 +178,9 @@
             this.fxLabel.BackColor = System.Drawing.SystemColors.Window;
             this.fxLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.fxLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.fxLabel.Location = new System.Drawing.Point(120, 55);
-            this.fxLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.fxLabel.Location = new System.Drawing.Point(180, 85);
             this.fxLabel.Name = "fxLabel";
-            this.fxLabel.Size = new System.Drawing.Size(25, 23);
+            this.fxLabel.Size = new System.Drawing.Size(36, 34);
             this.fxLabel.TabIndex = 5;
             this.fxLabel.Text = "Fx";
             // 
@@ -201,10 +189,9 @@
             this.nameLabel.BackColor = System.Drawing.SystemColors.Window;
             this.nameLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.nameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nameLabel.Location = new System.Drawing.Point(0, 55);
-            this.nameLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.nameLabel.Location = new System.Drawing.Point(0, 85);
             this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(47, 23);
+            this.nameLabel.Size = new System.Drawing.Size(70, 34);
             this.nameLabel.TabIndex = 6;
             // 
             // valueBox
@@ -212,40 +199,32 @@
             this.valueBox.BackColor = System.Drawing.SystemColors.Window;
             this.valueBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.valueBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.valueBox.Location = new System.Drawing.Point(46, 55);
-            this.valueBox.Margin = new System.Windows.Forms.Padding(2);
+            this.valueBox.Location = new System.Drawing.Point(69, 85);
             this.valueBox.Name = "valueBox";
             this.valueBox.ReadOnly = true;
-            this.valueBox.Size = new System.Drawing.Size(61, 23);
+            this.valueBox.Size = new System.Drawing.Size(90, 30);
             this.valueBox.TabIndex = 7;
             // 
             // contextMenu
             // 
             this.contextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cutToolStripMenuItem,
-            this.copyToolStripMenuItem,
-            this.pasteToolStripMenuItem});
+            this.undoToolStripMenuItem,
+            this.reverToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(103, 70);
+            this.contextMenu.Size = new System.Drawing.Size(127, 94);
             // 
-            // cutToolStripMenuItem
+            // undoToolStripMenuItem
             // 
-            this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
-            this.cutToolStripMenuItem.Text = "Cut";
+            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(126, 30);
+            this.undoToolStripMenuItem.Text = "Undo";
             // 
-            // copyToolStripMenuItem
+            // reverToolStripMenuItem
             // 
-            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
-            this.copyToolStripMenuItem.Text = "Copy";
-            // 
-            // pasteToolStripMenuItem
-            // 
-            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
-            this.pasteToolStripMenuItem.Text = "Paste";
+            this.reverToolStripMenuItem.Name = "reverToolStripMenuItem";
+            this.reverToolStripMenuItem.Size = new System.Drawing.Size(126, 30);
+            this.reverToolStripMenuItem.Text = "Revert";
             // 
             // spreadsheetPanel
             // 
@@ -254,18 +233,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.spreadsheetPanel.ContextMenuStrip = this.contextMenu;
             this.spreadsheetPanel.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.spreadsheetPanel.Location = new System.Drawing.Point(0, 78);
-            this.spreadsheetPanel.Margin = new System.Windows.Forms.Padding(2);
+            this.spreadsheetPanel.Location = new System.Drawing.Point(0, 120);
             this.spreadsheetPanel.Name = "spreadsheetPanel";
-            this.spreadsheetPanel.Size = new System.Drawing.Size(668, 259);
+            this.spreadsheetPanel.Size = new System.Drawing.Size(1002, 398);
             this.spreadsheetPanel.TabIndex = 3;
             // 
             // SpreadsheetView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(668, 338);
+            this.ClientSize = new System.Drawing.Size(1002, 520);
             this.Controls.Add(this.valueBox);
             this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.fxLabel);
@@ -274,7 +252,6 @@
             this.Controls.Add(this.menuStrip);
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip;
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "SpreadsheetView";
             this.Text = "Form1";
             this.menuStrip.ResumeLayout(false);
@@ -303,13 +280,11 @@
         private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
         private System.Windows.Forms.ToolStripMenuItem navMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changingCellsMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem cutMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem copyMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pasteMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem undoMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem revertMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
-        private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reverToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem darkModeMenuItem;
         private System.Windows.Forms.ToolStripMenuItem featuresMenuItem;
     }

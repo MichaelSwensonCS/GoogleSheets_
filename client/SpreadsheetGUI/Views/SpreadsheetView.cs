@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 10/15/18                                                     *
+ *                      Modtime : 10/17/18                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -37,9 +37,8 @@ namespace SS {
         public event EventHandler OpenMenuClick;
         public event EventHandler CloseMenuClick;
 
-        public event EventHandler CutMenuClick;
-        public event EventHandler CopyMenuClick;
-        public event EventHandler PasteMenuClick;
+        public event EventHandler UndoMenuClick;
+        public event EventHandler RevertMenuClick;
 
         public event EventHandler DarkModeMenuClick;
 
@@ -109,13 +108,11 @@ namespace SS {
             openMenuItem.Click += (o, e) => OpenMenuClick?.Invoke(o, e);
             closeMenuItem.Click += (o, e) => CloseMenuClick?.Invoke(o, e);
 
-            cutMenuItem.Click += (o, e) => CutMenuClick?.Invoke(o, e);
-            copyMenuItem.Click += (o, e) => CopyMenuClick?.Invoke(o, e);
-            pasteMenuItem.Click += (o, e) => PasteMenuClick?.Invoke(o, e);
+            undoMenuItem.Click += (o, e) => UndoMenuClick?.Invoke(o, e);
+            revertMenuItem.Click += (o, e) => RevertMenuClick?.Invoke(o, e);
 
-            cutToolStripMenuItem.Click += (o, e) => CutMenuClick?.Invoke(o, e);
-            copyToolStripMenuItem.Click += (o, e) => CopyMenuClick?.Invoke(o, e);
-            pasteToolStripMenuItem.Click += (o, e) => PasteMenuClick?.Invoke(o, e);
+            undoToolStripMenuItem.Click += (o, e) => UndoMenuClick?.Invoke(o, e);
+            reverToolStripMenuItem.Click += (o, e) => RevertMenuClick?.Invoke(o, e);
 
             darkModeMenuItem.Click += (o, e) => DarkModeMenuClick?.Invoke(o, e);
 
