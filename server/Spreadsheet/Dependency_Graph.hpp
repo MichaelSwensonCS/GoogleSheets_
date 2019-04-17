@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/13/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/13/19                                                     *
+ *                      Modtime : 04/17/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Dependency_Graph:                                                                           *
@@ -47,6 +47,8 @@ namespace RS {
 		bool Remove_Relation(const std::string&, const std::string&, Relation);
 		std::unordered_set<std::string>* Get_Relation_Set(const std::string&, Relation);
 		void Replace_Relation(const std::string&, const std::unordered_set<std::string>&, Relation);
+
+		static void Visit(const std::string&, const std::string&, std::unordered_set<std::string>&, std::vector<std::string>*);
 	public:
 		Dependency_Graph();
 		~Dependency_Graph();
@@ -61,6 +63,9 @@ namespace RS {
 		void Remove_Dependency(const std::string&, const std::string&);
 		void Replace_Dependents(const std::string&, const std::unordered_set<std::string>&);
 		void Replace_Dependees(const std::string&, const std::unordered_set<std::string>&);
+
+		static bool Has_Circular_Dependency(const std::string&);
+		static bool Has_Circular_Dependency(const std::unordered_set<std::string>&);
 	};
 }
 

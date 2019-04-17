@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/13/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/15/19                                                     *
+ *                      Modtime : 04/17/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Dependency_Graph:                                                                           *
@@ -98,6 +98,34 @@ namespace RS {
 	const std::unordered_set<std::string>& Dependency_Graph::Get_Dependees(const std::string &s) {
 		std::unordered_set<std::string> *set = Get_Relation_Set(s, Relation::Dependees);
 		return *set;
+	}
+
+	bool Dependency_Graph::Has_Circular_Dependency(const std::string &cell) {
+		std::unordered_set<std::string> cells({ cell });
+		return Has_Circular_Dependency(cells);
+	}
+
+	bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells) {
+		// LinkedList<String> changed = new LinkedList<String>();
+		std::vector<std::string> *changed = new std::vector<std::string>();
+		
+		// HashSet<String> visited = new HashSet<String>();
+		std::unordered_set<std::string> visited;
+
+		// foreach (String name in names) {
+
+		// 	if (!visited.Contains(name)) {
+		// 		Visit(name, name, visited, changed);
+		// 	}
+		// }
+		for (const auto &cell : cells) {
+			auto it = visited.find(cell);
+			if (it == visited.end()) {
+				Visit(cell, cell, visited, changed);
+			}
+		}
+
+		return false;
 	}
 
 	/*-----------------------------------------------------------------------------------------*
@@ -220,5 +248,22 @@ namespace RS {
 
 			graph_[key] = n;
 		}
+	}
+
+	void Dependency_Graph::Visit(const std::string &start, const std::string &cell,
+			std::unordered_set<std::string> &visited, std::vector<std::string> *changed) {
+
+		// visited.Add(name);
+		visited.insert(cell);
+		
+		// foreach (String n in GetDirectDependents(name)) {
+		// 	if (n.Equals(start)) {
+		// 		throw new CircularException();
+		// 	}
+		// 	else if (!visited.Contains(n)) {
+		// 		Visit(start, n, visited, changed);
+		// 	}
+		// }
+		// changed.AddFirst(name);
 	}
 }
