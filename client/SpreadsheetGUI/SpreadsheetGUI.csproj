@@ -72,6 +72,7 @@
     <Compile Include="Models\ISpreadsheetModel.cs" />
     <Compile Include="Models\MenuColorTable.cs" />
     <Compile Include="Models\NetMessages\DefaultMessage.cs" />
+    <Compile Include="Models\NetMessages\EditMessage.cs" />
     <Compile Include="Models\NetMessages\FullSendMessage.cs" />
     <Compile Include="Models\NetMessages\ListMessage.cs" />
     <Compile Include="Models\NetMessages\OpenMessage.cs" />
