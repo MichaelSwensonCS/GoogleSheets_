@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/17/19                                                     *
+ *                      Modtime : 04/18/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -38,7 +38,7 @@ namespace RS {
 	 * @return A new Spreadsheet instance with a value of the provided type.
 	 */
 	Server::Server(const std::string &host, const uint16_t &port, const std::vector<Action> &actions)
-			: host_(host), port_(port), actions_(actions), threads_(), sockets_(), sheets_(), users_() {}
+			: host_(host), port_(port), actions_(actions), threads_(), connections_(), sheets_(), users_() {}
 
 	/*-----------------------------------------------------------------------------------------*
 	 * Public Methods                                                                          *
@@ -248,11 +248,14 @@ namespace RS {
 		RS::Log::Message("Waiting for client connections.");
 
 		while(true) {
-			sockets_.emplace_back(listen_socket.accept());
-			auto &sock = sockets_.back();
+			auto accept = std::make_shared<kn::tcp_socket>(listen_socket.accept());
+			Socket_State connection("", accept);
+			connections_[connection.ID()] = connection;
+
+			auto &state = connections_[connection.ID()];
 
 			// On initial connection, send list of spreadsheets.
-			Do_List_Send(sock);
+			Do_List_Send(state);
 
 			// Listens to messages from the particular socket.
 			threads_.emplace_back([&]{
@@ -260,7 +263,7 @@ namespace RS {
 				kn::buffer<1024> buff;
 
 				while(receive) {
-					auto [size, valid] = sock.recv(buff);
+					auto [size, valid] = state.Socket().recv(buff);
 
 					if (valid) {
 						if (valid.value == kn::socket_status::cleanly_disconnected) {
@@ -269,7 +272,7 @@ namespace RS {
 						else {
 							auto output = std::string(reinterpret_cast<char*>(buff.data()), size);
 							auto msg = json::parse(output);
-							Receive_Message(msg, sock);
+							Receive_Message(msg, state);
 						}
 					}
 					else {
@@ -278,10 +281,10 @@ namespace RS {
 				}
 
 				RS::Log::Message("Client disconnect.");
-				const auto it = std::find(sockets_.begin(), sockets_.end(), std::ref(sock));
-				if (it != sockets_.end()) {
-					RS::Log::Message("Closing socket...");
-					sockets_.erase(it);
+				const auto it = connections_.find(state.ID());
+				if (it != connections_.end()) {
+					RS::Log::Message("Removing socket.");
+					connections_.erase(it);
 				}
 			});
 
@@ -294,15 +297,15 @@ namespace RS {
 	 * on what message comes through.
 	 *
 	 * @param msg The incomming message formatted as a JSON object.
-	 * @param sock The socket for the respective client.
+	 * @param state The socket state for the respective client.
 	 */
-	void Server::Receive_Message(const json &msg, kn::tcp_socket &sock) {
+	void Server::Receive_Message(const json &msg, Socket_State &state) {
 		std::string type = msg["type"];
 		if (type == "open") {
-			On_Open(msg["name"], msg["username"], msg["password"], sock);
+			On_Open(msg["name"], msg["username"], msg["password"], state);
 		}
 		else if (type == "edit") {
-			On_Edit(msg["cell"], msg["value"], msg["dependencies"], sock);
+			On_Edit(msg["cell"], msg["value"], msg["dependencies"], state);
 		}
 		else if (type == "undo") {
 
@@ -344,16 +347,16 @@ namespace RS {
 	 * @param filename The name of the spreadsheet to open/create.
 	 * @param username The username specified from the client.
 	 * @param password The password specified from the client.
-	 * @param sock The socket for the respective client.
+	 * @param state The socket state for the respective client.
 	 */
 	void Server::On_Open(const std::string &filename, const std::string &username,
-			const std::string &password, kn::tcp_socket &sock) {
+			const std::string &password, Socket_State &state) {
 
 		if (Valid_Auth(username, password)) {
-			Do_Full_Send(filename, sock);
+			Do_Full_Send(filename, state);
 		}
 		else {
-			Do_Error(1, "", sock);
+			Do_Error(1, "", state);
 		}
 	}
 
@@ -363,19 +366,19 @@ namespace RS {
 	 * @param cell The cell that was edited.
 	 * @param contents The new contents of the cell.
 	 * @param dependencies The direct dependents of the cell.
-	 * @param sock The socket for the respective client.
+	 * @param state The socket state for the respective client.
 	 */
 	void Server::On_Edit(const std::string &cell, const std::string &contents,
-			const std::vector<std::string> &dependencies, kn::tcp_socket &sock) {
+			const std::vector<std::string> &dependencies, Socket_State &state) {
 		Log::Message("Edit for cell " + cell + " is: " + contents);
 	}
 
 	/*
 	 * Creates and sends a "list" message to a client.
 	 *
-	 * @param sock The socket for the respective client.
+	 * @param state The socket state for the respective client.
 	 */
-	void Server::Do_List_Send(kn::tcp_socket &sock) {
+	void Server::Do_List_Send(Socket_State &state) {
 		auto sprds = RS::File::List_Spreadsheets(std::filesystem::current_path());
 
 		json list = {
@@ -383,16 +386,16 @@ namespace RS {
 			{"spreadsheets", sprds}
 		};
 
-		Send_Message(list, sock);
+		Send_Message(list, state);
 	}
 
 	/*
 	 * Creates and sends a "full_send" message to a client.
 	 *
 	 * @param filename The name of the spreadsheet to open/create.
-	 * @param sock The socket for the respective client.
+	 * @param state The socket state for the respective client.
 	 */
-	void Server::Do_Full_Send(const std::string &filename, kn::tcp_socket &sock) {
+	void Server::Do_Full_Send(const std::string &filename, Socket_State &state) {
 		json full_send;
 		if (std::filesystem::exists(filename)) {
 			auto it = sheets_.find(filename);
@@ -416,7 +419,7 @@ namespace RS {
 			File::Save_Json(filename, full_send);
 		}
 
-		Send_Message(full_send, sock);
+		Send_Message(full_send, state);
 	}
 
 	/*
@@ -424,16 +427,16 @@ namespace RS {
 	 *
 	 * @param code The error code.
 	 * @param source The cell source, if applicable.
-	 * @param sock The socket for the respective client.
+	 * @param state The socket state for the respective client.
 	 */
-	void Server::Do_Error(int code, const std::string &source, kn::tcp_socket &sock) {
+	void Server::Do_Error(int code, const std::string &source, Socket_State &state) {
 		json j_error = {
 			{"type", "error"},
 			{"code", code},
 			{"source", source}
 		};
 
-		Send_Message(j_error, sock);
+		Send_Message(j_error, state);
 	}
 
 	/*
@@ -441,10 +444,10 @@ namespace RS {
 	 * and then sends the newly formatted message.
 	 *
 	 * @param msg The JSON object of the message to send.
-	 * @param sock The socket for the respective client.
+	 * @param state The socket state for the respective client.
 	 */
-	void Server::Send_Message(const json &msg, kn::tcp_socket &sock) {
+	void Server::Send_Message(const json &msg, Socket_State &state) {
 		auto out = std::string{ msg.dump() + "\n\n" };
-		sock.send(reinterpret_cast<const std::byte*>(out.c_str()), out.size());
+		state.Socket().send(reinterpret_cast<const std::byte*>(out.c_str()), out.size());
 	}
 }

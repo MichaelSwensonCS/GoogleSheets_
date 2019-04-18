@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/17/19                                                     *
+ *                      Modtime : 04/18/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -21,11 +21,13 @@
 #include <csignal>
 #include <filesystem>
 #include <functional>
+#include <memory>
 #include <thread>
 #include <unistd.h>
 #include <vector>
 #include "Libraries/json.hpp"
 #include "Libraries/kissnet.hpp"
+#include "Net/Socket_State.hpp"
 #include "Utilities/Action.hpp"
 #include "Utilities/File.hpp"
 #include "Utilities/Log.hpp"
@@ -45,7 +47,7 @@ namespace RS {
 		std::vector<Action> actions_;
 
 		std::vector<std::thread> threads_;
-		std::vector<kn::tcp_socket> sockets_;
+		std::map<int, Socket_State> connections_;
 		std::map<std::string, std::string> users_;
 		std::map<std::string, json> sheets_;
 
@@ -59,16 +61,16 @@ namespace RS {
 		void Save_Auth();
 
 		void Update(kn::tcp_socket&);
-		void Receive_Message(const json&, kn::tcp_socket&);
+		void Receive_Message(const json&, Socket_State&);
 
 		bool Valid_Auth(const std::string&, const std::string&);
-		void On_Open(const std::string&, const std::string&, const std::string&, kn::tcp_socket&);
-		void On_Edit(const std::string&, const std::string&, const std::vector<std::string>&, kn::tcp_socket&);
-		void Do_List_Send(kn::tcp_socket&);
-		void Do_Full_Send(const std::string&, kn::tcp_socket&);
-		void Do_Error(int, const std::string&, kn::tcp_socket&);
+		void On_Open(const std::string&, const std::string&, const std::string&, Socket_State&);
+		void On_Edit(const std::string&, const std::string&, const std::vector<std::string>&, Socket_State&);
+		void Do_List_Send(Socket_State&);
+		void Do_Full_Send(const std::string&, Socket_State&);
+		void Do_Error(int, const std::string&, Socket_State&);
 
-		void Send_Message(const json&, kn::tcp_socket&);
+		void Send_Message(const json&, Socket_State&);
 	public:
 		static const std::string DEFAULT_HOST;
 		static const uint16_t DEFAULT_PORT;
