@@ -283,8 +283,11 @@ namespace RS {
 				RS::Log::Message("Client disconnect.");
 				const auto it = connections_.find(state.ID());
 				if (it != connections_.end()) {
-					RS::Log::Message("Removing socket.");
+					if (!state.Spreadsheet().empty()) {
+						sheets_[state.Spreadsheet()].Clients().erase(state.ID());
+					}
 					connections_.erase(it);
+					RS::Log::Message("Socket removed.");
 				}
 			});
 
@@ -371,7 +374,18 @@ namespace RS {
 	 */
 	void Server::On_Edit(const std::string &cell, const std::string &contents,
 			const std::vector<std::string> &dependencies, Socket_State &state) {
-		Log::Message("Edit for cell " + cell + " is: " + contents);
+
+		json& sheet = sheets_[state.Spreadsheet()].Sheet();
+		sheet["spreadsheet"][cell] = contents;
+		RS::File::Save_Json(state.Spreadsheet(), sheet);
+
+		for (int client : sheets_[state.Spreadsheet()].Clients()) {
+			if (client == state.ID()) { continue; }
+			else {
+				Log::Message("Client " + std::to_string(client) + " to have data sent to it.");
+				Do_Full_Send(state.Spreadsheet(), connections_[client]);
+			}
+		}
 	}
 
 	/*
@@ -401,11 +415,11 @@ namespace RS {
 		if (std::filesystem::exists(filename)) {
 			auto it = sheets_.find(filename);
 			if (it != sheets_.end()) {
-				full_send = it->second;
+				full_send = it->second.Sheet();
 			}
 			else {
 				full_send = File::Load_Json(filename);
-				sheets_[filename] = full_send;
+				sheets_[filename].Sheet() = full_send;
 			}
 		}
 		else {
@@ -416,10 +430,11 @@ namespace RS {
 					{"A2", ""}
 				}}
 			};
-			sheets_[filename] = full_send;
+			sheets_[filename].Sheet() = full_send;
 			File::Save_Json(filename, full_send);
 		}
 
+		sheets_[filename].Clients().insert(state.ID());
 		Send_Message(full_send, state);
 	}
 

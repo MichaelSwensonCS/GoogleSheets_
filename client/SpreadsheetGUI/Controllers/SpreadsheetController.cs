@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SS.Controllers {
@@ -498,7 +499,9 @@ namespace SS.Controllers {
 
                 _model.Connected = true;
                 _mainState = state;
-                Update(ref state);
+                Task.Factory.StartNew(() => {
+                    Update(ref state);
+                });
                 state.Callback = ReceiveUpdates;
                 Net.GetData(state);
             }
@@ -516,10 +519,12 @@ namespace SS.Controllers {
             }
             else {
                 // Process incoming messages
+                // Testing to see if edits come across.
+                state.RecMessage = SocketState.MessageType.Edit;
                 ProcessMessagesAndUpdate(state);
 
                 // Display updates.
-                
+
                 // Request more data.
                 state.Callback = ReceiveUpdates;
                 Net.GetData(state);
@@ -572,8 +577,15 @@ namespace SS.Controllers {
                     state.RecMessage = SocketState.MessageType.None;
                     state.SB.Remove(0, tokens[0].Length + tokens[1].Length);
 
-                    JObject obj = JsonConvert.DeserializeObject<JObject>(tokens[0]);
-                    HandleOpenMessage(obj);
+                    JObject jopen = JsonConvert.DeserializeObject<JObject>(tokens[0]);
+                    HandleOpenMessage(jopen);
+                    break;
+                case SocketState.MessageType.Edit:
+                    state.RecMessage = SocketState.MessageType.None;
+                    state.SB.Remove(0, tokens[0].Length + tokens[1].Length);
+
+                    JObject jedit = JsonConvert.DeserializeObject<JObject>(tokens[0]);
+                    HandleEditMessage(jedit);
                     break;
                 case SocketState.MessageType.None:
                     break;
@@ -610,6 +622,22 @@ namespace SS.Controllers {
                         break;
                     case "error":
                         MessageBox.Show("Incorrect password", "Error");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void HandleEditMessage(JObject obj) {
+            if (obj != null) {
+                var key = obj["type"].ToString();
+                switch (key) {
+                    case "full send":
+                        FullSendMessage fsm = JsonConvert.DeserializeObject<FullSendMessage>(obj.ToString());
+                        AppController.GetController().LoadModelIntoInstance(_openingSheetName, fsm.Cells, this);
+                        break;
+                    case "edit":
                         break;
                     default:
                         break;

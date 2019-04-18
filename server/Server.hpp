@@ -28,6 +28,7 @@
 #include "Libraries/json.hpp"
 #include "Libraries/kissnet.hpp"
 #include "Net/Socket_State.hpp"
+#include "Spreadsheet/SNode.hpp"
 #include "Utilities/Action.hpp"
 #include "Utilities/File.hpp"
 #include "Utilities/Log.hpp"
@@ -49,7 +50,7 @@ namespace RS {
 		std::vector<std::thread> threads_;
 		std::map<int, Socket_State> connections_;
 		std::map<std::string, std::string> users_;
-		std::map<std::string, json> sheets_;
+		std::map<std::string, SNode> sheets_;
 
 		void Do_Actions();
 		void Do_Account_Create(const Action&);
@@ -68,6 +69,7 @@ namespace RS {
 		void On_Edit(const std::string&, const std::string&, const std::vector<std::string>&, Socket_State&);
 		void Do_List_Send(Socket_State&);
 		void Do_Full_Send(const std::string&, Socket_State&);
+		void Do_Edit_Send();
 		void Do_Error(int, const std::string&, Socket_State&);
 
 		void Send_Message(const json&, Socket_State&);
