@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/17/19                                                     *
+ *                      Modtime : 04/18/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -46,7 +46,7 @@ namespace SS.Controllers {
     public class SpreadsheetController : ISpreadsheetController {
         string _openingSheetName;
         List<string> _serverSheets;
-        
+
         // Used to try to safely disconnect from a server.
         private CancellationTokenSource _client;
         private CancellationToken _cancelToken;
@@ -62,10 +62,10 @@ namespace SS.Controllers {
         private ISpreadsheetView _view;
         private ISpreadsheetModel _model;
         private SubViewsController _subViews;
-        private List<DefaultMessage> _messageList;
-        private StringBuilder _sbmsg;
-
         private Form _viewForm;
+        
+        private StringBuilder _sbmsg;
+        private SocketState _mainState;
 
         /// <summary>
         /// Triggers when the controller commits to closing.
@@ -89,13 +89,13 @@ namespace SS.Controllers {
             _view = view;
             _model = model;
             _subViews = subviews;
-
             _viewForm = _view as Form;
+
+            _model.Connected = false;
 
             Load(appController);
             _subViews.ShowConnectView(true);
-
-            _messageList = new List<DefaultMessage>();
+            
             _sbmsg = new StringBuilder();
         }
 
@@ -252,7 +252,7 @@ namespace SS.Controllers {
             }
         }
 
-        
+
         /// <summary>
         /// Handler for responding to a cell selection change. It's responsible for
         /// displaying the correct information of the newly selected cell. Also responsible
@@ -262,14 +262,6 @@ namespace SS.Controllers {
         private void OnCellSelectionChanged(SpreadsheetPanel sp) {
             sp.GetSelection(out int col, out int row);
             _model.Current.Contents = _view.DisplayedCellContents;
-            
-            if(_messageList == null)
-            {
-                _messageList = new List<DefaultMessage>();
-            }
-            string cellName = Cell.CoordsToName(col, row);
-            EditMessage em = new EditMessage(cellName, _model.Current.Contents, _model.GetDirectDependents(cellName).ToList());
-            _messageList.Add(em);
 
             List<Tuple<Point, string>> cellsToUpdate = _model.ChangeCurrentCell(col, row, CellUpdateActionError);
 
@@ -279,6 +271,19 @@ namespace SS.Controllers {
                 }
 
                 _view.CellBeingEdited(false);
+            }
+
+            if (_model.SendChanges && _mainState != null) {
+                lock (_mainState.OutboundMessages) {
+                    string name = _model.Previous.Name;
+                    string cntnts = _model.Previous.Contents;
+                    List<string> dep = _model.GetDirectDependents(name).ToList();
+                    EditMessage em = new EditMessage(name, cntnts, dep);
+
+                    _mainState.OutboundMessages.Add(em);
+                }
+
+                _model.SendChanges = false;
             }
 
             UpdateSelectedCellDisplayValues(_model.Current);
@@ -346,7 +351,7 @@ namespace SS.Controllers {
             //    //AppController.CreateNewWindow(openFileDialog.FileName);
             //    AppController.GetController().LoadModelIntoInstance(openFileDialog.FileName, this);
             //}
-            
+
         }
 
         /// <summary>
@@ -433,7 +438,7 @@ namespace SS.Controllers {
 
             _openingSheetName = om.SpreadsheetName;
 
-            state.Callback = ReceiveUpdates;
+            state.Callback = OpenCallback;
             state.RecMessage = SocketState.MessageType.Open;
             Net.Send(state.Socket, JsonConvert.SerializeObject(om));
             Net.GetData(state);
@@ -453,7 +458,7 @@ namespace SS.Controllers {
                 MessageBox.Show(state.ErrorMessage, "Error");
             }
             else {
-                if (Log.Enabled) {  Log.WriteLine("Connection created.", true); }
+                if (Log.Enabled) { Log.WriteLine("Connection created.", true); }
 
                 state.Callback = ReceiveInitialData;
                 Net.GetData(state);
@@ -486,10 +491,16 @@ namespace SS.Controllers {
             else {
                 state.RecMessage = SocketState.MessageType.Open;
                 ProcessMessagesAndUpdate(state);
+
+                if (_sbmsg == null) {
+                    _sbmsg = new StringBuilder();
+                }
+
+                _model.Connected = true;
+                _mainState = state;
+                Update(ref state);
                 state.Callback = ReceiveUpdates;
-                
                 Net.GetData(state);
-                Console.WriteLine(state.SB.ToString());
             }
         }
 
@@ -508,32 +519,35 @@ namespace SS.Controllers {
                 ProcessMessagesAndUpdate(state);
 
                 // Display updates.
-
-                // Send any messages to server.
                 
-                Net.Send(state.Socket, BuildSendMessage(ref _sbmsg));
                 // Request more data.
                 state.Callback = ReceiveUpdates;
                 Net.GetData(state);
             }
         }
 
-        
-        private string BuildSendMessage(ref StringBuilder sb)
-        {
+        private void Update(ref SocketState state) {
+            while (_model.Connected) {
+                // Send any messages to server.
+                if (_mainState.OutboundMessages.Count > 0) {
+                    Net.Send(state.Socket, BuildSendMessage(ref _sbmsg));
+                }
+            }
+        }
+
+        private string BuildSendMessage(ref StringBuilder sb) {
             string msg = "";
-            if(_sbmsg == null)
-            {
-                _sbmsg = new StringBuilder();
+            lock (_mainState.OutboundMessages) {
+                foreach (DefaultMessage m in _mainState.OutboundMessages) {
+                    var jmsg = JsonConvert.SerializeObject(m);
+                    sb.Append(jmsg.ToString());
+                    sb.Append("\n\n");
+                }
+                msg = sb.ToString();
+                sb.Clear();
+
+                _mainState.OutboundMessages.Clear();
             }
-            foreach (DefaultMessage m in _messageList)
-            {
-                var jmsg = JsonConvert.SerializeObject(m);
-                sb.Append(jmsg.ToString());
-                sb.Append("\n\n");
-            }
-            msg = sb.ToString();
-            sb.Clear();
 
             return msg;
         }
@@ -546,11 +560,11 @@ namespace SS.Controllers {
             string totalData = state.SB.ToString();
             string[] tokens = Regex.Split(totalData, @"(?<=[\n]{2})");
 
-            switch(state.RecMessage) {
+            switch (state.RecMessage) {
                 case SocketState.MessageType.Initial:
                     state.RecMessage = SocketState.MessageType.None;
 
-                    var msg = JsonConvert.DeserializeObject<ListMessage> (tokens[0]);
+                    var msg = JsonConvert.DeserializeObject<ListMessage>(tokens[0]);
                     _serverSheets = msg.Spreadsheets;
                     state.SB.Remove(0, tokens[0].Length + tokens[1].Length);
                     break;
@@ -588,7 +602,7 @@ namespace SS.Controllers {
         private void HandleOpenMessage(JObject obj) {
             if (obj != null) {
                 var key = obj["type"].ToString();
-                switch(key) {
+                switch (key) {
                     case "full send":
                         FullSendMessage fsm = JsonConvert.DeserializeObject<FullSendMessage>(obj.ToString());
                         AppController.GetController().LoadModelIntoInstance(_openingSheetName, fsm.Cells, this);

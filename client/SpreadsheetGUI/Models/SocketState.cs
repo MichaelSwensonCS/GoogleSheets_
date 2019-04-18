@@ -6,13 +6,15 @@
  *                                                                                             *
  *                   Start Date : 11/04/18                                                     *
  *                                                                                             *
- *                      Modtime : 03/28/19                                                     *
+ *                      Modtime : 04/18/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 using SS.Controllers;
+using SS.Models.NetMessages;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -65,6 +67,11 @@ namespace SS.Models {
         public MessageType RecMessage { get; set; }
 
         /// <summary>
+        /// Messages that are to be sent out with a socket.
+        /// </summary>
+        public List<DefaultMessage> OutboundMessages { get; set; }
+
+        /// <summary>
         /// Determines whether an error has occurred.
         /// </summary>
         public bool Error { get; set; }
@@ -88,6 +95,8 @@ namespace SS.Models {
             Buffer = new byte[_bufferLength];
             SB = new StringBuilder();
             RecMessage = MessageType.None;
+
+            OutboundMessages = new List<DefaultMessage>();
 
             Error = false;
             ErrorMessage = "";

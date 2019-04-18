@@ -47,6 +47,11 @@ namespace SS.Models {
         bool Connected { get; set; }
 
         /// <summary>
+        /// Represents whether an "edit" message should be sent.
+        /// </summary>
+        bool SendChanges { get; set; }
+
+        /// <summary>
         /// The currently selected cell.
         /// </summary>
         Cell Current { get; set; }

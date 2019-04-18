@@ -353,6 +353,7 @@ namespace RS {
 			const std::string &password, Socket_State &state) {
 
 		if (Valid_Auth(username, password)) {
+			state.Spreadsheet(filename);
 			Do_Full_Send(filename, state);
 		}
 		else {

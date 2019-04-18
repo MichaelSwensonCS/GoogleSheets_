@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/12/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/19                                                     *
+ *                      Modtime : 04/18/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -52,6 +52,11 @@ namespace SS.Models {
         /// Represents whether the current spreadsheet is connected to a server.
         /// </summary>
         public bool Connected { get; set; }
+
+        /// <summary>
+        /// Represents whether an "edit" message should be sent.
+        /// </summary>
+        public bool SendChanges { get; set; }
 
         /// <summary>
         /// The currently selected cell.
@@ -156,9 +161,9 @@ namespace SS.Models {
                 Current.Contents = ParseContents(Sheet.GetCellContents(Current.Name));
 
                 if (Previous.Modified) {
-
                     Previous.Modified = false;
                     cells = UpdateCellContents(Previous, notifyError);
+                    SendChanges = true;
                 }
 
                 if (Current.Value == null) {
