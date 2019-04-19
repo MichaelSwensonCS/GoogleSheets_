@@ -382,6 +382,8 @@ namespace RS {
 		json& sheet = sheets_[state.Spreadsheet()].Sheet();
 		sheet["spreadsheet"][cell] = contents;
 		RS::File::Save_Json(state.Spreadsheet(), sheet);
+		// TODO
+		// need to save to revert and undo stack here
 
 		// Echo edits to clients on same sheet.
 		for (int client : sheets_[state.Spreadsheet()].Clients()) {
@@ -465,6 +467,10 @@ namespace RS {
 	 * @param state The socket state for the respective client.
 	 */
 	void Server::On_Undo(Socket_State &state){
+		// TODO
+		// need to get recent global change and pop it
+
+		// then send back previous state to clients
 
 	}
 	
@@ -475,7 +481,10 @@ namespace RS {
 	 * @param state The socket state for the respective client.
 	 */
 	void Server::On_Revert(const std::string &cell, Socket_State &state){
+		// TODO
+		// need to get recent cell change and pop it
 
+		// then send back previous state to clients
 	}
 
 	/*
