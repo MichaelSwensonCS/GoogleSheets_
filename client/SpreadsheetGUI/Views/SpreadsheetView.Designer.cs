@@ -76,14 +76,15 @@
             // 
             // openMenuItem
             // 
+            this.openMenuItem.Enabled = false;
             this.openMenuItem.Name = "openMenuItem";
-            this.openMenuItem.Size = new System.Drawing.Size(182, 30);
+            this.openMenuItem.Size = new System.Drawing.Size(252, 30);
             this.openMenuItem.Text = "New/Open";
             // 
             // closeMenuItem
             // 
             this.closeMenuItem.Name = "closeMenuItem";
-            this.closeMenuItem.Size = new System.Drawing.Size(182, 30);
+            this.closeMenuItem.Size = new System.Drawing.Size(252, 30);
             this.closeMenuItem.Text = "Close";
             // 
             // editMenu
@@ -98,13 +99,13 @@
             // undoMenuItem
             // 
             this.undoMenuItem.Name = "undoMenuItem";
-            this.undoMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.undoMenuItem.Size = new System.Drawing.Size(145, 30);
             this.undoMenuItem.Text = "Undo";
             // 
             // revertMenuItem
             // 
             this.revertMenuItem.Name = "revertMenuItem";
-            this.revertMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.revertMenuItem.Size = new System.Drawing.Size(145, 30);
             this.revertMenuItem.Text = "Revert";
             // 
             // viewMenu
@@ -212,18 +213,18 @@
             this.undoToolStripMenuItem,
             this.reverToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(127, 94);
+            this.contextMenu.Size = new System.Drawing.Size(134, 64);
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(126, 30);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(133, 30);
             this.undoToolStripMenuItem.Text = "Undo";
             // 
             // reverToolStripMenuItem
             // 
             this.reverToolStripMenuItem.Name = "reverToolStripMenuItem";
-            this.reverToolStripMenuItem.Size = new System.Drawing.Size(126, 30);
+            this.reverToolStripMenuItem.Size = new System.Drawing.Size(133, 30);
             this.reverToolStripMenuItem.Text = "Revert";
             // 
             // spreadsheetPanel

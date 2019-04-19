@@ -375,14 +375,18 @@ namespace RS {
 	void Server::On_Edit(const std::string &cell, const std::string &contents,
 			const std::vector<std::string> &dependencies, Socket_State &state) {
 
+		// Verify
+		// TODO
+
+		// Set sheet data and save.
 		json& sheet = sheets_[state.Spreadsheet()].Sheet();
 		sheet["spreadsheet"][cell] = contents;
 		RS::File::Save_Json(state.Spreadsheet(), sheet);
 
+		// Echo edits to clients on same sheet.
 		for (int client : sheets_[state.Spreadsheet()].Clients()) {
 			if (client == state.ID()) { continue; }
 			else {
-				Log::Message("Client " + std::to_string(client) + " to have data sent to it.");
 				Do_Full_Send(state.Spreadsheet(), connections_[client]);
 			}
 		}

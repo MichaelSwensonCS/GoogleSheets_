@@ -23,7 +23,6 @@ using SS.Models.NetMessages;
 using SS.Views;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -94,10 +93,10 @@ namespace SS.Controllers {
 
             _model.Connected = false;
 
+            _sbmsg = new StringBuilder();
+
             Load(appController);
             _subViews.ShowConnectView(true);
-            
-            _sbmsg = new StringBuilder();
         }
 
         /// <summary>
@@ -141,6 +140,10 @@ namespace SS.Controllers {
             _view.DisplayedCellValue = _model.Current.Value;
         }
 
+        /// <summary>
+        /// Thread safe way of loading a model into the controller.
+        /// </summary>
+        /// <param name="model">The model to load.</param>
         public void LoadModelThreaded(ISpreadsheetModel model) {
             _model = model;
 
@@ -255,7 +258,6 @@ namespace SS.Controllers {
             }
         }
 
-
         /// <summary>
         /// Handler for responding to a cell selection change. It's responsible for
         /// displaying the correct information of the newly selected cell. Also responsible
@@ -338,23 +340,7 @@ namespace SS.Controllers {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnOpenClick(object sender, EventArgs e) {
-            //OpenFileDialog openFileDialog = new OpenFileDialog();
-            //openFileDialog.Filter = "Spreadsheet Files|*.sprd|All files (*.*)|*.*";
-            //openFileDialog.Title = "Select a Spreadsheet File";
-
-            //if (openFileDialog.ShowDialog() == DialogResult.OK)
-            //{
-            //    if (openFileDialog.FilterIndex == 1)
-            //    {
-            //        string ext = Path.GetExtension(openFileDialog.SafeFileName);
-
-            //        if (ext != ".sprd") { }
-            //    }
-
-            //    //AppController.CreateNewWindow(openFileDialog.FileName);
-            //    AppController.GetController().LoadModelIntoInstance(openFileDialog.FileName, this);
-            //}
-
+            AppController.GetController().CreateNewWindow();
         }
 
         /// <summary>
@@ -408,12 +394,26 @@ namespace SS.Controllers {
             _view.Title = path;
         }
 
+        /// <summary>
+        /// Handler for when the initial connection view is closed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnConnectClosed(Object sender, EventArgs e) {
-            _view.Close();
+            _viewForm.Invoke(new MethodInvoker(() => {
+                _view.Close();
+            }));
         }
 
+        /// <summary>
+        /// Handler for when the open/save view is closed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnOpenSaveClosed(Object sender, EventArgs e) {
-            _view.Close();
+            _viewForm.Invoke(new MethodInvoker(() => {
+                _view.Close();
+            }));
         }
 
         /*---------------------------------------------------------------------------------------------*
@@ -427,15 +427,20 @@ namespace SS.Controllers {
         /// <param name="e"></param>
         private void OnConnectToServer(string server) {
             if (Log.Enabled) { Log.WriteLine($"Attempting to connect to {server}...", true); }
-
             try {
                 Net.ConnectToServer(InitialConnection, server, _cancelToken);
             }
             catch (Exception exception) {
                 MessageBox.Show(exception.ToString(), "Error Connecting");
+                _subViews.ConnectToggleInputs(true);
             }
         }
 
+        /// <summary>
+        /// Event handler for when a user opens or creates a sheet.
+        /// </summary>
+        /// <param name="om">The open message to be sent out.</param>
+        /// <param name="state"></param>
         private void OnOpenSheet(OpenMessage om, SocketState state) {
             if (Log.Enabled) { Log.WriteLine($"Attempting to open/create {om.SpreadsheetName}...", true); }
 
@@ -445,10 +450,6 @@ namespace SS.Controllers {
             state.RecMessage = SocketState.MessageType.Open;
             Net.Send(state.Socket, JsonConvert.SerializeObject(om));
             Net.GetData(state);
-        }
-
-        private void OnEdit() {
-
         }
 
         /// <summary>
@@ -486,6 +487,10 @@ namespace SS.Controllers {
             }
         }
 
+        /// <summary>
+        /// Callback function that is used when an open message is sent.
+        /// </summary>
+        /// <param name="state">The socket state.</param>
         private void OpenCallback(SocketState state) {
             if (state.Error) {
                 if (Log.Enabled) { Log.WriteLine(state.ErrorMessage, true); }
@@ -521,11 +526,8 @@ namespace SS.Controllers {
             }
             else {
                 // Process incoming messages
-                // Testing to see if edits come across.
                 state.RecMessage = SocketState.MessageType.Edit;
                 ProcessMessagesAndUpdate(state);
-
-                // Display updates.
 
                 // Request more data.
                 state.Callback = ReceiveUpdates;
@@ -533,6 +535,10 @@ namespace SS.Controllers {
             }
         }
 
+        /// <summary>
+        /// The separate update method which will send out user edits. Should be on its own thread.
+        /// </summary>
+        /// <param name="state">The socket state.</param>
         private void Update(SocketState state) {
             while (_model.Connected) {
                 // Send any messages to server.
@@ -542,6 +548,11 @@ namespace SS.Controllers {
             }
         }
 
+        /// <summary>
+        /// Builds messages to be sent to the server.
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <returns></returns>
         private string BuildSendMessage(ref StringBuilder sb) {
             string msg = "";
             lock (_mainState.OutboundMessages) {
@@ -592,27 +603,12 @@ namespace SS.Controllers {
                 case SocketState.MessageType.None:
                     break;
             }
-
-            //if (state.RecMessage == SocketState.MessageType.Initial) {
-            //    state.RecMessage = SocketState.MessageType.None;
-
-            //    var msg = JsonConvert.DeserializeObject<ListMessage>(tokens[0]);
-            //    _serverSheets = msg.Spreadsheets;
-            //    state.SB.Remove(0, tokens[0].Length + tokens[1].Length);
-            //}
-            //else {
-            //    for (int i = 0; i < tokens.Length; i++) {
-            //        if (IsValidToken(tokens[i])) {
-            //            //UpdateObject(tokens[i]);
-            //            state.SB.Remove(0, tokens[i].Length);
-
-            //        }
-            //    }
-
-            //    //Update();
-            //}
         }
 
+        /// <summary>
+        /// Further handling of an open response message.
+        /// </summary>
+        /// <param name="obj"></param>
         private void HandleOpenMessage(JObject obj) {
             if (obj != null) {
                 var key = obj["type"].ToString();
@@ -631,6 +627,10 @@ namespace SS.Controllers {
             }
         }
 
+        /// <summary>
+        /// Further handling of an edit receive message.
+        /// </summary>
+        /// <param name="obj"></param>
         private void HandleEditMessage(JObject obj) {
             if (obj != null) {
                 var key = obj["type"].ToString();

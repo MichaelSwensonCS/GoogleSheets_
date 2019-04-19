@@ -35,6 +35,7 @@
             this.serverBox.Name = "serverBox";
             this.serverBox.Size = new System.Drawing.Size(772, 26);
             this.serverBox.TabIndex = 0;
+            this.serverBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.serverBox_KeyPress);
             // 
             // serverLbl
             // 

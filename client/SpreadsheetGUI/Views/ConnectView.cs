@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/06/19                                                     *
+ *                      Modtime : 04/18/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -25,6 +25,8 @@ namespace SS.Views {
     /// Represents the Connect view.
     /// </summary>
     public partial class ConnectView : Form {
+
+        private const char KEY_ENTER = (char)0xD;
 
         public event EventHandler ConnectClicked;
 
@@ -100,6 +102,12 @@ namespace SS.Views {
         private void ChangeTextBoxColors(Color bg, Color fg) {
             serverBox.BackColor = bg;
             serverBox.ForeColor = fg;
+        }
+
+        private void serverBox_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar == KEY_ENTER) {
+                ConnectClicked?.Invoke(sender, e);
+            }
         }
     }
 }

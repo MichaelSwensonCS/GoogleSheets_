@@ -149,6 +149,10 @@ namespace SS.Controllers {
             _openNew.DarkMode(mode);
         }
 
+        public void ConnectToggleInputs(bool enable) {
+            _connectView.ToggleInputs(enable);
+        }
+
         public void EndOpenNew() {
             if (_initialLoad) {
                 _initialLoad = false;
@@ -187,12 +191,11 @@ namespace SS.Controllers {
             string server = _connectView.Server;
             if (string.IsNullOrEmpty(server)) {
                 MessageBox.Show("Please provide a valid server address.", "Error");
+                _connectView.ToggleInputs(true);
             }
             else {
                 ConnectToServer?.Invoke(server);
             }
-
-            _connectView.ToggleInputs(true);
         }
 
         /// <summary>
