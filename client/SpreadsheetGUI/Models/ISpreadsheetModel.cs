@@ -61,6 +61,8 @@ namespace SS.Models {
         /// </summary>
         Cell Previous { get; set; }
 
+        void SetCells(Dictionary<string, string> cells);
+
         /// <summary>
         /// Gets the values associated with the given cells.
         /// </summary>

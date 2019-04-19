@@ -111,6 +111,15 @@ namespace SS.Models {
             Current.Contents = ParseContents(contents);
         }
 
+        public void SetCells(Dictionary<string, string> cells) {
+            foreach (KeyValuePair<string, string> cell in cells) {
+                if (Current.Name == cell.Key) {
+                    Current.Contents = cell.Value;
+                }
+                Sheet.SetContentsOfCell(cell.Key, cell.Value);
+            }
+        }
+
         /// <summary>
         /// Gets the values associated with the given cells.
         /// </summary>

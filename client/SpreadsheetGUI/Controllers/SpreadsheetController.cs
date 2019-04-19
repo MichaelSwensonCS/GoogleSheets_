@@ -122,7 +122,9 @@ namespace SS.Controllers {
         /// </summary>
         /// <param name="model">The model to load.</param>
         public void LoadModel(ISpreadsheetModel model) {
-            _model = model;
+            if (_model != model) {
+                _model = model;
+            }
 
             _view.Clear();
             _view.Title = _model.Name;
@@ -500,7 +502,7 @@ namespace SS.Controllers {
                 _model.Connected = true;
                 _mainState = state;
                 Task.Factory.StartNew(() => {
-                    Update(ref state);
+                    Update(state);
                 });
                 state.Callback = ReceiveUpdates;
                 Net.GetData(state);
@@ -531,7 +533,7 @@ namespace SS.Controllers {
             }
         }
 
-        private void Update(ref SocketState state) {
+        private void Update(SocketState state) {
             while (_model.Connected) {
                 // Send any messages to server.
                 if (_mainState.OutboundMessages.Count > 0) {
@@ -635,7 +637,8 @@ namespace SS.Controllers {
                 switch (key) {
                     case "full send":
                         FullSendMessage fsm = JsonConvert.DeserializeObject<FullSendMessage>(obj.ToString());
-                        AppController.GetController().LoadModelIntoInstance(_openingSheetName, fsm.Cells, this);
+                        _model.SetCells(fsm.Cells);
+                        LoadModel(_model);
                         break;
                     case "edit":
                         break;
