@@ -471,7 +471,12 @@ namespace RS {
 		// need to get recent global change and pop it
 
 		// then send back previous state to clients
-
+		for (int client : sheets_[state.Spreadsheet()].Clients()) {
+			
+			Do_Full_Send(state.Spreadsheet(), connections_[client]);
+			
+			}
+		}
 	}
 	
 	/*
@@ -485,6 +490,12 @@ namespace RS {
 		// need to get recent cell change and pop it
 
 		// then send back previous state to clients
+		for (int client : sheets_[state.Spreadsheet()].Clients()) {
+			
+			Do_Full_Send(state.Spreadsheet(), connections_[client]);
+			
+			}
+		}
 	}
 
 	/*
