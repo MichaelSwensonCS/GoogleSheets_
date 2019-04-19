@@ -311,10 +311,10 @@ namespace RS {
 			On_Edit(msg["cell"], msg["value"], msg["dependencies"], state);
 		}
 		else if (type == "undo") {
-
+			On_Undo(state);
 		}
 		else if (type == "revert") {
-
+			On_Revert(msg["cell"], state);
 		}
 		else {
 
@@ -460,22 +460,23 @@ namespace RS {
 	}
 
 	/*
-	 * Action for when a client sends an edit.
+	 * Action for when a client sends an undo.
 	 *
-	 * @param cell The cell that was edited.
-	 * @param contents The new contents of the cell.
 	 * @param state The socket state for the respective client.
 	 */
-	void Server::On_Undo(const std::string &cell, const std::string &contents, Socket_State &state);
+	void Server::On_Undo(Socket_State &state){
+
+	}
 	
 	/*
 	 * Action for when a client sends a revert.
 	 *
 	 * @param cell The cell that was edited.
-	 * @param contents The new contents of the cell.
 	 * @param state The socket state for the respective client.
 	 */
-	void Server::On_Revert(const std::string &cell, const std::string &contents, Socket_State &state);
+	void Server::On_Revert(const std::string &cell, Socket_State &state){
+
+	}
 
 	/*
 	 * Small helper method that appends the message terminator ("\n\n") to the outgoing message
