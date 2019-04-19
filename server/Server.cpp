@@ -460,6 +460,24 @@ namespace RS {
 	}
 
 	/*
+	 * Action for when a client sends an edit.
+	 *
+	 * @param cell The cell that was edited.
+	 * @param contents The new contents of the cell.
+	 * @param state The socket state for the respective client.
+	 */
+	void Server::On_Undo(const std::string &cell, const std::string &contents, Socket_State &state);
+	
+	/*
+	 * Action for when a client sends a revert.
+	 *
+	 * @param cell The cell that was edited.
+	 * @param contents The new contents of the cell.
+	 * @param state The socket state for the respective client.
+	 */
+	void Server::On_Revert(const std::string &cell, const std::string &contents, Socket_State &state);
+
+	/*
 	 * Small helper method that appends the message terminator ("\n\n") to the outgoing message
 	 * and then sends the newly formatted message.
 	 *
