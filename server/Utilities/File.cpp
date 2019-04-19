@@ -66,12 +66,33 @@ namespace RS {
 
 		for (const auto &file : std::filesystem::directory_iterator(path)) {
 			filename = file.path().filename();
-			extension = filename.substr(filename.find_last_of('.') + 1);
+			extension = Get_Extension(filename);
 			if (extension == "sprd") {
 				spreadsheets.push_back(filename);
 			}
 		}
 
 		return spreadsheets;
+	}
+
+	/*
+	 * Returns the extension of a provided filename. IE - "test.jpg" would return "jpg".
+	 *
+	 * @param filename The filename to extract off of.
+	 * @return The file's extension.
+	 */
+	std::string File::Get_Extension(const std::string &filename) {
+		return filename.substr(filename.find_last_of('.') + 1);
+	}
+
+	/*
+	 * Returns the the base name of a file.
+	 *
+	 * @param filename The filename to extract off of.
+	 * @return The base of the filename.
+	 */
+	std::string File::Get_Base_Filename(const std::string &filename) {
+		std::size_t end_dot = filename.find_last_of('.');
+		return filename.substr(0, end_dot);
 	}
 }

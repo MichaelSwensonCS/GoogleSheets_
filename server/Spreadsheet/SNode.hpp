@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/18/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/18/19                                                     *
+ *                      Modtime : 04/19/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * SNode:                                                                                      *
@@ -16,6 +16,8 @@
 #ifndef SNODE_RS_H
 #define SNODE_RS_H
 
+#include <map>
+#include <stack>
 #include <unordered_set>
 #include "../Libraries/json.hpp"
 
@@ -27,11 +29,20 @@ namespace RS {
 	private:
 		std::unordered_set<int> clients_;
 		json sheet_;
+
+		// Global
+		std::stack<std::string> undo_;
+
+		// Per cell
+		std::map<std::string, std::stack<std::string>> revert_;
 	public:
 		SNode();
 
 		std::unordered_set<int>& Clients();
 		json& Sheet();
+
+		const std::string& Undo();
+		const std::string& Revert();
 	};
 }
 

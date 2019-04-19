@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/18/19                                                     *
+ *                      Modtime : 04/19/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -237,6 +237,16 @@ namespace RS {
 			j[key] = value;
 		}
 		File::Save_Json(AUTH_FILENAME, j);
+	}
+
+	json& Server::Load_Sheet(const std::string &filename) {
+		json sheet, history;
+		std::string file = File::Get_Base_Filename(filename);
+
+		sheet = File::Load_Json(filename);
+		sheets_[filename].Sheet() = sheet;
+
+		history = File::Load_Json(file + ".history");
 	}
 
 	/*

@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/10/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/19                                                     *
+ *                      Modtime : 04/19/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * File:                                                                                       *
@@ -16,6 +16,7 @@
 #ifndef FILE_RS_H
 #define FILE_RS_H
 
+#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -34,6 +35,9 @@ namespace RS {
 		static void Save_Json(const std::string&, json&);
 
 		static std::vector<std::string> List_Spreadsheets(const std::string&);
+
+		static std::string Get_Extension(const std::string&);
+		static std::string Get_Base_Filename(const std::string&);
 	};
 }
 
