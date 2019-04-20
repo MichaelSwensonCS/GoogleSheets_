@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/18/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/19/19                                                     *
+ *                      Modtime : 04/20/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * SNode:                                                                                      *
@@ -35,11 +35,33 @@ namespace RS {
 		return sheet_;
 	}
 
-	const std::string& Undo() {
+	const std::stack<std::string>& SNode::Undo() const {
+		return undo_;
+	}
+
+	const std::map<std::string, std::stack<std::string>>& SNode::Revert() const {
+		return revert_;
+	}
+
+	/*-----------------------------------------------------------------------------------------*
+	 * Mutator Methods                                                                         *
+	 *-----------------------------------------------------------------------------------------*/
+
+	void SNode::History(const std::stack<std::string> &undo, const std::map<std::string, std::stack<std::string>> &revert) {
+		undo_ = undo;
+		revert_ = revert;
+	}
+
+	void SNode::Reset_History() {
+		undo_ = std::stack<std::string>();
+		revert_ = std::map<std::string, std::stack<std::string>>();
+	}
+
+	const std::string& SNode::Do_Undo() {
 		return "";
 	}
 
-	const std::string& Revert() {
+	const std::string& SNode::Do_Revert() {
 		return "";
 	}
 

@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/18/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/19/19                                                     *
+ *                      Modtime : 04/20/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * SNode:                                                                                      *
@@ -41,8 +41,14 @@ namespace RS {
 		std::unordered_set<int>& Clients();
 		json& Sheet();
 
-		const std::string& Undo();
-		const std::string& Revert();
+		const std::stack<std::string>& Undo() const;
+		const std::map<std::string, std::stack<std::string>>& Revert() const;
+
+		void History(const std::stack<std::string>&, const std::map<std::string, std::stack<std::string>>&);
+		void Reset_History();
+
+		const std::string& Do_Undo();
+		const std::string& Do_Revert();
 	};
 }
 

@@ -23,6 +23,7 @@
 #include <map>
 #include <stack>
 #include <string>
+#include <tuple>
 #include <vector>
 #include "Log.hpp"
 #include "../Libraries/json.hpp"
@@ -33,17 +34,16 @@ namespace RS {
 	
 	class File {
 	private:
-		static void L_Trim(std::string &s);
-		static void R_Trim(std::string &s);
-		static void Trim(std::string &s);
-		static std::string Trim_Copy(std::string s);
+		static std::stack<std::string> Load_Undo_History(std::ifstream&);
+		static std::map<std::string, std::stack<std::string>> Load_Revert_History(std::ifstream&);
+		static void Save_Undo_History(std::ofstream&, std::stack<std::string>&);
+		static void Save_Revert_History(std::ofstream&, std::map<std::string, std::stack<std::string>>&);
 	public:
 		static json Load_Json(const std::string&);
-		static std::stack<std::string> Load_Undo_History(const std::string&);
-		static std::map<std::string, std::stack<std::string>> Load_Revert_History(const std::string&);
+		static std::tuple<std::stack<std::string>, std::map<std::string, std::stack<std::string>>> Load_History(const std::string &filename);
+		
 		static void Save_Json(const std::string&, json&);
-		static void Save_Undo_History(const std::string&, std::stack<std::string>);
-		static void Save_Revert_History(const std::string&, std::map<std::string, std::stack<std::string>>);
+		static void Save_History(const std::string &filename, std::stack<std::string>, std::map<std::string, std::stack<std::string>>);
 
 		static std::vector<std::string> List_Spreadsheets(const std::string&);
 

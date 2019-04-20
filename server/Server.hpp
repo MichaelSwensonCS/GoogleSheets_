@@ -69,12 +69,12 @@ namespace RS {
 		bool Valid_Auth(const std::string&, const std::string&);
 		void On_Open(const std::string&, const std::string&, const std::string&, Socket_State&);
 		void On_Edit(const std::string&, const std::string&, const std::vector<std::string>&, Socket_State&);
+		void On_Undo(Socket_State&);
+		void On_Revert(const std::string&, Socket_State&);
 		void Do_List_Send(Socket_State&);
 		void Do_Full_Send(const std::string&, Socket_State&);
 		void Do_Edit_Send();
 		void Do_Error(int, const std::string&, Socket_State&);
-		void On_Undo(Socket_State&);
-		void On_Revert(const std::string&, Socket_State&);
 
 		void Send_Message(const json&, Socket_State&);
 	public:

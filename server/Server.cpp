@@ -240,13 +240,36 @@ namespace RS {
 	}
 
 	json& Server::Load_Sheet(const std::string &filename) {
-		json sheet, history;
-		std::string file = File::Get_Base_Filename(filename);
+		json sheet;
+		auto history_filename = File::Get_Base_Filename(filename) + ".history";
 
-		sheet = File::Load_Json(filename);
+		// Load .sprd file.
+		if (std::filesystem::exists(filename)) {
+			sheet = File::Load_Json(filename);
+		}
+		else {
+			sheet = {
+				{"type", "full send"},
+				{"spreadsheet", {
+					{"A1", ""},
+					{"A2", ""}
+				}}
+			};
+			File::Save_Json(filename, sheet);
+		}
+
 		sheets_[filename].Sheet() = sheet;
+		
+		// Load .history file.
+		if (std::filesystem::exists(history_filename)) {
+			auto history = RS::File::Load_History(history_filename);
+			sheets_[filename].History(std::get<0>(history), std::get<1>(history));
+		}
+		else {
 
-		history = File::Load_Json(file + ".history");
+		}
+
+		return sheets_[filename].Sheet();
 	}
 
 	/*
@@ -392,8 +415,10 @@ namespace RS {
 		json& sheet = sheets_[state.Spreadsheet()].Sheet();
 		sheet["spreadsheet"][cell] = contents;
 		RS::File::Save_Json(state.Spreadsheet(), sheet);
+
+		
+		// Need to save to revert and undo stack here
 		// TODO
-		// need to save to revert and undo stack here
 
 		// Echo edits to clients on same sheet.
 		for (int client : sheets_[state.Spreadsheet()].Clients()) {
@@ -402,73 +427,6 @@ namespace RS {
 				Do_Full_Send(state.Spreadsheet(), connections_[client]);
 			}
 		}
-	}
-
-	/*
-	 * Creates and sends a "list" message to a client.
-	 *
-	 * @param state The socket state for the respective client.
-	 */
-	void Server::Do_List_Send(Socket_State &state) {
-		auto sprds = RS::File::List_Spreadsheets(std::filesystem::current_path());
-
-		json list = {
-			{"type", "list"},
-			{"spreadsheets", sprds}
-		};
-
-		Send_Message(list, state);
-	}
-
-	/*
-	 * Creates and sends a "full_send" message to a client.
-	 *
-	 * @param filename The name of the spreadsheet to open/create.
-	 * @param state The socket state for the respective client.
-	 */
-	void Server::Do_Full_Send(const std::string &filename, Socket_State &state) {
-		json full_send;
-		if (std::filesystem::exists(filename)) {
-			auto it = sheets_.find(filename);
-			if (it != sheets_.end()) {
-				full_send = it->second.Sheet();
-			}
-			else {
-				full_send = File::Load_Json(filename);
-				sheets_[filename].Sheet() = full_send;
-			}
-		}
-		else {
-			full_send = {
-				{"type", "full send"},
-				{"spreadsheet", {
-					{"A1", ""},
-					{"A2", ""}
-				}}
-			};
-			sheets_[filename].Sheet() = full_send;
-			File::Save_Json(filename, full_send);
-		}
-
-		sheets_[filename].Clients().insert(state.ID());
-		Send_Message(full_send, state);
-	}
-
-	/*
-	 * Creates and sends an error message to a client.
-	 *
-	 * @param code The error code.
-	 * @param source The cell source, if applicable.
-	 * @param state The socket state for the respective client.
-	 */
-	void Server::Do_Error(int code, const std::string &source, Socket_State &state) {
-		json j_error = {
-			{"type", "error"},
-			{"code", code},
-			{"source", source}
-		};
-
-		Send_Message(j_error, state);
 	}
 
 	/*
@@ -504,6 +462,62 @@ namespace RS {
 			Do_Full_Send(state.Spreadsheet(), connections_[client]);
 			
 		}
+	}
+
+	/*
+	 * Creates and sends a "list" message to a client.
+	 *
+	 * @param state The socket state for the respective client.
+	 */
+	void Server::Do_List_Send(Socket_State &state) {
+		auto sprds = RS::File::List_Spreadsheets(std::filesystem::current_path());
+
+		json list = {
+			{"type", "list"},
+			{"spreadsheets", sprds}
+		};
+
+		Send_Message(list, state);
+	}
+
+	/*
+	 * Creates and sends a "full_send" message to a client.
+	 *
+	 * @param filename The name of the spreadsheet to open/create.
+	 * @param state The socket state for the respective client.
+	 */
+	void Server::Do_Full_Send(const std::string &filename, Socket_State &state) {
+		json full_send;
+
+		// Check if sheet is already loaded.
+		auto it = sheets_.find(filename);
+		if (it != sheets_.end()) {
+			full_send = it->second.Sheet();
+		}
+		else {
+			full_send = Load_Sheet(filename);
+		}
+
+		// Store connection reference and send message.
+		sheets_[filename].Clients().insert(state.ID());
+		Send_Message(full_send, state);
+	}
+
+	/*
+	 * Creates and sends an error message to a client.
+	 *
+	 * @param code The error code.
+	 * @param source The cell source, if applicable.
+	 * @param state The socket state for the respective client.
+	 */
+	void Server::Do_Error(int code, const std::string &source, Socket_State &state) {
+		json j_error = {
+			{"type", "error"},
+			{"code", code},
+			{"source", source}
+		};
+
+		Send_Message(j_error, state);
 	}
 
 	/*
