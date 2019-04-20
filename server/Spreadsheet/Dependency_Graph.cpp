@@ -100,6 +100,12 @@ namespace RS {
 		return *set;
 	}
 
+	const std::unordered_set<std::string>& Dependency_Graph::GetDirectDependents(const std::string &s) {
+		std::unordered_set<std::string> *ret = Get_Dependents(s);
+		return *ret;
+	}
+
+
 	bool Dependency_Graph::Has_Circular_Dependency(const std::string &cell) {
 		std::unordered_set<std::string> cells({ cell });
 		return Has_Circular_Dependency(cells);
@@ -265,5 +271,19 @@ namespace RS {
 		// 	}
 		// }
 		// changed.AddFirst(name);
+
+		for(const auto &name : GetDirectDependents(cell)) {
+			if(name.find(start)) {
+				throw "Circular Exception";
+			}
+
+			auto got = visited.find (name); 
+			
+			else if(got == visited.end() ) {
+				Visit(start, name, visited, changed);
+			}
+		}
+
+		changed.first(cell);
 	}
 }

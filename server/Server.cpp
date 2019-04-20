@@ -485,7 +485,7 @@ namespace RS {
 			
 			Do_Full_Send(state.Spreadsheet(), connections_[client]);
 			
-			}
+		}
 	}
 	
 	/*
@@ -503,7 +503,7 @@ namespace RS {
 			
 			Do_Full_Send(state.Spreadsheet(), connections_[client]);
 			
-			}
+		}
 	}
 
 	/*

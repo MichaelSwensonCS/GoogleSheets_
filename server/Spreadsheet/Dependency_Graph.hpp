@@ -64,6 +64,8 @@ namespace RS {
 		void Replace_Dependents(const std::string&, const std::unordered_set<std::string>&);
 		void Replace_Dependees(const std::string&, const std::unordered_set<std::string>&);
 
+		const std::unordered_set<std::string>& GetDirectDependents(const std::string&);
+
 		static bool Has_Circular_Dependency(const std::string&);
 		static bool Has_Circular_Dependency(const std::unordered_set<std::string>&);
 	};
