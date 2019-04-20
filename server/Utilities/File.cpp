@@ -55,18 +55,25 @@ namespace RS {
 
 	std::stack<std::string> File::Load_Undo_History(const std::string &filename) {
 		std::stack<std::string> output;
+		std::vector<std::string> holder;
 
+		// Load file.
 		std::string line;
 		std::ifstream file(filename);
 		if (file.is_open()) {
 			while (std::getline(file,line)) {
-				output.push(line);
+				holder.push_back(line);
 			}
 
 			file.close();
 		}
 		else {
 			Log::Error("Unable to open undo history file, " + filename);
+		}
+
+		// Loop backwards to preserve stack ordering.
+		for (auto it = holder.rbegin(); it != holder.rend(); it++) {
+			output.push(*it);
 		}
 
 		return output;
