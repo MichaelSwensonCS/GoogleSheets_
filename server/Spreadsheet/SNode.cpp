@@ -39,7 +39,7 @@ namespace RS {
 		return undo_;
 	}
 
-	const std::map<std::string, std::stack<std::string>>& SNode::Revert() const {
+	const std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>& SNode::Revert() const {
 		return revert_;
 	}
 
@@ -47,14 +47,14 @@ namespace RS {
 	 * Mutator Methods                                                                         *
 	 *-----------------------------------------------------------------------------------------*/
 
-	void SNode::History(const std::stack<std::string> &undo, const std::map<std::string, std::stack<std::string>> &revert) {
+	void SNode::History(const std::stack<std::string> &undo, const std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>> &revert) {
 		undo_ = undo;
 		revert_ = revert;
 	}
 
 	void SNode::Reset_History() {
 		undo_ = std::stack<std::string>();
-		revert_ = std::map<std::string, std::stack<std::string>>();
+		revert_ = std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>();
 	}
 
 	const std::string& SNode::Do_Undo() {

@@ -18,7 +18,9 @@
 
 #include <map>
 #include <stack>
+#include <tuple>
 #include <unordered_set>
+#include <vector>
 #include "../Libraries/json.hpp"
 
 using json = nlohmann::json;
@@ -34,7 +36,7 @@ namespace RS {
 		std::stack<std::string> undo_;
 
 		// Per cell
-		std::map<std::string, std::stack<std::string>> revert_;
+		std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>> revert_;
 	public:
 		SNode();
 
@@ -42,9 +44,9 @@ namespace RS {
 		json& Sheet();
 
 		const std::stack<std::string>& Undo() const;
-		const std::map<std::string, std::stack<std::string>>& Revert() const;
+		const std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>& Revert() const;
 
-		void History(const std::stack<std::string>&, const std::map<std::string, std::stack<std::string>>&);
+		void History(const std::stack<std::string>&, const std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>&);
 		void Reset_History();
 
 		const std::string& Do_Undo();

@@ -41,10 +41,10 @@ namespace RS {
 		return j;
 	}
 
-	std::tuple<std::stack<std::string>, std::map<std::string, std::stack<std::string>>>
+	std::tuple<std::stack<std::string>, std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>>
 	File::Load_History(const std::string &filename) {
 		std::stack<std::string> undo;
-		std::map<std::string, std::stack<std::string>> revert;
+		std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>> revert;
 
 		std::string line;
 		std::ifstream file(filename);
@@ -81,7 +81,9 @@ namespace RS {
 		out.close();
 	}
 
-	void File::Save_History(const std::string &filename, std::stack<std::string> undo, std::map<std::string, std::stack<std::string>> revert) {
+	void File::Save_History(const std::string &filename, std::stack<std::string> undo,
+			std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>> revert) {
+
 		std::ofstream file(filename);
 		if (file.is_open()) {
 			Save_Revert_History(file, revert);
@@ -169,8 +171,9 @@ namespace RS {
 		return output;
 	}
 
-	std::map<std::string, std::stack<std::string>> File::Load_Revert_History(std::ifstream &file) {
-		std::map<std::string, std::stack<std::string>> output;
+	std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>
+	File::Load_Revert_History(std::ifstream &file) {
+		std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>> output;
 
 		std::string line;
 		if (file.is_open()) {
@@ -189,9 +192,16 @@ namespace RS {
 				value	= line.substr(delim + 1);
 				j		= json::parse(value);
 
-				output[key] = std::stack<std::string>();
+				output[key] = std::stack<std::tuple<std::string, std::vector<std::string>>>();
 				for (auto it = j.rbegin(); it != j.rend(); it++) {
-					output[key].push(it.value());
+					for (auto& [k, v] : it.value().items()) {
+						std::vector<std::string> vec;
+						for (auto &dep : v) {
+							vec.push_back(dep);
+						}
+						auto tup = std::make_tuple(k, vec);
+						output[key].push(tup);
+					}
 				}
 			}
 		}
@@ -215,19 +225,33 @@ namespace RS {
 		}
 	}
 
-	void File::Save_Revert_History(std::ofstream &file, std::map<std::string, std::stack<std::string>> &revert) {
+	void File::Save_Revert_History(std::ofstream &file,
+			std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>> &revert) {
+
 		std::vector<std::string> holder;
 		if (file.is_open()) {
 			file << "[revert]\n";
 			for (auto & [key, val] : revert) {
 				file << key << "=[";
 				while (val.size() != 0) {
+					auto contents = std::get<0>(val.top());
+					auto deps = std::get<1>(val.top());
+
+					file << "{\"" << contents << "\":[";
+					for (auto it = deps.begin(); it != deps.end(); ++it) {
+						if(std::next(it) == deps.end()) {
+							file << '\"' << *it << '\"';
+						}
+						file << '\"' << *it << "\",";
+					}
+
 					if (val.size() == 1) {
-						file << '\"' << val.top() << "\"";
+						file << "]}";
 					}
 					else {
-						file << '\"' << val.top() << "\",";
+						file << "]},";
 					}
+					
 					val.pop();
 				}
 				file << "]\n";

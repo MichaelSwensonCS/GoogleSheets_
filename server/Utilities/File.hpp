@@ -35,15 +35,15 @@ namespace RS {
 	class File {
 	private:
 		static std::stack<std::string> Load_Undo_History(std::ifstream&);
-		static std::map<std::string, std::stack<std::string>> Load_Revert_History(std::ifstream&);
+		static std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>> Load_Revert_History(std::ifstream&);
 		static void Save_Undo_History(std::ofstream&, std::stack<std::string>&);
-		static void Save_Revert_History(std::ofstream&, std::map<std::string, std::stack<std::string>>&);
+		static void Save_Revert_History(std::ofstream&, std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>&);
 	public:
 		static json Load_Json(const std::string&);
-		static std::tuple<std::stack<std::string>, std::map<std::string, std::stack<std::string>>> Load_History(const std::string &filename);
+		static std::tuple<std::stack<std::string>, std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>> Load_History(const std::string &filename);
 		
 		static void Save_Json(const std::string&, json&);
-		static void Save_History(const std::string &filename, std::stack<std::string>, std::map<std::string, std::stack<std::string>>);
+		static void Save_History(const std::string &filename, std::stack<std::string>, std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>);
 
 		static std::vector<std::string> List_Spreadsheets(const std::string&);
 
