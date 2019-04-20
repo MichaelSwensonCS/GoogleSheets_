@@ -41,18 +41,6 @@ namespace RS {
 		return j;
 	}
 
-	/*
-	 * Saves a JSON object locally to a file.
-	 *
-	 * @param filename The name of the JSON file to save.
-	 * @param j The JSON object to be saved.
-	 */
-	void File::Save_Json(const std::string &filename, json &j) {
-		std::ofstream out(filename);
-		out << std::setw(4) << j << std::endl;
-		out.close();
-	}
-
 	std::stack<std::string> File::Load_Undo_History(const std::string &filename) {
 		std::stack<std::string> output;
 		std::vector<std::string> holder;
@@ -79,21 +67,6 @@ namespace RS {
 		return output;
 	}
 
-	void File::Save_Undo_History(const std::string &filename, std::stack<std::string> undo) {
-		std::ofstream out(filename);
-		if (out.is_open()) {
-			while (undo.size() != 0) {
-				out << undo.top() << "\n";
-				undo.pop();
-			}
-		}
-		else {
-			Log::Error("Unable to create undo history file, " + filename);
-		}
-		
-		out.close();
-	}
-
 	std::map<std::string, std::stack<std::string>> File::Load_Revert_History(const std::string &filename) {
 		std::map<std::string, std::stack<std::string>> output;
 
@@ -111,8 +84,9 @@ namespace RS {
 				j		= json::parse(value);
 
 				output[key] = std::stack<std::string>();
-
-				output[key].push(value);
+				for (auto it = j.rbegin(); it != j.rend(); it++) {
+					output[key].push(it.value());
+				}
 			}
 
 			file.close();
@@ -124,10 +98,51 @@ namespace RS {
 		return output;
 	}
 
-	void File::Save_Revert_History(const std::string &filename, std::map<std::string, std::stack<std::string>> revert) {
+	/*
+	 * Saves a JSON object locally to a file.
+	 *
+	 * @param filename The name of the JSON file to save.
+	 * @param j The JSON object to be saved.
+	 */
+	void File::Save_Json(const std::string &filename, json &j) {
+		std::ofstream out(filename);
+		out << std::setw(4) << j << std::endl;
+		out.close();
+	}
+
+	void File::Save_Undo_History(const std::string &filename, std::stack<std::string> undo) {
 		std::ofstream out(filename);
 		if (out.is_open()) {
+			while (undo.size() != 0) {
+				out << undo.top() << "\n";
+				undo.pop();
+			}
+		}
+		else {
+			Log::Error("Unable to create undo history file, " + filename);
+		}
+		
+		out.close();
+	}
 
+	void File::Save_Revert_History(const std::string &filename, std::map<std::string, std::stack<std::string>> revert) {
+		std::vector<std::string> holder;
+
+		std::ofstream out(filename);
+		if (out.is_open()) {
+			for (auto & [key, val] : revert) {
+				out << key << "=[";
+				while (val.size() != 0) {
+					if (val.size() == 1) {
+						out << '\"' << val.top() << "\"";
+					}
+					else {
+						out << '\"' << val.top() << "\",";
+					}
+					val.pop();
+				}
+				out << "]\n";
+			}
 		}
 		else {
 			Log::Error("Unable to create revert history file, " + filename);

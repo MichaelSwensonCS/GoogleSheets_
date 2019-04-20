@@ -39,10 +39,10 @@ namespace RS {
 		static std::string Trim_Copy(std::string s);
 	public:
 		static json Load_Json(const std::string&);
-		static void Save_Json(const std::string&, json&);
 		static std::stack<std::string> Load_Undo_History(const std::string&);
-		static void Save_Undo_History(const std::string&, std::stack<std::string>);
 		static std::map<std::string, std::stack<std::string>> Load_Revert_History(const std::string&);
+		static void Save_Json(const std::string&, json&);
+		static void Save_Undo_History(const std::string&, std::stack<std::string>);
 		static void Save_Revert_History(const std::string&, std::map<std::string, std::stack<std::string>>);
 
 		static std::vector<std::string> List_Spreadsheets(const std::string&);
