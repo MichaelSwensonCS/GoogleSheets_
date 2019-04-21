@@ -57,12 +57,38 @@ namespace RS {
 		revert_ = std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>();
 	}
 
-	const std::string& SNode::Do_Undo() {
-		return "";
+	void SNode::Push_Edit(const std::string &cell, const std::string &contents, const std::vector<std::string> &deps) {
+		undo_.push(cell);
+		revert_[cell].push(std::make_tuple(contents, deps));
 	}
 
-	const std::string& SNode::Do_Revert() {
-		return "";
+	const std::string& SNode::Do_Undo() {
+		std::string cell = undo_.top();
+		undo_.pop();
+		return Do_Revert(cell);;
+	}
+
+	const std::string& SNode::Do_Revert(const std::string &cell) {
+		auto contents = std::make_shared<std::string>("");
+
+		// Check that the cell has history.
+		auto it = revert_.find(cell);
+		if (it != revert_.end()) {
+			auto history = it->second;
+			auto tup = history.top();
+
+			*contents = std::get<0>(tup);
+			auto dependents = std::get<1>(tup);
+
+			// Probably check dependents
+
+			history.pop();
+		}
+
+		// Revert cell's contents.
+		sheet_["spreadsheet"][cell] = *contents;
+
+		return *contents;
 	}
 
 

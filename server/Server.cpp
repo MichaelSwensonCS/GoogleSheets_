@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/19/19                                                     *
+ *                      Modtime : 04/20/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -272,6 +272,14 @@ namespace RS {
 		return sheets_[filename].Sheet();
 	}
 
+	void Server::Save_Sheet(const std::string &filename, SNode &node) {
+		auto history_filename = File::Get_Base_Filename(filename) + ".history";
+
+		json& sheet = node.Sheet();
+		RS::File::Save_Json(filename, sheet);
+		RS::File::Save_History(history_filename, node.Undo(), node.Revert());
+	}
+
 	/*
 	 * The server's main update loop which handles new connections and any messages.
 	 *
@@ -411,20 +419,24 @@ namespace RS {
 		// Verify
 		// TODO
 
-		// Set sheet data and save.
-		json& sheet = sheets_[state.Spreadsheet()].Sheet();
-		sheet["spreadsheet"][cell] = contents;
-		RS::File::Save_Json(state.Spreadsheet(), sheet);
+		// Initial setup.
+		int id = state.ID();
+		std::string filename = state.Spreadsheet();
+		SNode node = sheets_[filename];
+		json& sheet = node.Sheet();
 
-		
-		// Need to save to revert and undo stack here
-		// TODO
+		// Set sheet data and history.
+		sheet["spreadsheet"][cell] = contents;
+		node.Push_Edit(cell, contents, dependencies);
+
+		// Save.
+		Save_Sheet(filename, node);
 
 		// Echo edits to clients on same sheet.
-		for (int client : sheets_[state.Spreadsheet()].Clients()) {
-			if (client == state.ID()) { continue; }
+		for (int client : node.Clients()) {
+			if (client == id) { continue; }
 			else {
-				Do_Full_Send(state.Spreadsheet(), connections_[client]);
+				Do_Full_Send(sheet, connections_[client]);
 			}
 		}
 	}
@@ -434,15 +446,22 @@ namespace RS {
 	 *
 	 * @param state The socket state for the respective client.
 	 */
-	void Server::On_Undo(Socket_State &state){
-		// TODO
-		// need to get recent global change and pop it
+	void Server::On_Undo(Socket_State &state) {
+		// Initial setup.
+		int id = state.ID();
+		std::string filename = state.Spreadsheet();
+		SNode node = sheets_[filename];
+		json& sheet = node.Sheet();
 
-		// then send back previous state to clients
-		for (int client : sheets_[state.Spreadsheet()].Clients()) {
-			
+		// Undo.
+		std::string contents = node.Do_Undo();
+
+		// Save.
+		Save_Sheet(filename, node);
+
+		// Send back previous contents to clients.
+		for (int client : node.Clients()) {
 			Do_Full_Send(state.Spreadsheet(), connections_[client]);
-			
 		}
 	}
 	
@@ -452,15 +471,22 @@ namespace RS {
 	 * @param cell The cell that was edited.
 	 * @param state The socket state for the respective client.
 	 */
-	void Server::On_Revert(const std::string &cell, Socket_State &state){
-		// TODO
-		// need to get recent cell change and pop it
+	void Server::On_Revert(const std::string &cell, Socket_State &state) {
+		// Initial setup.
+		int id = state.ID();
+		std::string filename = state.Spreadsheet();
+		SNode node = sheets_[filename];
+		json& sheet = node.Sheet();
 
-		// then send back previous state to clients
+		// Revert.
+		std::string contents = node.Do_Revert(cell);
+
+		// Save.
+		Save_Sheet(filename, node);
+
+		// Send back previous contents to clients.
 		for (int client : sheets_[state.Spreadsheet()].Clients()) {
-			
 			Do_Full_Send(state.Spreadsheet(), connections_[client]);
-			
 		}
 	}
 

@@ -17,6 +17,7 @@
 #define SNODE_RS_H
 
 #include <map>
+#include <memory>
 #include <stack>
 #include <tuple>
 #include <unordered_set>
@@ -49,8 +50,10 @@ namespace RS {
 		void History(const std::stack<std::string>&, const std::map<std::string, std::stack<std::tuple<std::string, std::vector<std::string>>>>&);
 		void Reset_History();
 
+		void Push_Edit(const std::string&, const std::string&, const std::vector<std::string>&);
+
 		const std::string& Do_Undo();
-		const std::string& Do_Revert();
+		const std::string& Do_Revert(const std::string&);
 	};
 }
 
