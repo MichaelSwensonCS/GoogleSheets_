@@ -1,5 +1,17 @@
-Put server code here.
-server .cpp examples are in the server folder.
+*** Compiling ***
+Additional libraries are included with the project. To compile, just run make. Resulting output will be in ./bin.
 
-g++ -std=c++11 -DASIO_STANDALONE chat_server.cpp chat_message.hpp -I /home/u0585863/Documents/asio-1.12.2/include/ -pthread
-g++ -std=c++11 -DASIO_STANDALONE chat_client.cpp chat_message.hpp -I /home/u0585863/Documents/asio-1.12.2/include/ -pthread
+*** Running ***
+Usage:	server [OPTIONS] [ARG]
+		server [OPTIONS] COMMAND [ARG]
+
+Options:
+	-host string			Specifies the host address that the server will listen on (default "127.0.0.1").
+	-port number			Specifies the port that the serer will listen on (default 2112).
+
+	-acct COMMAND string	Executes an account related action.
+	-sprd COMMAND string	Executes a spreadsheet related action.
+
+Commands:
+	new						Creates a new account or spreadsheet.
+	del						Deletes the specified account or spreadsheet.
