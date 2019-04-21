@@ -101,37 +101,31 @@ namespace RS {
 	}
 
 	const std::unordered_set<std::string>& Dependency_Graph::GetDirectDependents(const std::string &s) {
-		std::unordered_set<std::string> *ret = Get_Dependents(s);
-		return *ret;
+		Dependency_Graph dep;
+
+
+		return dep.Get_Dependents(s);
 	}
 
 
-	bool Dependency_Graph::Has_Circular_Dependency(const std::string &cell) {
-		std::unordered_set<std::string> cells({ cell });
-		return Has_Circular_Dependency(cells);
-	}
-
-	bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells) {
-		// LinkedList<String> changed = new LinkedList<String>();
-		std::vector<std::string> *changed = new std::vector<std::string>();
+	bool Dependency_Graph::Has_Circular_Dependency(const std::string &cells, const std::string &contents) {
 		
-		// HashSet<String> visited = new HashSet<String>();
-		std::unordered_set<std::string> visited;
+		std::unordered_set<std::string> cell_deps = GetDirectDependents(cells);
 
-		// foreach (String name in names) {
+		for(std::string it : cell_deps) {
 
-		// 	if (!visited.Contains(name)) {
-		// 		Visit(name, name, visited, changed);
-		// 	}
-		// }
-		for (const auto &cell : cells) {
-			auto it = visited.find(cell);
-			if (it == visited.end()) {
-				Visit(cell, cell, visited, changed);
+				if(it.compare(contents) == 0) {
+					return true;
+				}
 			}
-		}
 
 		return false;
+	}
+
+
+	bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents) {
+
+
 	}
 
 	/*-----------------------------------------------------------------------------------------*
@@ -271,19 +265,5 @@ namespace RS {
 		// 	}
 		// }
 		// changed.AddFirst(name);
-
-		for(const auto &name : GetDirectDependents(cell)) {
-			if(name.find(start)) {
-				throw "Circular Exception";
-			}
-
-			auto got = visited.find (name); 
-			
-			else if(got == visited.end() ) {
-				Visit(start, name, visited, changed);
-			}
-		}
-
-		changed.first(cell);
 	}
 }
