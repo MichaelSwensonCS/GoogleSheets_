@@ -451,7 +451,6 @@ namespace SS.Controllers {
         /// <param name="state"></param>
         private void OnOpenSheet(OpenMessage om, SocketState state) {
             if (Log.Enabled) { Log.WriteLine($"Attempting to open/create {om.SpreadsheetName}...", true); }
-
             _openingSheetName = om.SpreadsheetName;
 
             state.Callback = OpenCallback;
@@ -468,6 +467,7 @@ namespace SS.Controllers {
             if (state.Error) {
                 if (Log.Enabled) { Log.WriteLine(state.ErrorMessage, true); }
                 MessageBox.Show(state.ErrorMessage, "Error");
+                _subViews.ConnectToggleInputsThreaded(true);
             }
             else {
                 if (Log.Enabled) { Log.WriteLine("Connection created.", true); }

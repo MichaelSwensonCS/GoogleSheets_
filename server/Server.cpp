@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/20/19                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Server:                                                                                     *
@@ -158,11 +158,16 @@ namespace RS {
 	void Server::Do_Spreadsheet_Create(const Action &action) {
 		bool create_new = false;
 
-		if (std::filesystem::exists(action.Arg01())) {
+		std::string filename = action.Arg01();
+		if (RS::File::Get_Extension(filename) != "sprd") {
+			filename = filename + ".sprd";
+		}
+
+		if (std::filesystem::exists(filename)) {
 			std::string response;
 
 		response_check:
-			response = RS::Log::Prompt_Overwrite(action.Arg01());
+			response = RS::Log::Prompt_Overwrite(filename);
 			std::transform(response.begin(), response.end(), response.begin(), ::tolower);
 			if (response == "y" || response == "yes") {
 				create_new = true;
@@ -187,8 +192,8 @@ namespace RS {
 				}}
 			};
 
-			File::Save_Json(action.Arg01(), sheet);
-			RS::Log::Success("Spreadsheet " + action.Arg01() + " created.");
+			File::Save_Json(filename, sheet);
+			RS::Log::Success("Spreadsheet " + filename + " created.");
 		}
 	}
 
@@ -198,12 +203,24 @@ namespace RS {
 	 * @param action The related action object.
 	 */
 	void Server::Do_Spreadsheet_Delete(const Action &action) {
-		if (std::filesystem::exists(action.Arg01())) {
-			unlink(action.Arg01().c_str());
-			RS::Log::Success("Spreadsheet " + action.Arg01() + " deleted.");
+		std::string filename = action.Arg01();
+		auto history_filename = File::Get_Base_Filename(filename) + ".history";
+
+		if (RS::File::Get_Extension(filename) != "sprd") {
+			RS::Log::Error("The file \"" + filename + "\" is not a valid spreadsheet (.sprd).");
+			return;
+		}
+
+		if (std::filesystem::exists(filename)) {
+			if (std::filesystem::exists(history_filename)) {
+				unlink(history_filename.c_str());
+			}
+
+			unlink(filename.c_str());
+			RS::Log::Success("Spreadsheet " + filename + " deleted.");
 		}
 		else {
-			RS::Log::Error("Can't delete spreadsheet " + action.Arg01() + " because it doesn't exist.");
+			RS::Log::Error("Can't delete spreadsheet \"" + filename + "\" because it doesn't exist.");
 		}
 	}
 
@@ -239,6 +256,12 @@ namespace RS {
 		File::Save_Json(AUTH_FILENAME, j);
 	}
 
+	/*
+	 * Attempts to load a spreadsheet and its history with the specified filename. If the spreadsheet
+	 * or the history file for the spreadsheet cannot be found then the files will be created.
+	 *
+	 * @param filename The name of the spreadsheet to load.
+	 */
 	json& Server::Load_Sheet(const std::string &filename) {
 		json sheet;
 		auto history_filename = File::Get_Base_Filename(filename) + ".history";
@@ -265,13 +288,16 @@ namespace RS {
 			auto history = RS::File::Load_History(history_filename);
 			sheets_[filename].History(std::get<0>(history), std::get<1>(history));
 		}
-		else {
-
-		}
 
 		return sheets_[filename].Sheet();
 	}
 
+	/*
+	 * Saves a spreadsheet and its corresponding history.
+	 *
+	 * @param filename The name of the spreadsheet to save.
+	 * @param node The node containing the spreadsheet data.
+	 */
 	void Server::Save_Sheet(const std::string &filename, SNode &node) {
 		auto history_filename = File::Get_Base_Filename(filename) + ".history";
 
@@ -396,9 +422,14 @@ namespace RS {
 	void Server::On_Open(const std::string &filename, const std::string &username,
 			const std::string &password, Socket_State &state) {
 
+		std::string file = filename;
+		if (RS::File::Get_Extension(filename) != "sprd") {
+			file = filename + ".sprd";
+		}
+
 		if (Valid_Auth(username, password)) {
-			state.Spreadsheet(filename);
-			Do_Full_Send(filename, state);
+			state.Spreadsheet(file);
+			Do_Full_Send(file, state);
 		}
 		else {
 			Do_Error(1, "", state);

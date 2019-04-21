@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/09/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/15/19                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -19,6 +19,7 @@ using SS.Models.NetMessages;
 using SS.Views;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 namespace SS.Controllers {
@@ -153,6 +154,12 @@ namespace SS.Controllers {
             _connectView.ToggleInputs(enable);
         }
 
+        public void ConnectToggleInputsThreaded(bool enable) {
+            _connectView.Invoke(new MethodInvoker(() => {
+                _connectView.ToggleInputs(enable);
+            }));
+        }
+
         public void EndOpenNew() {
             if (_initialLoad) {
                 _initialLoad = false;
@@ -276,6 +283,9 @@ namespace SS.Controllers {
                 return false;
             }
             else {
+                if (Path.GetExtension(spreadsheet) != ".sprd") {
+                    spreadsheet = spreadsheet + ".sprd";
+                }
                 values.Add(spreadsheet);
             }
 
