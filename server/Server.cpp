@@ -467,7 +467,7 @@ namespace RS {
 		for (int client : node.Clients()) {
 			if (client == id) { continue; }
 			else {
-				Do_Full_Send(sheet, connections_[client]);
+				Do_Full_Send(state.Spreadsheet(), connections_[client]);
 			}
 		}
 	}

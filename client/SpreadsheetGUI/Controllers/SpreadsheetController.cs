@@ -188,7 +188,6 @@ namespace SS.Controllers {
 
             _view.HelpNavMenuClick += (o, e) => _subViews.ShowHelpNavView();
             _view.HelpChangingCellsMenuClick += (o, e) => _subViews.ShowHelpChangingCellsView();
-            _view.HelpAddtionalFeaturesMenuClick += (o, e) => _subViews.ShowHelpAdditoinalFeaturesView();
             _view.AboutMenuClick += (o, e) => _subViews.ShowAboutView();
 
             _subViews.ConnectFormClosed += OnConnectClosed;

@@ -36,7 +36,6 @@
             this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.navMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changingCellsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.featuresMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.formulaBox = new System.Windows.Forms.TextBox();
@@ -130,7 +129,6 @@
             this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.navMenuItem,
             this.changingCellsMenuItem,
-            this.featuresMenuItem,
             this.toolStripSeparator3,
             this.aboutMenuItem});
             this.helpMenu.Name = "helpMenu";
@@ -148,12 +146,6 @@
             this.changingCellsMenuItem.Name = "changingCellsMenuItem";
             this.changingCellsMenuItem.Size = new System.Drawing.Size(281, 30);
             this.changingCellsMenuItem.Text = "Changing Cell Contents";
-            // 
-            // featuresMenuItem
-            // 
-            this.featuresMenuItem.Name = "featuresMenuItem";
-            this.featuresMenuItem.Size = new System.Drawing.Size(281, 30);
-            this.featuresMenuItem.Text = "Additional Features";
             // 
             // toolStripSeparator3
             // 
@@ -290,7 +282,6 @@
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reverToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem darkModeMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem featuresMenuItem;
     }
 }
 

@@ -37,7 +37,6 @@ namespace SS.Controllers {
         private AboutView _about;
         private HelpNavView _helpNav;
         private HelpChangingCellsContentsView _helpCells;
-        private HelpAdditionalFeatures _helpFeatures;
         private ConnectView _connectView;
         private OpenNewView _openNew;
 
@@ -76,7 +75,6 @@ namespace SS.Controllers {
             _about = new AboutView(mode);
             _helpNav = new HelpNavView(mode);
             _helpCells = new HelpChangingCellsContentsView(mode);
-            _helpFeatures = new HelpAdditionalFeatures(mode);
             _connectView = new ConnectView(mode);
             _openNew = new OpenNewView(mode);
 
@@ -112,13 +110,6 @@ namespace SS.Controllers {
         }
 
         /// <summary>
-        /// Show the "Additional Features" dialog.
-        /// </summary>
-        public void ShowHelpAdditoinalFeaturesView() {
-            _helpFeatures.ShowDialog();
-        }
-
-        /// <summary>
         /// Show the "Connect" dialog.
         /// </summary>
         /// <param name="isInitialLoad">If true then treats the dialog as the anchor for the main
@@ -146,7 +137,6 @@ namespace SS.Controllers {
             _about.DarkMode(mode);
             _helpNav.DarkMode(mode);
             _helpCells.DarkMode(mode);
-            _helpFeatures.DarkMode(mode);
             _openNew.DarkMode(mode);
         }
 

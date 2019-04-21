@@ -93,12 +93,6 @@
     <Compile Include="Views\ConnectView.Designer.cs">
       <DependentUpon>ConnectView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\HelpAdditionalFeatures.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\HelpAdditionalFeatures.Designer.cs">
-      <DependentUpon>HelpAdditionalFeatures.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\HelpChangingCellsContentsView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -146,9 +140,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ConnectView.resx">
       <DependentUpon>ConnectView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\HelpAdditionalFeatures.resx">
-      <DependentUpon>HelpAdditionalFeatures.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\HelpChangingCellsContentsView.resx">
       <DependentUpon>HelpChangingCellsContentsView.cs</DependentUpon>

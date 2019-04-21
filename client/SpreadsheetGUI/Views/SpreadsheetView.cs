@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 10/17/18                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -118,7 +118,6 @@ namespace SS {
 
             navMenuItem.Click += (o, e) => HelpNavMenuClick?.Invoke(o, e);
             changingCellsMenuItem.Click += (o, e) => HelpChangingCellsMenuClick?.Invoke(o, e);
-            featuresMenuItem.Click += (o, e) => HelpAddtionalFeaturesMenuClick?.Invoke(o, e);
             aboutMenuItem.Click += (o, e) => AboutMenuClick?.Invoke(o, e);
         }
 
