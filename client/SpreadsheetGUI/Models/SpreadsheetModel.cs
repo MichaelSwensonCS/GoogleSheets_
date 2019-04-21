@@ -113,10 +113,12 @@ namespace SS.Models {
 
         public void SetCells(Dictionary<string, string> cells) {
             foreach (KeyValuePair<string, string> cell in cells) {
+                Sheet.SetContentsOfCell(cell.Key, cell.Value);
+
                 if (Current.Name == cell.Key) {
                     Current.Contents = cell.Value;
+                    Current.Value = Sheet.GetCellValue(Current.Name).ToString();
                 }
-                Sheet.SetContentsOfCell(cell.Key, cell.Value);
             }
         }
 
