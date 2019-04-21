@@ -67,7 +67,7 @@ namespace RS {
 		static const std::unordered_set<std::string>& GetDirectDependents(const std::string&);
 
 		static bool Has_Circular_Dependency(const std::string&, const std::string&, const std::vector<std::string>&);
-		// static bool Has_Circular_Dependency(const std::unordered_set<std::string>&, const std::unordered_set<std::string>&);
+		static bool Has_Circular_Dependency(const std::unordered_set<std::string>&, const std::unordered_set<std::string>&, const std::vector<std::string>&);
 
 	};
 }

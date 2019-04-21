@@ -108,24 +108,30 @@ namespace RS {
 	}
 
 
-	bool Dependency_Graph::Has_Circular_Dependency(const std::string &cells, const std::string& contents, const std::vector<std::string>& dependencies) {
+	bool Dependency_Graph::Has_Circular_Dependency(const std::string &cell, const std::string& content, const std::vector<std::string>& dependencies) {
 		
+		std::unordered_set<std::string> cells({ cell });
+		std::unordered_set<std::string> contents({ content });
+
+		return Has_Circular_Dependency(cells, contents, dependencies);
+	}
+
+
+	bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents, const std::vector<std::string>& dependencies) {
+	 	
+
 		std::unordered_set<std::string> cell_deps = GetDirectDependents(cells);
 
 		for(std::string it : cell_deps) {
 
-				if(it.compare(contents) == 0) {
+			auto dep_it = dependencies;
+				if(dep_it.compare(cell_deps) == 0) {
 					return true;
 				}
 			}
 
-		return false;
+	 	return false;
 	}
-
-
-	// bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents) {
-	// 	return false;
-	// }
 
 	/*-----------------------------------------------------------------------------------------*
 	 * Mutator Methods                                                                         *
