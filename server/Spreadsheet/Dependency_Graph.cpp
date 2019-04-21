@@ -119,16 +119,29 @@ namespace RS {
 
 	bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents, const std::vector<std::string>& dependencies) {
 	 	
+	 	for(auto cell_deps : cells){
+			 auto celld = GetDirectDependents(cell_deps);
+			 for(auto cell : celld){
+				for (std::string dep_it : dependencies){
+					if(dep_it.compare(cell) == 0)
+					{
+						return true;
+					}
+			 }
+			 }
 
-		std::unordered_set<std::string> cell_deps = GetDirectDependents(cells);
+		 }
 
-		for(std::string it : cell_deps) {
+		//std::unordered_set<std::string> cell_deps = GetDirectDependents(cells);
 
-			auto dep_it = dependencies;
-				if(dep_it.compare(cell_deps) == 0) {
-					return true;
-				}
-			}
+		// for(std::string it : cell_deps) {
+
+		// 	auto dep_it = dependencies;
+			
+		// 	if(dep_it == cell_deps) {
+		// 			return true;
+		// 		}
+		// 	}
 
 	 	return false;
 	}
