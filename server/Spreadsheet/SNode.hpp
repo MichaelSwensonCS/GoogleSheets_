@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/18/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/20/19                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * SNode:                                                                                      *
@@ -23,6 +23,7 @@
 #include <unordered_set>
 #include <vector>
 #include "../Libraries/json.hpp"
+#include "../Utilities/Log.hpp"
 
 using json = nlohmann::json;
 

@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/12/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/19                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -90,6 +90,18 @@ namespace SS.Models {
         /// <returns>List of cells that were affected by the contents being changed of the particular cell.</returns>
         List<Tuple<Point, string>> UpdateCellContents(Cell cell, Action<Exception> notifyError);
 
+        /// <summary>
+        /// Gets a collection of names for cells directly dependent on given cell.
+        /// </summary>
+        /// <param name="cell">The name of the cell to lookup.</param>
+        /// <returns>Names of dependent cells.</returns>
         IEnumerable<string> GetDirectDependents(string cell);
+
+        /// <summary>
+        /// Gets the direct dependees of a cell (IE - what the cell depends upon).
+        /// </summary>
+        /// <param name="cell">The name of the cell to check.</param>
+        /// <returns>An IEnumerable of the dependees.</returns>
+        IEnumerable<string> GetDirectDependees(string cell);
     }
 }

@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/06/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/18/19                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -282,7 +282,7 @@ namespace SS.Controllers {
                 lock (_mainState.OutboundMessages) {
                     string name = _model.Previous.Name;
                     string cntnts = _model.Previous.Contents;
-                    List<string> dep = _model.GetDirectDependents(name).ToList();
+                    List<string> dep = _model.GetDirectDependees(name).ToList();
                     EditMessage em = new EditMessage(name, cntnts, dep);
 
                     _mainState.OutboundMessages.Add(em);
@@ -349,8 +349,10 @@ namespace SS.Controllers {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnUndoClick(object sender, EventArgs e) {
-            Console.WriteLine("Undo clicked.");
-
+            if (_mainState != null) {
+                DefaultMessage msg = new DefaultMessage("undo");
+                _mainState.OutboundMessages.Add(msg);
+            }
         }
 
         /// <summary>
@@ -359,8 +361,10 @@ namespace SS.Controllers {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnRevertClick(object sender, EventArgs e) {
-            Console.WriteLine("Revert clicked.");
-
+            if (_mainState != null) {
+                RevertMessage rev = new RevertMessage(_model.Current.Name);
+                _mainState.OutboundMessages.Add(rev);
+            }
         }
 
         /// <summary>
@@ -638,7 +642,7 @@ namespace SS.Controllers {
                     case "full send":
                         FullSendMessage fsm = JsonConvert.DeserializeObject<FullSendMessage>(obj.ToString());
                         _model.SetCells(fsm.Cells);
-                        LoadModel(_model);
+                        LoadModelThreaded(_model);
                         break;
                     case "edit":
                         break;

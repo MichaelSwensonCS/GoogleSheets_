@@ -252,6 +252,13 @@
             The direct dependents of A1 are B1 and C1
             </summary>
         </member>
+        <member name="M:SS.AbstractSpreadsheet.GetDirectDependees(System.String)">
+            <summary>
+            Gets the direct dependees of a cell (IE - what the cell depends upon).
+            </summary>
+            <param name="name">The name of the cell to check.</param>
+            <returns>An IEnumerable of the dependees.</returns>
+        </member>
         <member name="M:SS.AbstractSpreadsheet.GetCellsToRecalculate(System.Collections.Generic.ISet{System.String})">
             <summary>
             Requires that names be non-null.  Also requires that if names contains s,
@@ -456,6 +463,13 @@
             </summary>
             <param name="name">The name of the cell to lookup.</param>
             <returns>Names of dependent cells.</returns>
+        </member>
+        <member name="M:SS.Spreadsheet.GetDirectDependees(System.String)">
+            <summary>
+            Gets the direct dependees of a cell (IE - what the cell depends upon).
+            </summary>
+            <param name="name">The name of the cell to check.</param>
+            <returns>An IEnumerable of the dependees.</returns>
         </member>
         <member name="M:SS.Spreadsheet.ReadSpreadsheetFromXml(System.String)">
             <summary>

@@ -76,6 +76,7 @@
     <Compile Include="Models\NetMessages\FullSendMessage.cs" />
     <Compile Include="Models\NetMessages\ListMessage.cs" />
     <Compile Include="Models\NetMessages\OpenMessage.cs" />
+    <Compile Include="Models\NetMessages\RevertMessage.cs" />
     <Compile Include="Models\SocketState.cs" />
     <Compile Include="Models\SpreadsheetModel.cs" />
     <Compile Include="Program.cs" />

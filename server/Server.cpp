@@ -422,8 +422,8 @@ namespace RS {
 		// Initial setup.
 		int id = state.ID();
 		std::string filename = state.Spreadsheet();
-		SNode node = sheets_[filename];
-		json& sheet = node.Sheet();
+		SNode &node = sheets_[filename];
+		json &sheet = node.Sheet();
 
 		// Set sheet data and history.
 		sheet["spreadsheet"][cell] = contents;
@@ -450,8 +450,8 @@ namespace RS {
 		// Initial setup.
 		int id = state.ID();
 		std::string filename = state.Spreadsheet();
-		SNode node = sheets_[filename];
-		json& sheet = node.Sheet();
+		SNode &node = sheets_[filename];
+		json &sheet = node.Sheet();
 
 		// Undo.
 		std::string contents = node.Do_Undo();
@@ -475,8 +475,8 @@ namespace RS {
 		// Initial setup.
 		int id = state.ID();
 		std::string filename = state.Spreadsheet();
-		SNode node = sheets_[filename];
-		json& sheet = node.Sheet();
+		SNode &node = sheets_[filename];
+		json &sheet = node.Sheet();
 
 		// Revert.
 		std::string contents = node.Do_Revert(cell);

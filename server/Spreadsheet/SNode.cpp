@@ -6,7 +6,7 @@
  *                                                                                             *
  *                   Start Date : 04/18/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/20/19                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * SNode:                                                                                      *
@@ -63,9 +63,16 @@ namespace RS {
 	}
 
 	const std::string& SNode::Do_Undo() {
-		std::string cell = undo_.top();
-		undo_.pop();
-		return Do_Revert(cell);;
+		auto contents = std::make_shared<std::string>("");
+
+		if (undo_.size() > 0) {
+			std::string cell = undo_.top();
+			undo_.pop();
+			return Do_Revert(cell);
+		}
+		else {
+			return *contents;
+		}
 	}
 
 	const std::string& SNode::Do_Revert(const std::string &cell) {
@@ -74,15 +81,21 @@ namespace RS {
 		// Check that the cell has history.
 		auto it = revert_.find(cell);
 		if (it != revert_.end()) {
-			auto history = it->second;
-			auto tup = history.top();
 
-			*contents = std::get<0>(tup);
-			auto dependents = std::get<1>(tup);
+			auto &history = it->second;
+			if (history.size() > 0) {
+				auto current = history.top();
+				history.pop();
 
-			// Probably check dependents
+				if (history.size() != 0) {
+					auto previous = history.top();
 
-			history.pop();
+					*contents = std::get<0>(previous);
+					auto dependees = std::get<1>(previous);
+
+					// Probably check dependents
+				}
+			}
 		}
 
 		// Revert cell's contents.
@@ -90,6 +103,4 @@ namespace RS {
 
 		return *contents;
 	}
-
-
 }

@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 10/12/18                                                     *
  *                                                                                             *
- *                      Modtime : 04/18/19                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -200,8 +200,22 @@ namespace SS.Models {
             return cells;
         }
 
+        /// <summary>
+        /// Gets a collection of names for cells directly dependent on given cell.
+        /// </summary>
+        /// <param name="cell">The name of the cell to lookup.</param>
+        /// <returns>Names of dependent cells.</returns>
         public IEnumerable<string> GetDirectDependents(string cell) {
             return Sheet.GetDirectDependents(cell);
+        }
+
+        /// <summary>
+        /// Gets the direct dependees of a cell (IE - what the cell depends upon).
+        /// </summary>
+        /// <param name="cell">The name of the cell to check.</param>
+        /// <returns>An IEnumerable of the dependees.</returns>
+        public IEnumerable<string> GetDirectDependees(string cell) {
+            return Sheet.GetDirectDependees(cell);
         }
 
         /// <summary>
