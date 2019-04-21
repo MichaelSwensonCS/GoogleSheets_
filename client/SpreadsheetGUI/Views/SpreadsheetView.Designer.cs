@@ -78,13 +78,13 @@
             // 
             this.openMenuItem.Enabled = false;
             this.openMenuItem.Name = "openMenuItem";
-            this.openMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.openMenuItem.Size = new System.Drawing.Size(182, 30);
             this.openMenuItem.Text = "New/Open";
             // 
             // closeMenuItem
             // 
             this.closeMenuItem.Name = "closeMenuItem";
-            this.closeMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.closeMenuItem.Size = new System.Drawing.Size(182, 30);
             this.closeMenuItem.Text = "Close";
             // 
             // editMenu
@@ -99,13 +99,16 @@
             // undoMenuItem
             // 
             this.undoMenuItem.Name = "undoMenuItem";
-            this.undoMenuItem.Size = new System.Drawing.Size(145, 30);
+            this.undoMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.undoMenuItem.Size = new System.Drawing.Size(254, 30);
             this.undoMenuItem.Text = "Undo";
             // 
             // revertMenuItem
             // 
             this.revertMenuItem.Name = "revertMenuItem";
-            this.revertMenuItem.Size = new System.Drawing.Size(145, 30);
+            this.revertMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.Z)));
+            this.revertMenuItem.Size = new System.Drawing.Size(254, 30);
             this.revertMenuItem.Text = "Revert";
             // 
             // viewMenu

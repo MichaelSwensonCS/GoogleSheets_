@@ -58,6 +58,9 @@ namespace SS.Controllers {
         private const char KEY_ENTER = (char)0xD;
         private const char KEY_TAB = (char)0x9;
         private const char KEY_BACKSPACE = (char)0x8;
+        private const char KEY_SHIFT = (char)0x10;
+        private const char KEY_CONTROL = (char)0x11;
+        private const char KEY_SUBSTITUTE = (char)0x1A;
 
         private ISpreadsheetView _view;
         private ISpreadsheetModel _model;
@@ -219,6 +222,9 @@ namespace SS.Controllers {
                 switch (e.KeyChar) {
                     case KEY_TAB:
                     case KEY_ENTER:
+                    case KEY_CONTROL:
+                    case KEY_SHIFT:
+                    case KEY_SUBSTITUTE:
                         return;
                     case KEY_BACKSPACE:
                         if (_model.Current.Modified) {
