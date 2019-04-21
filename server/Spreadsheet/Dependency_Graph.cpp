@@ -108,7 +108,7 @@ namespace RS {
 	}
 
 
-	bool Dependency_Graph::Has_Circular_Dependency(const std::string &cells, const std::string &contents) {
+	bool Dependency_Graph::Has_Circular_Dependency(const std::string &cells, const std::string& contents, const std::vector<std::string>& dependencies) {
 		
 		std::unordered_set<std::string> cell_deps = GetDirectDependents(cells);
 
@@ -123,10 +123,9 @@ namespace RS {
 	}
 
 
-	bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents) {
-
-
-	}
+	// bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents) {
+	// 	return false;
+	// }
 
 	/*-----------------------------------------------------------------------------------------*
 	 * Mutator Methods                                                                         *
