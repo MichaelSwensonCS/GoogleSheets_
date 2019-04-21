@@ -112,39 +112,33 @@ namespace RS {
 		
 		std::unordered_set<std::string> cells({ cell });
 		std::unordered_set<std::string> contents({ content });
+		
+		if(content.find(cell) != std::string::npos)
+		{
+			return true;
+		}
 
-		return Has_Circular_Dependency(cells, contents, dependencies);
+		return false;
 	}
 
 
-	bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents, const std::vector<std::string>& dependencies) {
+	// bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents, const std::vector<std::string>& dependencies) {
 	 	
-	 	for(auto cell_deps : cells){
-			 auto celld = GetDirectDependents(cell_deps);
-			 for(auto cell : celld){
-				for (std::string dep_it : dependencies){
-					if(dep_it.compare(cell) == 0)
-					{
-						return true;
-					}
-			 }
-			 }
+	//  	// for(auto cell_deps : cells){
+	// 	// 	 auto celld = GetDirectDependents(cell_deps);
+	// 	// 	 for(auto cell : celld){
+	// 	// 		for (std::string dep_it : dependencies){
+	// 	// 			if(dep_it.compare(cell) == 0)
+	// 	// 			{
+	// 	// 				return true;
+	// 	// 			}
+	// 	// 	 	}
+	// 	// 	 }
 
-		 }
+	// 	//  }
 
-		//std::unordered_set<std::string> cell_deps = GetDirectDependents(cells);
-
-		// for(std::string it : cell_deps) {
-
-		// 	auto dep_it = dependencies;
-			
-		// 	if(dep_it == cell_deps) {
-		// 			return true;
-		// 		}
-		// 	}
-
-	 	return false;
-	}
+	//  	return false;
+	// }
 
 	/*-----------------------------------------------------------------------------------------*
 	 * Mutator Methods                                                                         *
