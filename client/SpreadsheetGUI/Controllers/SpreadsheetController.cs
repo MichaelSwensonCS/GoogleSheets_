@@ -404,9 +404,7 @@ namespace SS.Controllers {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnConnectClosed(Object sender, EventArgs e) {
-            _viewForm.Invoke(new MethodInvoker(() => {
-                _view.Close();
-            }));
+            _view.Close();
         }
 
         /// <summary>

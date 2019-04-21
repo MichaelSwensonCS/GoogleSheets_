@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 04/06/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/18/19                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -107,6 +107,7 @@ namespace SS.Views {
         private void serverBox_KeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == KEY_ENTER) {
                 ConnectClicked?.Invoke(sender, e);
+                e.Handled = true;
             }
         }
     }

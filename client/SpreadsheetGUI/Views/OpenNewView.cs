@@ -8,7 +8,7 @@
  *                                                                                             *
  *                   Start Date : 03/28/19                                                     *
  *                                                                                             *
- *                      Modtime : 04/14/19                                                     *
+ *                      Modtime : 04/21/19                                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -26,6 +26,8 @@ namespace SS.Views {
     /// Represents the Open/New view.
     /// </summary>
     public partial class OpenNewView : Form {
+
+        private const char KEY_ENTER = (char)0xD;
 
         public event EventHandler OpenClicked;
 
@@ -78,6 +80,13 @@ namespace SS.Views {
             DarkMode(mode);
 
             openNewBtn.Click += (o, e) => OpenClicked?.Invoke(o, e);
+            spreadsheetList.MouseDoubleClick += OnListDoubleClick;
+
+            this.KeyPress += OnMainWindowKeyPress;
+            usernameBox.KeyPress += OnMainWindowKeyPress;
+            passwordBox.KeyPress += OnMainWindowKeyPress;
+            spreadsheetBox.KeyPress += OnMainWindowKeyPress;
+            spreadsheetList.KeyPress += OnMainWindowKeyPress;
         }
 
         /// <summary>
@@ -148,6 +157,21 @@ namespace SS.Views {
 
             spreadsheetList.BackColor = bg;
             spreadsheetList.ForeColor = fg;
+        }
+
+        private void OnMainWindowKeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar == KEY_ENTER) {
+                OpenClicked?.Invoke(sender, e);
+                e.Handled = true;
+            }
+        }
+
+        private void OnListDoubleClick(object sender, EventArgs e) {
+            var s = sender as System.Windows.Forms.ListBox;
+            if (s != null) {
+                spreadsheetBox.Text = s.Text;
+                OpenClicked?.Invoke(sender, e);
+            }
         }
 
         /// <summary>
