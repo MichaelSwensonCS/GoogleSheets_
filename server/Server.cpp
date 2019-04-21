@@ -449,31 +449,27 @@ namespace RS {
 
 		// Verify
 		// TODO
-		Dependency_Graph dg;
-		if(!dg.Has_Circular_Dependency(cell, contents, dependencies))
-		{
-			// Initial setup.
-			int id = state.ID();
-			std::string filename = state.Spreadsheet();
-			SNode &node = sheets_[filename];
-			json &sheet = node.Sheet();
 
-			// Set sheet data and history.
-			sheet["spreadsheet"][cell] = contents;
-			node.Push_Edit(cell, contents, dependencies);
+		// Initial setup.
+		int id = state.ID();
+		std::string filename = state.Spreadsheet();
+		SNode &node = sheets_[filename];
+		json &sheet = node.Sheet();
 
-			// Save.
-			Save_Sheet(filename, node);
+		// Set sheet data and history.
+		sheet["spreadsheet"][cell] = contents;
+		node.Push_Edit(cell, contents, dependencies);
 
-			// Echo edits to clients on same sheet.
-			for (int client : node.Clients()) {
-				if (client == id) { continue; }
-				else {
-					Do_Full_Send(state.Spreadsheet(), connections_[client]);
-				}
+		// Save.
+		Save_Sheet(filename, node);
+
+		// Echo edits to clients on same sheet.
+		for (int client : node.Clients()) {
+			if (client == id) { continue; }
+			else {
+				Do_Full_Send(state.Spreadsheet(), connections_[client]);
 			}
 		}
-
 	}
 
 	/*
