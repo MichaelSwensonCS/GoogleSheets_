@@ -112,33 +112,40 @@ namespace RS {
 		
 		std::unordered_set<std::string> cells({ cell });
 		std::unordered_set<std::string> contents({ content });
-		
-		if(content.find(cell) != std::string::npos)
-		{
-			return true;
-		}
-
-		return false;
+		return Has_Circular_Dependency(cells, contents, dependencies);
 	}
 
+	bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents, const std::vector<std::string>& dependencies) {
 
-	// bool Dependency_Graph::Has_Circular_Dependency(const std::unordered_set<std::string> &cells, const std::unordered_set<std::string>& contents, const std::vector<std::string>& dependencies) {
-	 	
-	//  	// for(auto cell_deps : cells){
-	// 	// 	 auto celld = GetDirectDependents(cell_deps);
-	// 	// 	 for(auto cell : celld){
-	// 	// 		for (std::string dep_it : dependencies){
-	// 	// 			if(dep_it.compare(cell) == 0)
-	// 	// 			{
-	// 	// 				return true;
-	// 	// 			}
-	// 	// 	 	}
-	// 	// 	 }
+		for(auto cell : cells)
+		{
+			for(auto dependents : dependencies)
+			{
+				// need to add Get_Dependents(dependents) and then can compare to those
+				// but i keep getting a segmentation error 
+				if(dependents.find(cell) != std::string::npos)
+				{
+					return true;
+				}
+			}
+		}
 
-	// 	//  }
 
-	//  	return false;
-	// }
+		// supposed to search through all of the dependencies but causes segmentation error
+		// for(std::string old_dep : dependencies){
+		// 	std::unordered_set<std::string> new_dep = Get_Dependents(old_dep);
+		// 	for(std::string search : new_dep)
+		// 	{
+		// 		if(search.find(cell) != std::string::npos)
+		// 		{
+		// 			return true;
+		// 		}
+		// 	}
+		// }
+
+		return false;
+
+	}
 
 	/*-----------------------------------------------------------------------------------------*
 	 * Mutator Methods                                                                         *
@@ -262,20 +269,20 @@ namespace RS {
 		}
 	}
 
-	void Dependency_Graph::Visit(const std::string &start, const std::string &cell,
-			std::unordered_set<std::string> &visited, std::vector<std::string> *changed) {
+	// void Dependency_Graph::Visit(const std::string &start, const std::string &cell,
+	// 		std::unordered_set<std::string> &visited, std::vector<std::string> *changed) {
 
-		// visited.Add(name);
-		visited.insert(cell);
+	// 	// visited.Add(name);
+	// 	// visited.insert(cell);
 		
-		// foreach (String n in GetDirectDependents(name)) {
-		// 	if (n.Equals(start)) {
-		// 		throw new CircularException();
-		// 	}
-		// 	else if (!visited.Contains(n)) {
-		// 		Visit(start, n, visited, changed);
-		// 	}
-		// }
-		// changed.AddFirst(name);
-	}
+	// 	// foreach (String n in GetDirectDependents(name)) {
+	// 	// 	if (n.Equals(start)) {
+	// 	// 		throw new CircularException();
+	// 	// 	}
+	// 	// 	else if (!visited.Contains(n)) {
+	// 	// 		Visit(start, n, visited, changed);
+	// 	// 	}
+	// 	// }
+	// 	// changed.AddFirst(name);
+	// }
 }

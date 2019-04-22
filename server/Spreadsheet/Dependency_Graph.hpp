@@ -48,7 +48,7 @@ namespace RS {
 		std::unordered_set<std::string>* Get_Relation_Set(const std::string&, Relation);
 		void Replace_Relation(const std::string&, const std::unordered_set<std::string>&, Relation);
 
-		static void Visit(const std::string&, const std::string&, std::unordered_set<std::string>&, std::vector<std::string>*);
+		//static void Visit(const std::string&, const std::string&, std::unordered_set<std::string>&, std::vector<std::string>*);
 	public:
 		Dependency_Graph();
 		~Dependency_Graph();
@@ -64,9 +64,10 @@ namespace RS {
 		void Replace_Dependents(const std::string&, const std::unordered_set<std::string>&);
 		void Replace_Dependees(const std::string&, const std::unordered_set<std::string>&);
 
-		static const std::unordered_set<std::string>& GetDirectDependents(const std::string&);
+	    const std::unordered_set<std::string>& GetDirectDependents(const std::string&);
 
-		static bool Has_Circular_Dependency(const std::string&, const std::string&, const std::vector<std::string>&);
+		bool Has_Circular_Dependency(const std::string&, const std::string&, const std::vector<std::string>&);
+		bool Has_Circular_Dependency(const std::unordered_set<std::string>&, const std::unordered_set<std::string>&, const std::vector<std::string>&);
 
 	};
 }
