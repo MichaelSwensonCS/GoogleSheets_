@@ -449,9 +449,9 @@ namespace RS {
 
 		// Verify
 		// TODO
-		Dependency_Graph dg;
-		if(!dg.Has_Circular_Dependency(cell, contents, dependencies))
-		{
+		// uncomment for dg testing
+		// Dependency_Graph dg;
+		// if(!dg.Has_Circular_Dependency(cell, contents, dependencies)){
 			// Initial setup.
 			int id = state.ID();
 			std::string filename = state.Spreadsheet();
@@ -472,7 +472,7 @@ namespace RS {
 					Do_Full_Send(state.Spreadsheet(), connections_[client]);
 				}
 			}
-		}
+		// } uncomment for dg
 
 	}
 
